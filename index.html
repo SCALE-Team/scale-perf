@@ -1,17 +1,9 @@
 <html>
 	<body>
-		Zieh das in deine Link Leiste:<br />
-		<a href="javascript:(function(){
-				var jselem=document.createElement('SCRIPT');
-				jselem.type='text/javascript';
-				jselem.src='http://rawgit.com/scale-team/scale-perf/master/perf-bookmarklet.js';
-				document.getElementsByTagName('body')[0].appendChild(jselem);
-			})();">
-			Scale-Perf
-		</a>
-		<br />
-		Local:<br />
-		<a href='javascript:(function(){
+		<script>
+			var body = document.getElementsByTagName("body")[0];
+			
+			function scriptLoadFunction(scriptPath){
 				var body = document.getElementsByTagName("body")[0];
 				
 				var loadingElem = document.createElement("div");
@@ -27,13 +19,43 @@
 				
 				var jselem = document.createElement("script");
 				jselem.type = "text/javascript";
-				jselem.src = "http://localhost/perf-bookmarklet.js";
-				jselem.onload = function(){
+				jselem.src = scriptPath + "?" + (Math.round(Math.random() * Math.pow(2, 16)));
+				jselem.onload = function() {
 					body.removeChild(loadingElem);
 				};
 				body.appendChild(jselem);
-			})();'>
-			Loc-Scale-Perf
-		</a>
+			};
+			
+			var links = [
+				{
+					title:	"Zieh das in deine Link Leiste",
+					script:	"http://rawgit.com/scale-team/scale-perf/master/perf-bookmarklet.js",
+					text:	"Scale-Perf"
+				},
+				{
+					title:	"local",
+					script:	"http://localhost/perf-bookmarklet.js",
+					text:	"Loc-Scale-Perf"
+				}
+			];
+			
+			for(var f in links)
+			{
+				var link = links[f];
+				
+				var div = document.createElement("div");
+				
+					var title = document.createElement("div");
+					title.innerText = link.title + ":";
+					div.appendChild(title);
+					
+					var linkElem = document.createElement("a");
+					linkElem.text = link.text;
+					linkElem.href = 'javascript:' + scriptLoadFunction + '; scriptLoadFunction("' + link.script + '")';
+					div.appendChild(linkElem);
+					
+				body.appendChild(div);
+			}
+		</script>
 	</body>
 </html>
