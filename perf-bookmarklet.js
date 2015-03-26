@@ -1,26 +1,22 @@
 var body = document.getElementsByTagName("body")[0];
 
 var style = document.createElement("style");
-style.innerText = "#PerfBar > div a { display: inline-block; cursor: pointer; text-decoration: none !important; color: #fff !important; display: inline-block; padding: 5px; }";
+style.innerText = "#PerfBar { color: #fff; position: fixed; top: 0; left: 0; width: 100%; background-color: #000; box-shadow: 0px 0px 5px #000; }";
+style.innerText += "#PerfBar > div { padding-right: 50px; }";
+style.innerText += "#PerfBar > div a { display: inline-block; cursor: pointer; text-decoration: none !important; color: #fff !important; display: inline-block; padding: 5px; }";
 style.innerText += "#PerfBar > div a:hover { background-color: red !important; }";
 style.innerText += "#PerfBar .perfClose { position: absolute; width: 50; text-align: right; top: 0; right: 0; }";
 body.appendChild(style);
 
 var topBarContainer = document.createElement("div");
-topBarContainer.id = "PerfBar";
 topBarContainer.style.height = 28;
-topBarContainer.style.color = "#fff";
-topBarContainer.style.position = "fixed";
-topBarContainer.style.top = 0;
-topBarContainer.style.left = 0;
-topBarContainer.style.width = "100%";
-topBarContainer.style.backgroundColor = "#000";
-topBarContainer.style.boxShadow = "0 0 5px #000";
-body.style.paddingTop = topBarContainer.style.height;
+topBarContainer.id = "PerfBar";
+
+var oldBodyPaddingTop = body.offsetTop * 1.0;
+body.style.paddingTop = oldBodyPaddingTop + topBarContainer.style.height;
 body.appendChild(topBarContainer);
 
 var topBar = document.createElement("div");
-topBar.style.paddingRight = 50;
 topBarContainer.appendChild(topBar);
 
 var scripts = [
@@ -73,6 +69,7 @@ var close = document.createElement("a");
 close.className = "perfClose";
 close.innerText = "close";
 close.onclick = function(){
+	body.style.paddingTop = oldBodyPaddingTop;
 	body.removeChild(topBarContainer);
 };
 topBar.appendChild(close);
