@@ -1,13 +1,39 @@
 <html>
 	<body>
-		Zieh das in deine Link Leiste:
+		Zieh das in deine Link Leiste:<br />
 		<a href="javascript:(function(){
 				var jselem=document.createElement('SCRIPT');
 				jselem.type='text/javascript';
-				jselem.src='https://raw.githubusercontent.com/SCALE-Team/scale-perf/master/perf-bookmarklet.js';
+				jselem.src='http://rawgit.com/scale-team/scale-perf/master/perf-bookmarklet.js';
 				document.getElementsByTagName('body')[0].appendChild(jselem);
 			})();">
 			Scale-Perf
+		</a>
+		<br />
+		Local:<br />
+		<a href='javascript:(function(){
+				var body = document.getElementsByTagName("body")[0];
+				
+				var loadingElem = document.createElement("div");
+				loadingElem.innerText = "loading scale performance tests...";
+				loadingElem.style.color = "#fff";
+				loadingElem.style.position = "absolute";
+				loadingElem.style.top = 0;
+				loadingElem.style.left = 0;
+				loadingElem.style.backgroundColor = "#000";
+				loadingElem.style.padding=5;
+				loadingElem.style.boxShadow = "0 0 5px #000";
+				body.appendChild(loadingElem);
+				
+				var jselem = document.createElement("script");
+				jselem.type = "text/javascript";
+				jselem.src = "http://localhost/perf-bookmarklet.js";
+				jselem.onload = function(){
+					body.removeChild(loadingElem);
+				};
+				body.appendChild(jselem);
+			})();'>
+			Loc-Scale-Perf
 		</a>
 	</body>
 </html>
