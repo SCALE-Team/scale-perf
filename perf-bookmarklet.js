@@ -8,13 +8,15 @@ body.appendChild(style);
 
 var topBarContainer = document.createElement("div");
 topBarContainer.id = "PerfBar";
+topBarContainer.style.height = 28;
 topBarContainer.style.color = "#fff";
-topBarContainer.style.position = "absolute";
+topBarContainer.style.position = "fixed";
 topBarContainer.style.top = 0;
 topBarContainer.style.left = 0;
 topBarContainer.style.width = "100%";
 topBarContainer.style.backgroundColor = "#000";
 topBarContainer.style.boxShadow = "0 0 5px #000";
+body.style.paddingTop = topBarContainer.style.height;
 body.appendChild(topBarContainer);
 
 var topBar = document.createElement("div");
