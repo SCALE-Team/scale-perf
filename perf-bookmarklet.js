@@ -1,7 +1,7 @@
 var body = document.getElementsByTagName("body")[0];
 
 var style = document.createElement("style");
-style.innerText = "#PerfBar { color: #fff; position: fixed; top: 0; left: 0; width: 100%; background-color: #000; box-shadow: 0px 0px 5px #000; }";
+style.innerText = "#PerfBar { z-index: 999999; color: #fff; position: fixed; top: 0; left: 0; width: 100%; background-color: #000; box-shadow: 0px 0px 5px #000; }";
 style.innerText += "#PerfBar > div { padding-right: 50px; }";
 style.innerText += "#PerfBar > div a { display: inline-block; cursor: pointer; text-decoration: none !important; color: #fff !important; display: inline-block; padding: 5px; }";
 style.innerText += "#PerfBar > div a:hover { background-color: red !important; }";
