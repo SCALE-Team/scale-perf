@@ -1,14 +1,18 @@
 var body = document.getElementsByTagName("body")[0];
 
+var topBarContainer = document.createElement("div");
+topBarContainer.style.color = "#fff";
+topBarContainer.style.position = "absolute";
+topBarContainer.style.top = 0;
+topBarContainer.style.left = 0;
+topBarContainer.style.width = "100%";
+topBarContainer.style.backgroundColor = "#000";
+topBarContainer.style.boxShadow = "0 0 5px #000";
+body.appendChild(topBarContainer);
+
 var topBar = document.createElement("div");
-topBar.style.color = "#fff";
-topBar.style.position = "absolute";
-topBar.style.top = 0;
-topBar.style.left = 0;
-topBar.style.width = "100%";
-topBar.style.backgroundColor = "#000";
-topBar.style.boxShadow = "0 0 5px #000";
-body.appendChild(topBar);
+topBar.style.paddingRight = 50;
+topBarContainer.appendChild(topBar);
 
 var scripts = [
 	{
@@ -33,7 +37,7 @@ var scripts = [
 	},
 	{
 		name:	"Display Stats",
-		href:	"//rawgit.com/mrdoob/stats.js/master/build/stats.min.js",
+		href:	"https://rawgit.com/mrdoob/stats.js/master/build/stats.min.js",
 		onclick:	function(){
 			var displayStatsInterval = setInterval(function(){
 				console.log("hii :)");
@@ -54,6 +58,22 @@ var scripts = [
 		}
 	},
 ];
+
+var close = document.createElement("a");
+close.innerText = "close";
+close.style.position = "absolute";
+close.style.width = 50;
+close.style.textAlign = "right";
+close.style.top = 0;
+close.style.right = 0;
+close.style.display = "inline-block";
+close.style.padding = 5;
+close.style.cursor = "pointer";
+close.style.color = "#fff";
+close.onclick = function(){
+	body.removeChild(topBarContainer);
+};
+topBar.appendChild(close);
 
 for(var f in scripts)
 {
