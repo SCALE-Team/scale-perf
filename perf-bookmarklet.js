@@ -9,11 +9,14 @@ style.innerText += "#PerfBar .perfClose { position: absolute; width: 50; text-al
 body.appendChild(style);
 
 var topBarContainer = document.createElement("div");
-topBarContainer.style.height = 28;
 topBarContainer.id = "PerfBar";
 
+//*
+topBarContainer.style.height = 28;
 var oldBodyPaddingTop = body.offsetTop * 1.0;
 body.style.paddingTop = oldBodyPaddingTop + topBarContainer.style.height;
+//*/
+
 body.appendChild(topBarContainer);
 
 var topBar = document.createElement("div");
