@@ -4,13 +4,40 @@
 			Scale-Perf
 		</title>
 		
+		<style>
+			body {
+				font-family:	Arial;
+				color:			#444;
+				background:		#ddd;
+			}
+			
+			h1 {
+				color:			#999;
+				width:			980px;
+				margin:			30px auto;
+				text-shadow:	1px 1px 2px #fff, -1px -1px 2px #000;
+			}
+			
+			#Main {
+				width:			980px;
+				background:		#fff;
+				border-radius:	5px;
+				padding:		5px;
+				margin:			0px auto;
+				box-shadow:		0px 0px 5px;
+			}
+		</style>
 	</head>
 	<body>
+		<h1>SCALE performance bookmarklet</h1>
+		
+		<div id="Main"></div>
+		
 		<script>
-			var body = document.getElementsByTagName("body")[0];
+			var main = document.getElementById("Main");
 			
 			function scriptLoadFunction(scriptPath){
-				var body = document.getElementsByTagName("body")[0];
+				var main = document.getElementsByTagName("body")[0];
 				
 				var loadingElem = document.createElement("div");
 				loadingElem.innerText = "loading scale performance tests...";
@@ -19,24 +46,24 @@
 				loadingElem.style.top = 0;
 				loadingElem.style.left = 0;
 				loadingElem.style.backgroundColor = "#000";
-				loadingElem.style.padding=5;
+				loadingElem.style.padding = 5;
 				loadingElem.style.boxShadow = "0 0 5px #000";
-				body.appendChild(loadingElem);
+				main.appendChild(loadingElem);
 				
 				var jselem = document.createElement("script");
 				jselem.type = "text/javascript";
 				jselem.src = scriptPath + "?" + (Math.round(Math.random() * Math.pow(2, 16)));
 				jselem.onload = function() {
-					body.removeChild(loadingElem);
+					main.removeChild(loadingElem);
 				};
-				body.appendChild(jselem);
+				main.appendChild(jselem);
 				
 				console.log("Load SCALE performance bar from " + jselem.src);
 			};
 			
 			var links = [
 				{
-					title:	"Zieh das in deine Link Leiste",
+					title:	"Script hosted on Github",
 					script:	"https://rawgit.com/scale-team/scale-perf/master/perf-bookmarklet.js",
 					text:	"Scale-Perf"
 				}
@@ -58,21 +85,25 @@
 				
 				var div = document.createElement("div");
 				
-					var title = document.createElement("h1");
-					title.innerText = link.title + ":";
+					var title = document.createElement("h2");
+					title.innerText = link.title;
 					div.appendChild(title);
 					
-					var desktop = document.createElement("h2");
-					desktop.innerText = "DESKTOP";
+					var desktop = document.createElement("h3");
+					desktop.innerText = "Desktop";
 					div.appendChild(desktop);
+					
+					var description = document.createElement("div");
+					description.innerText = "Drag and drop this intop your link bar: ";
+					div.appendChild(description);
 					
 					var linkElem = document.createElement("a");
 					linkElem.text = link.text;
 					linkElem.href = 'javascript:' + scriptLoadFunction + '; scriptLoadFunction("' + link.script + '")';
-					div.appendChild(linkElem);
+					description.appendChild(linkElem);
 					
 					var mobile = document.createElement("h2");
-					mobile.innerText = "MOBILE";
+					mobile.innerText = "Mobile";
 					div.appendChild(mobile);
 					
 					var mobileText = document.createElement("ol");
@@ -93,7 +124,7 @@
 					
 					div.appendChild(mobileText);
 					
-				body.appendChild(div);
+				main.appendChild(div);
 			}
 		</script>
 	</body>
