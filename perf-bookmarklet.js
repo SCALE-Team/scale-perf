@@ -42,7 +42,7 @@ var scripts = [
 	},
 	{
 		name:	"DOM Monster",
-		href:	"http://mir.aculo.us/dom-monster/dommonster.js"
+		href:	"https://mir.aculo.us/dom-monster/dommonster.js"
 	},
 	{
 		name:	"Display Stats",
