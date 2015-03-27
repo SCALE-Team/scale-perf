@@ -79,9 +79,9 @@ var scripts = [
 
 var maxIndex = (scripts.length - 1);
 
-for(var f in scripts)
+for(var i in scripts)
 {
-	var script = scripts[f];
+	var script = scripts[i];
 	
 	var link = document.createElement("a");
 	link.innerText = script.name;
@@ -92,14 +92,18 @@ for(var f in scripts)
 		link.href += 'body.appendChild(jselem);';
 	link.href += '})()';
 	
-	if(typeof(script.onclick) != null)
-	{
-		link.onclick = script.onclick;
-	}
+	link.onclick = function(){
+		topBarContainer.style.display = "none";
+		
+		if(typeof(script.onclick) != null)
+		{
+			script.onclick();
+		}
+	};
 	
 	topBar.appendChild(link);
 	
-	if(f < maxIndex)
+	if(i < maxIndex)
 	{
 		var separatorElem = document.createElement("span");
 		separatorElem.className = "perfSeparator";
@@ -118,6 +122,6 @@ close.className = "perfClose";
 close.innerText = "close";
 close.onclick = function(){
 	//body.style.paddingTop = oldBodyPaddingTop;
-	body.removeChild(topBarContainer);
+	topBarContainer.style.display = "none";
 };
 topBar.appendChild(close);

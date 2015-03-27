@@ -37,7 +37,12 @@
 			var main = document.getElementById("Main");
 			
 			function scriptLoadFunction(scriptPath){
-				if(document.getElementById("PerfBar") != null) return;
+				var perfBar = document.getElementById("PerfBar");
+				if(perfBar != null)
+				{
+					perfBar.style.display = "block";
+					return;
+				}
 				
 				var main = document.getElementsByTagName("body")[0];
 				
