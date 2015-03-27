@@ -50,10 +50,18 @@ var scripts = [
 	{
 		name:		"Waterfall",
 		href:		"https://andydavies.github.io/waterfall/bookmarklet/waterfall.js",
-		localHref:	"/tools/waterfall.js"
+		localHref:	"/tools/waterfall.js",
+		onclick:	function() {
+			console.log(222);
+			perfBookmarkletAddToolCloseFunction(function()
+			{
+				var waterfall = document.getElementById("PerfWaterfallDiv");
+				waterfall.parentNode.removeChild(waterfall);
+			});
+		}
 	},
 	{
-		name:	"Perf Map",
+		name:	"Picture load times",
 		href:	"https://zeman.github.io/perfmap/perfmap.js"
 	},
 	{
@@ -64,7 +72,7 @@ var scripts = [
 		name:		"Display Stats",
 		href:		"https://rawgit.com/mrdoob/stats.js/master/build/stats.min.js",
 		localHref:	"/tools/stats.js",
-		onclick:	function(){
+		onclick:	function() {
 			var displayStatsInterval = setInterval(function(){
 				if(typeof Stats == "function")
 				{
@@ -72,12 +80,21 @@ var scripts = [
 					
 					var stats = new Stats();
 					stats.domElement.style.position = "fixed";
+					stats.domElement.style.paddingTop = 28;
 					stats.domElement.style.left = "0px";
 					stats.domElement.style.top = "0px";
 					stats.domElement.style.zIndex = "10000";
 					document.body.appendChild(stats.domElement);
 					
-					setInterval(function(){ stats.update(); }, 1000/60);
+					var interval = setInterval(function(){ stats.update(); }, 1000/60);
+					
+					//* SCALE perf bookmarklet extension
+					perfBookmarkletAddToolCloseFunction(function()
+					{
+						document.body.removeChild(stats.domElement);
+						clearInterval(interval);
+					});
+					//*/
 				}
 			}, 100);
 		}
@@ -92,7 +109,9 @@ for(var i in scripts)
 	var script = scripts[i];
 	
 	var link = document.createElement("a");
+	//link.data.scriptIndex = i;
 	link.innerText = script.name;
+	link._onToolStartTrigger = script.onclick;
 	link.href = 'javascript:(function(){';
 		link.href += 'var jselem = document.createElement("script");';
 		link.href += 'jselem.type = "text/javascript";';
@@ -110,13 +129,14 @@ for(var i in scripts)
 		link.href += 'body.appendChild(jselem);';
 	link.href += '})()';
 	
-	link.onclick = function(){
+	link.onclick = function(elem) {
 		topBarContainer.style.display = "none";
 		toolActiveBar.style.display = "block";
+		toolBarActiveTitle.innerText = elem.target.innerText;
 		
-		if(typeof(script.onclick) != null)
+		if(typeof(elem.target._onToolStartTrigger) == "function")
 		{
-			script.onclick();
+			elem.target._onToolStartTrigger();
 		}
 	};
 	
@@ -173,13 +193,20 @@ topBar.appendChild(close);
 	closeToolActiveBar.onclick = function() {
 		toolActiveBar.style.display = "none";
 		
-		if(typeof(scalePerfCloseTool) == "function")
-		{
-			scalePerfCloseTool();
-			return;
-		}
-		
-		console.log("No tool to close available. (typeof(scalePerfCloseTool) = '" + typeof(scalePerfCloseTool) + "')");
+		perfExecuteOnCloseTool();
 	};
 	toolActiveBar.appendChild(closeToolActiveBar);
+}
+
+var _perfOnCloseTool = [];
+function perfBookmarkletAddToolCloseFunction(func) {
+	_perfOnCloseTool.push(func);
+}
+
+function perfExecuteOnCloseTool(func) {
+	while(_perfOnCloseTool.length > 0)
+	{
+		var func = _perfOnCloseTool.pop();
+		func();
+	}
 }

@@ -136,6 +136,9 @@
 		}
 
 		var containerID= "waterfall-div",
+		//* SCALE perf bookmarklet extension
+		containerID = "PerfWaterfallDiv";
+		//*/
 			container = d.getElementById(containerID),
 			closeBtn = createCloseBtn();
 
@@ -432,11 +435,3 @@
 		alert("Resource Timing API not supported");
 	}
 })(window,window.document);
-
-//* SCALE perf bookmarklet extension
-function scalePerfCloseTool()
-{
-	var elem = document.getElementById("WaterfallCloseBtn");
-	elem.click();
-}
-//**/

@@ -14,10 +14,6 @@ var Stats = function () {
 	container.addEventListener( 'mousedown', function ( event ) { event.preventDefault(); setMode( ++ mode % 2 ) }, false );
 	container.style.cssText = 'width:80px;opacity:0.9;cursor:pointer';
 
-	//* SCALE perf bookmarklet extension
-	container.style.paddingTop = 28;
-	//*/
-	
 	var fpsDiv = document.createElement( 'div' );
 	fpsDiv.id = 'fps';
 	fpsDiv.style.cssText = 'padding:0 0 3px 3px;text-align:left;background-color:#002';
@@ -150,11 +146,4 @@ if ( typeof module === 'object' ) {
 
 	module.exports = Stats;
 
-}
-
-function scalePerfCloseTool()
-{
-	var stats = document.getElementById("stats");
-	var body = document.getElementsByTagName("body")[0];
-	body.removeChild(stats);
 }
