@@ -34,6 +34,7 @@ body.style.paddingTop = oldBodyPaddingTop + topBarContainer.style.height;
 
 body.appendChild(topBarContainer);
 
+// For the transition animation
 setTimeout(function(){
 	topBarContainer.style.cssText += ';-webkit-transform:translateY(0px)';
 }, 10);
@@ -92,11 +93,17 @@ var scripts = [
 					
 					var stats = new Stats();
 					stats.domElement.style.position = "fixed";
-					stats.domElement.style.paddingTop = 30;
 					stats.domElement.style.left = "0px";
 					stats.domElement.style.top = "0px";
 					stats.domElement.style.zIndex = "10000";
 					document.body.appendChild(stats.domElement);
+					
+					// for the transition animation
+					stats.domElement.style.cssText += "-webkit-transition:-webkit-transform ease-out 0.3s;-webkit-transform:translateY(-450px);";
+					
+					setTimeout(function(){
+						stats.domElement.style.cssText += ';-webkit-transform:translateY(30px)';
+					}, 10);
 					
 					var interval = setInterval(function(){ stats.update(); }, 1000/60);
 					

@@ -149,13 +149,18 @@
 
 		container.style.cssText = 'background:#fff;border-bottom: 2px solid #000;margin:5px;position:absolute;top:0px;left:0px;z-index:99999;margin:0px;padding:0px;';
 		
-		//* SCALE perf bookmarklet extension
-		container.style.marginTop = 30;
-		//*/
-		
 		container.appendChild(closeBtn);
 		d.body.appendChild(container);
-
+		
+		//* SCALE perf bookmarklet extension
+		// for the transition animation
+		container.style.cssText += "-webkit-transition:-webkit-transform ease-out 0.3s;-webkit-transform:translateY(-450px);";
+		
+		setTimeout(function(){
+			container.style.cssText += ';-webkit-transform:translateY(30px)';
+		}, 10);
+		//*/
+		
 		var rowHeight = 10;
 		var rowPadding = 2;
 		var barOffset = 200;
