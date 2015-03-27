@@ -51,7 +51,7 @@ var scripts = [
 	//*/
 	{
 		name:	"Performance Bookmarklet",
-		href:	"https://rawgit.com/scale-team/scale-perf/master/tools/performanceBookmarklet.min.js",
+		href:	"https://rawgit.com/scale-team/scale-perf/master/tools/performanceBookmarklet.js",
 		localHref:	"/tools/performanceBookmarklet.js",
 		onclick:	function() {
 			perfBookmarkletAddToolCloseFunction(function()
@@ -105,7 +105,7 @@ var scripts = [
 	},
 	{
 		name:		"FPS display",
-		href:		"https://rawgit.com/scale-team/scale-perf/master/tools/stats.min.js",
+		href:		"https://rawgit.com/scale-team/scale-perf/master/tools/stats.js",
 		localHref:	"/tools/stats.js",
 		onclick:	function() {
 			var displayStatsInterval = setInterval(function(){
