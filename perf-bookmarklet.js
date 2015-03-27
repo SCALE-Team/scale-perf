@@ -61,8 +61,9 @@ var scripts = [
 		href:	"https://mir.aculo.us/dom-monster/dommonster.js"
 	},
 	{
-		name:	"Display Stats",
-		href:	"https://rawgit.com/mrdoob/stats.js/master/build/stats.min.js",
+		name:		"Display Stats",
+		href:		"https://rawgit.com/mrdoob/stats.js/master/build/stats.min.js",
+		localHref:	"/tools/stats.js",
 		onclick:	function(){
 			var displayStatsInterval = setInterval(function(){
 				if(typeof Stats == "function")
