@@ -51,7 +51,7 @@ var scripts = [
 	//*/
 	{
 		name:	"Performance Bookmarklet",
-		href:	"https://micmro.github.io/performance-bookmarklet/dist/performanceBookmarklet.min.js",
+		href:	"https://rawgit.com/scale-team/scale-perf/master/tools/performanceBookmarklet.min.js",
 		localHref:	"/tools/performanceBookmarklet.js",
 		onclick:	function() {
 			perfBookmarkletAddToolCloseFunction(function()
@@ -63,7 +63,7 @@ var scripts = [
 	},
 	{
 		name:		"Source load waterfall",
-		href:		"https://rawgit.com/scale-team/scale-perf/master/perf-bookmarklet.js/tools/waterfall.js",
+		href:		"https://rawgit.com/scale-team/scale-perf/master/tools/waterfall.js",
 		localHref:	"/tools/waterfall.js",
 		onclick:	function() {
 			perfBookmarkletAddToolCloseFunction(function()
@@ -75,7 +75,7 @@ var scripts = [
 	},
 	{
 		name:		"Picture load times",
-		href:		"https://rawgit.com/scale-team/scale-perf/master/perf-bookmarklet.js/tools/perfmap.js",
+		href:		"https://rawgit.com/scale-team/scale-perf/master/tools/perfmap.js",
 		localHref:	"/tools/perfmap.js",
 		onclick:	function() {
 			perfBookmarkletAddToolCloseFunction(function()
@@ -93,7 +93,7 @@ var scripts = [
 	},
 	{
 		name:	"Analyze page for tips",
-		href:	"https://rawgit.com/scale-team/scale-perf/master/perf-bookmarklet.js/tools/dommonster.js",
+		href:	"https://rawgit.com/scale-team/scale-perf/master/tools/dommonster.js",
 		localHref:	"/tools/dommonster.js",
 		onclick:	function() {
 			perfBookmarkletAddToolCloseFunction(function()
@@ -105,7 +105,7 @@ var scripts = [
 	},
 	{
 		name:		"FPS display",
-		href:		"https://rawgit.com/scale-team/scale-perf/master/perf-bookmarklet.js/tools/stats.min.js",
+		href:		"https://rawgit.com/scale-team/scale-perf/master/tools/stats.min.js",
 		localHref:	"/tools/stats.js",
 		onclick:	function() {
 			var displayStatsInterval = setInterval(function(){
