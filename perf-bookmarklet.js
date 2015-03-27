@@ -5,13 +5,22 @@ style.innerText = "#PerfBar { z-index: 999999; color: #fff; position: fixed; top
 style.innerText += "#PerfBar > div { padding-right: 50px; }";
 style.innerText += "#PerfBar > div a { display: inline-block; cursor: pointer; text-decoration: none !important; color: #fff !important; display: inline-block; padding: 5px; }";
 style.innerText += "#PerfBar > div a:hover { background-color: red !important; }";
-style.innerText += "#PerfBar .perfClose { position: absolute; width: 50; text-align: right; top: 0; right: 0; }";
+style.innerText += "#PerfBar .perfCloseSeparator { display: none; }";
+style.innerText += "@media (max-width: 768px) {";
+	style.innerText += "#PerfBar { height: auto !important; }";
+	style.innerText += "#PerfBar >div { padding: 0px; }";
+	style.innerText += "#PerfBar > div a { width:	100%; }";
+	style.innerText += "#PerfBar .perfSeparator { display: none; }";
+	style.innerText += "#PerfBar .perfClose { display: block; width: 100% !important; text-align: left !important; position: static !important; }";
+	style.innerText += "#PerfBar .perfCloseSeparator { display: block; }";
+style.innerText += "}";
+style.innerText += "#PerfBar .perfClose { position: absolute; width: 50px; text-align: right; top: 0px; right: 0px; }";
 body.appendChild(style);
 
 var topBarContainer = document.createElement("div");
 topBarContainer.id = "PerfBar";
 
-//*
+/*
 topBarContainer.style.height = 28;
 var oldBodyPaddingTop = body.offsetTop * 1.0;
 body.style.paddingTop = oldBodyPaddingTop + topBarContainer.style.height;
@@ -68,15 +77,6 @@ var scripts = [
 	},
 ];
 
-var close = document.createElement("a");
-close.className = "perfClose";
-close.innerText = "close";
-close.onclick = function(){
-	body.style.paddingTop = oldBodyPaddingTop;
-	body.removeChild(topBarContainer);
-};
-topBar.appendChild(close);
-
 var maxIndex = (scripts.length - 1);
 
 for(var f in scripts)
@@ -102,7 +102,22 @@ for(var f in scripts)
 	if(f < maxIndex)
 	{
 		var separatorElem = document.createElement("span");
+		separatorElem.className = "perfSeparator";
 		separatorElem.innerHTML = "&middot;";
 		topBar.appendChild(separatorElem);
 	}
 }
+
+var separatorElem = document.createElement("hr");
+separatorElem.className = "perfCloseSeparator";
+topBar.appendChild(separatorElem);
+
+// Add close button
+var close = document.createElement("a");
+close.className = "perfClose";
+close.innerText = "close";
+close.onclick = function(){
+	//body.style.paddingTop = oldBodyPaddingTop;
+	body.removeChild(topBarContainer);
+};
+topBar.appendChild(close);
