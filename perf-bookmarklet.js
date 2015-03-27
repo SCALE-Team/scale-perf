@@ -157,7 +157,7 @@ for(var i in scripts)
 	link._onToolStartTrigger = script.onclick;
 	link.href = 'javascript:(function(){';
 		link.href += 'var jselem = document.createElement("script");';
-		link.href += 'jselem.id = "Script' + i + '";';
+		link.href += 'jselem.id = "PerfScript' + i + '";';
 		link.href += 'jselem.type = "text/javascript";';
 		
 		if(isLocal && script.localHref != null)
@@ -181,7 +181,7 @@ for(var i in scripts)
 		// Add method to remove script after closing tool
 		perfBookmarkletAddToolCloseFunction(function(){
 			var index = elem.target.data.scriptIndex;
-			var scriptElem = document.getElementById('Script' + index);
+			var scriptElem = document.getElementById('PerfScript' + index);
 			
 			scriptElem.parentNode.removeChild(scriptElem);
 		});

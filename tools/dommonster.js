@@ -660,12 +660,18 @@
             node = document.createElement('div');
         node.id = 'jr_results';
         body.appendChild(node);
-        node.style.cssText = JR.reset + ';width:100%;text-align:left;z-index:999999;letter-spacing:0;position:fixed;top:30;' + 'color:#444;';
-        node.innerHTML = '<div id="jr_results_tips" style="' + JR.reset + 'max-height:400px;padding:5px;overflow:auto;background:#fff;border-top:1px solid #000;box-shadow: 1px 0px 5px #000;-webkit-transition:-webkit-transform ease-out 0.3s;-webkit-transform:translateY(-450px)">' + '<div style="' + JR.reset + 'height:23px;font-size:16px;font-weight:normal;margin-top:0px;margin-bottom:5px;color:#444">' + '<div style="' + JR.reset + 'float:left;padding:5px 0px 3px 5px" id="jr_results_prognosis_container">' + '<span id="jr_results_prognosis" style="' + JR.reset + '"></span> ' + '<span style="' + JR.reset + 'font-size:12px;font-weight:normal" id="jr_results_warnings_container"><span id="jr_results_warnings" style="' + JR.reset + '"></span></span>' + '</div></div>' + '<div style="' + JR.reset + 'float:left;width:220px;padding:4px;margin-top:2px; display:none;" id="jr_stats">' + '</div>' + '</div>';
+        node.style.cssText = JR.reset + ';width:100%;text-align:left;z-index:999999;letter-spacing:0;position:fixed;top:0px;' + 'color:#444;';
+        node.innerHTML = '<div id="jr_results_tips" style="' + JR.reset + 'max-height:400px;padding:5px;overflow:auto;background:#fff;border-top:1px solid #000;box-shadow: 1px 0px 5px #000;">' + '<div style="' + JR.reset + 'height:23px;font-size:16px;font-weight:normal;margin-top:0px;margin-bottom:5px;color:#444">' + '<div style="' + JR.reset + 'float:left;padding:5px 0px 3px 5px" id="jr_results_prognosis_container">' + '<span id="jr_results_prognosis" style="' + JR.reset + '"></span> ' + '<span style="' + JR.reset + 'font-size:12px;font-weight:normal" id="jr_results_warnings_container"><span id="jr_results_warnings" style="' + JR.reset + '"></span></span>' + '</div></div>' + '<div style="' + JR.reset + 'float:left;width:220px;padding:4px;margin-top:2px; display:none;" id="jr_stats">' + '</div>' + '</div>';
         JR.flush();
-        setTimeout(function() {
-            $('jr_results_tips').style.cssText += ';-webkit-transform:translateY(0px)';
-        }, 10);
+		
+		//* SCALE perf bookmarklet extension
+		// for the transition animation
+		node.style.cssText += "-webkit-transition:-webkit-transform ease-out 0.3s;-webkit-transform:translateY(-450px);";
+		
+		setTimeout(function(){
+			node.style.cssText += ';-webkit-transform:translateY(30px)';
+		}, 10);
+		//*/
     }, 10);
 })();
 
