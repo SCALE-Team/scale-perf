@@ -4,42 +4,47 @@
 			Scale-Perf
 		</title>
 		
+		<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+		
 		<style>
 			body {
-				font-family:	Arial;
-				color:			#444;
 				background:		#ddd;
 			}
 			
 			h1 {
-				color:			#999;
-				width:			980px;
 				margin:			30px auto;
-				text-shadow:	1px 1px 2px #fff, -1px -1px 2px #000;
 			}
 			
 			#Main {
-				width:			980px;
 				background:		#fff;
 				border-radius:	5px;
 				padding:		5px;
 				margin:			0px auto;
 				box-shadow:		0px 0px 5px;
 			}
+
+			
+			@media (min-width: 980px) {
+				h1 {
+					width:			980px;
+				}
+				
+				#Main {
+					width:			980px;
+				}
+			}
 		</style>
 	</head>
 	<body>
 		<h1>SCALE performance bookmarklet</h1>
 		
-		<div id="Main">
-			<h2>Script hosted on Github</h2>
-			
-			<h3>Desktop</h3>
+		<div id="Main" class="row">
+			<h2>Desktop</h2>
 			<div>
 				Drag and drop this intop your link bar: <a id="desktopLink">Scale-Perf</a>
 			</div>
 			
-			<h3>Mobile</h3>
+			<h2>Mobile</h2>
 			
 			<ol>
 				<li>Click this link: <a id="mobileLink">SCALE Perf bookmarklet</a></li>
@@ -50,7 +55,7 @@
 					<br />
 					Example:
 					<br />
-					<img src="images/mobileAddBokkmarkletExample.png" />
+					<img class="img-responsive" src="images/mobileAddBokkmarkletExample.png" />
 				</li>
 			</ol>
 		</div>
