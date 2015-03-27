@@ -63,7 +63,7 @@ var scripts = [
 	},
 	{
 		name:		"Source load waterfall",
-		href:		"https://andydavies.github.io/waterfall/bookmarklet/waterfall.js",
+		href:		"https://rawgit.com/scale-team/scale-perf/master/perf-bookmarklet.js/tools/waterfall.js",
 		localHref:	"/tools/waterfall.js",
 		onclick:	function() {
 			perfBookmarkletAddToolCloseFunction(function()
@@ -75,7 +75,7 @@ var scripts = [
 	},
 	{
 		name:		"Picture load times",
-		href:		"https://zeman.github.io/perfmap/perfmap.js",
+		href:		"https://rawgit.com/scale-team/scale-perf/master/perf-bookmarklet.js/tools/perfmap.js",
 		localHref:	"/tools/perfmap.js",
 		onclick:	function() {
 			perfBookmarkletAddToolCloseFunction(function()
@@ -93,7 +93,7 @@ var scripts = [
 	},
 	{
 		name:	"Analyze page for tips",
-		href:	"https://mir.aculo.us/dom-monster/dommonster.js",
+		href:	"https://rawgit.com/scale-team/scale-perf/master/perf-bookmarklet.js/tools/dommonster.js",
 		localHref:	"/tools/dommonster.js",
 		onclick:	function() {
 			perfBookmarkletAddToolCloseFunction(function()
@@ -105,7 +105,7 @@ var scripts = [
 	},
 	{
 		name:		"FPS display",
-		href:		"https://rawgit.com/mrdoob/stats.js/master/build/stats.min.js",
+		href:		"https://rawgit.com/scale-team/scale-perf/master/perf-bookmarklet.js/tools/stats.min.js",
 		localHref:	"/tools/stats.js",
 		onclick:	function() {
 			var displayStatsInterval = setInterval(function(){
