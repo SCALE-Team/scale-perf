@@ -31,18 +31,41 @@
 	<body>
 		<h1>SCALE performance bookmarklet</h1>
 		
-		<div id="Main"></div>
+		<div id="Main">
+			<h2>Script hosted on Github</h2>
+			
+			<h3>Desktop</h3>
+			<div>
+				Drag and drop this intop your link bar: <a id="desktopLink">Scale-Perf</a>
+			</div>
+			
+			<h2>Mobile</h2>
+			
+			<ol>
+				<li>Click this link: <a id="mobileLink">SCALE Perf bookmarklet</a></li>
+				<li>Bookmark this page</li>
+				<li>
+					Edit the bookmark URL and remove everything up to and including the hash ("#")
+					so that the bookmark URL starts with "javascript:"
+				</li>
+			</ol>
+		</div>
 		
 		<script>
 			var main = document.getElementById("Main");
 			
-			function scriptLoadFunction(scriptPath){
+			function scriptLoadFunction(){
 				var perfBar = document.getElementById("PerfBar");
 				if(perfBar != null)
 				{
 					perfBar.style.display = "block";
 					return;
 				}
+				
+				var isLocal = ((self.location+"").split("http://").pop().split("/")[0] == "localhost");
+				var scriptPath = (isLocal ?
+					"http://localhost/perf-bookmarklet.js"
+					: "https://rawgit.com/scale-team/scale-perf/master/perf-bookmarklet.js");
 				
 				var main = document.getElementsByTagName("body")[0];
 				
@@ -68,71 +91,9 @@
 				console.log("Load SCALE performance bar from " + jselem.src);
 			};
 			
-			var links = [
-				{
-					title:	"Script hosted on Github",
-					script:	"https://rawgit.com/scale-team/scale-perf/master/perf-bookmarklet.js",
-					text:	"Scale-Perf"
-				}
-			];
-			
-			var isLocal = ((self.location+"").split("http://").pop().split("/")[0] == "localhost");
-			if(isLocal)
-			{
-				links.push({
-					title:	"Lokale Variante",
-					script:	"http://localhost/perf-bookmarklet.js",
-					text:	"Loc-Scale-Perf"
-				});
-			}
-			
-			for(var f in links)
-			{
-				var link = links[f];
-				
-				var div = document.createElement("div");
-				
-					var title = document.createElement("h2");
-					title.innerText = link.title;
-					div.appendChild(title);
-					
-					var desktop = document.createElement("h3");
-					desktop.innerText = "Desktop";
-					div.appendChild(desktop);
-					
-					var description = document.createElement("div");
-					description.innerText = "Drag and drop this intop your link bar: ";
-					div.appendChild(description);
-					
-					var linkElem = document.createElement("a");
-					linkElem.text = link.text;
-					linkElem.href = 'javascript:' + scriptLoadFunction + '; scriptLoadFunction("' + link.script + '")';
-					description.appendChild(linkElem);
-					
-					var mobile = document.createElement("h2");
-					mobile.innerText = "Mobile";
-					div.appendChild(mobile);
-					
-					var mobileText = document.createElement("ol");
-						var step = document.createElement("li");
-						step.innerText = "click this link: ";
-							var mobileLink = document.createElement("a");
-							mobileLink.innerText = "SCALE Perf bookmarklet";
-							mobileLink.href = "#" + linkElem.href;
-							step.appendChild(mobileLink);
-						
-						mobileText.appendChild(step);
-						step = document.createElement("li");
-						step.innerText = "bookmark this page";
-						mobileText.appendChild(step);
-						var step = document.createElement("li");
-						step.innerText = 'edit the bookmark URL and remove everything up to and including the hash ("#") so that the bookmark URL starts with "javascript:"';;
-						mobileText.appendChild(step);
-					
-					div.appendChild(mobileText);
-					
-				main.appendChild(div);
-			}
+			var linkElem = document.getElementById("desktopLink");
+			linkElem.href = 'javascript:' + scriptLoadFunction + '; scriptLoadFunction()';
+			document.getElementById("mobileLink").href = "#" + linkElem.href;
 		</script>
 	</body>
 </html>
