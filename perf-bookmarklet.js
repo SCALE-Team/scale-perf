@@ -1,3 +1,5 @@
+var isLocal = ((self.location+"").split("http://").pop().split("/")[0] == "localhost");
+
 var body = document.getElementsByTagName("body")[0];
 
 var style = document.createElement("style");
@@ -43,8 +45,9 @@ var scripts = [
 		href:	"https://micmro.github.io/performance-bookmarklet/dist/performanceBookmarklet.min.js"
 	},
 	{
-		name:	"Waterfall",
-		href:	"https://andydavies.github.io/waterfall/bookmarklet/waterfall.js"
+		name:		"Waterfall",
+		href:		"https://andydavies.github.io/waterfall/bookmarklet/waterfall.js",
+		localHref:	"/tools/waterfall.js"
 	},
 	{
 		name:	"Perf Map",
@@ -78,6 +81,7 @@ var scripts = [
 ];
 
 var maxIndex = (scripts.length - 1);
+var randomInt = (Math.round(Math.random() * Math.pow(2, 16)));
 
 for(var i in scripts)
 {
@@ -88,7 +92,17 @@ for(var i in scripts)
 	link.href = 'javascript:(function(){';
 		link.href += 'var jselem = document.createElement("script");';
 		link.href += 'jselem.type = "text/javascript";';
-		link.href += 'jselem.src = "' + script.href + '?' + Math.floor((+new Date)/(864e5)) + '";';
+		
+		if(isLocal && script.localHref != null)
+		{
+			link.href += 'console.log("tool loaded locally");';
+			link.href += 'jselem.src = "' + script.localHref + '?' + randomInt + '";';
+		}
+		else
+		{
+			link.href += 'jselem.src = "' + script.href + '?' + randomInt + '";';
+		}
+		
 		link.href += 'body.appendChild(jselem);';
 	link.href += '})()';
 	
