@@ -37,6 +37,8 @@
 			var main = document.getElementById("Main");
 			
 			function scriptLoadFunction(scriptPath){
+				if(document.getElementById("PerfBar") != null) return;
+				
 				var main = document.getElementsByTagName("body")[0];
 				
 				var loadingElem = document.createElement("div");
