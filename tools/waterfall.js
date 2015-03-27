@@ -145,6 +145,11 @@
 		}
 
 		container.style.cssText = 'background:#fff;border: 2px solid #000;margin:5px;position:absolute;top:0px;left:0px;z-index:99999;margin:0px;padding:0px;';
+		
+		//* SCALE perf bookmarklet extension
+		container.style.marginTop = 28;
+		//*/
+		
 		container.appendChild(closeBtn);
 		d.body.appendChild(container);
 
@@ -281,6 +286,12 @@
 		btnEle.innerHTML = 'x';
 		btnEle.style.cssText = 'position:absolute;margin:-3px 5px;right:0;font-size:22px;cursor:pointer';
 		addEvent(btnEle,'click',closeBtnHandler);
+		
+		//* SCALE perf bookmarklet extension
+		btnEle.id = "WaterfallCloseBtn";
+		btnEle.style.display = "none";
+		//*/
+		
 		return btnEle;
 	}
 
@@ -421,3 +432,11 @@
 		alert("Resource Timing API not supported");
 	}
 })(window,window.document);
+
+//* SCALE perf bookmarklet extension
+function scalePerfCloseTool()
+{
+	var elem = document.getElementById("WaterfallCloseBtn");
+	elem.click();
+}
+//**/

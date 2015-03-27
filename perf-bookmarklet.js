@@ -3,10 +3,11 @@ var isLocal = ((self.location+"").split("http://").pop().split("/")[0] == "local
 var body = document.getElementsByTagName("body")[0];
 
 var style = document.createElement("style");
-style.innerText = "#PerfBar { z-index: 999999; color: #fff; position: fixed; top: 0; left: 0; width: 100%; background-color: #000; box-shadow: 0px 0px 5px #000; }";
-style.innerText += "#PerfBar > div { padding-right: 50px; }";
-style.innerText += "#PerfBar > div a { display: inline-block; cursor: pointer; text-decoration: none !important; color: #fff !important; display: inline-block; padding: 5px; }";
-style.innerText += "#PerfBar > div a:hover { background-color: red !important; }";
+style.innerText = "#PerfBar, #PerfToolActiveBar { z-index: 999999; color: #fff; position: fixed; top: 0; left: 0; width: 100%; background-color: #000; box-shadow: 0px 0px 5px #000; }";
+style.innerText += "#PerfToolActiveBar { display: none; height: 28px; }";
+style.innerText += "#PerfBar > div, { padding-right: 50px; }";
+style.innerText += "#PerfBar > div a, #PerfToolActiveBar a { display: inline-block; cursor: pointer; text-decoration: none !important; color: #fff !important; display: inline-block; padding: 5px; }";
+style.innerText += "#PerfBar > div a:hover, #PerfToolActiveBar a:hover { background-color: red !important; }";
 style.innerText += "#PerfBar .perfCloseSeparator { display: none; }";
 style.innerText += "@media (max-width: 768px) {";
 	style.innerText += "#PerfBar { height: auto !important; }";
@@ -16,7 +17,9 @@ style.innerText += "@media (max-width: 768px) {";
 	style.innerText += "#PerfBar .perfClose { display: block; width: 100% !important; text-align: left !important; position: static !important; }";
 	style.innerText += "#PerfBar .perfCloseSeparator { display: block; }";
 style.innerText += "}";
-style.innerText += "#PerfBar .perfClose { position: absolute; width: 50px; text-align: right; top: 0px; right: 0px; }";
+style.innerText += "#PerfBar .perfClose, #PerfToolActiveBar .perfClose { position: absolute; width: 50px; text-align: right; top: 0px; right: 0px; }";
+style.innerText += "#PerfToolTitle { padding: 5px; font-weight: bold; }";
+style.innerText += "#PerfToolActiveBar .perfToolBackButton { font-weight: bold; }";
 body.appendChild(style);
 
 var topBarContainer = document.createElement("div");
@@ -108,6 +111,7 @@ for(var i in scripts)
 	
 	link.onclick = function(){
 		topBarContainer.style.display = "none";
+		toolActiveBar.style.display = "block";
 		
 		if(typeof(script.onclick) != null)
 		{
@@ -134,8 +138,47 @@ topBar.appendChild(separatorElem);
 var close = document.createElement("a");
 close.className = "perfClose";
 close.innerText = "close";
-close.onclick = function(){
+close.onclick = function() {
 	//body.style.paddingTop = oldBodyPaddingTop;
 	topBarContainer.style.display = "none";
 };
 topBar.appendChild(close);
+
+/* Tool close button */ {
+	var toolActiveBar = document.createElement("div");
+	toolActiveBar.id = "PerfToolActiveBar";
+	body.appendChild(toolActiveBar);
+
+	// Add back button
+	var toolBarActiveBackButton = document.createElement("a");
+	toolBarActiveBackButton.className = "perfToolBackButton";
+	toolBarActiveBackButton.innerHTML = "< ";
+	toolBarActiveBackButton.onclick = function(){
+		topBarContainer.style.display = "block";
+		closeToolActiveBar.click();
+	};
+	toolActiveBar.appendChild(toolBarActiveBackButton);
+	
+		// Add title bar
+		var toolBarActiveTitle = document.createElement("span");
+		toolBarActiveTitle.id = "PerfToolTitle";
+		toolBarActiveTitle.innerText = "Nice tool";
+		toolBarActiveBackButton.appendChild(toolBarActiveTitle);
+	
+	// Add close button
+	var closeToolActiveBar = document.createElement("a");
+	closeToolActiveBar.className = "perfClose";
+	closeToolActiveBar.innerText = "close";
+	closeToolActiveBar.onclick = function() {
+		toolActiveBar.style.display = "none";
+		
+		if(typeof(scalePerfCloseTool) == "function")
+		{
+			scalePerfCloseTool();
+			return;
+		}
+		
+		console.log("No tool to close available. (typeof(scalePerfCloseTool) = '" + typeof(scalePerfCloseTool) + "')");
+	};
+	toolActiveBar.appendChild(closeToolActiveBar);
+}
