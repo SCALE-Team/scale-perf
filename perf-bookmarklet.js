@@ -51,7 +51,15 @@ var scripts = [
 	//*/
 	{
 		name:	"Performance Bookmarklet",
-		href:	"https://micmro.github.io/performance-bookmarklet/dist/performanceBookmarklet.min.js"
+		href:	"https://micmro.github.io/performance-bookmarklet/dist/performanceBookmarklet.min.js",
+		localHref:	"/tools/performanceBookmarklet.js",
+		onclick:	function() {
+			perfBookmarkletAddToolCloseFunction(function()
+			{
+				var waterfall = document.getElementById("perfbook-iframe");
+				waterfall.parentNode.removeChild(waterfall);
+			});
+		}
 	},
 	{
 		name:		"Source load waterfall",
