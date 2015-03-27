@@ -66,8 +66,22 @@ var scripts = [
 		}
 	},
 	{
-		name:	"Picture load times",
-		href:	"https://zeman.github.io/perfmap/perfmap.js"
+		name:		"Picture load times",
+		href:		"https://zeman.github.io/perfmap/perfmap.js",
+		localHref:	"/tools/perfmap.js",
+		onclick:	function() {
+			perfBookmarkletAddToolCloseFunction(function()
+			{
+				var elems = document.getElementsByClassName("perfmap");
+				while(elems.length > 0)
+				{
+					elems[0].parentNode.removeChild(elems[0]);
+				}
+				
+				var perfmap = document.getElementById("perfmap");
+				perfmap.parentNode.removeChild(perfmap);
+			});
+		}
 	},
 	{
 		name:	"Analyze page for tips",
@@ -76,7 +90,7 @@ var scripts = [
 		onclick:	function() {
 			perfBookmarkletAddToolCloseFunction(function()
 			{
-				var r = document.getElementById("jr_results_tips");
+				var r = document.getElementById("jr_results");
 				r.parentNode.removeChild(r);
 			});
 		}
@@ -128,11 +142,14 @@ for(var i in scripts)
 	var script = scripts[i];
 	
 	var link = document.createElement("a");
-	//link.data.scriptIndex = i;
+	link.data = {
+		scriptIndex: i
+	};
 	link.innerText = script.name;
 	link._onToolStartTrigger = script.onclick;
 	link.href = 'javascript:(function(){';
 		link.href += 'var jselem = document.createElement("script");';
+		link.href += 'jselem.id = "Script' + i + '";';
 		link.href += 'jselem.type = "text/javascript";';
 		
 		if(isLocal && script.localHref != null)
@@ -152,6 +169,14 @@ for(var i in scripts)
 		topBarContainer.style.display = "none";
 		toolActiveBar.style.display = "block";
 		toolBarActiveTitle.innerText = elem.target.innerText;
+		
+		// Add method to remove script after closing tool
+		perfBookmarkletAddToolCloseFunction(function(){
+			var index = elem.target.data.scriptIndex;
+			var scriptElem = document.getElementById('Script' + index);
+			
+			scriptElem.parentNode.removeChild(scriptElem);
+		});
 		
 		if(typeof(elem.target._onToolStartTrigger) == "function")
 		{
