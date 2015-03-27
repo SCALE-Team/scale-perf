@@ -3,8 +3,9 @@ var isLocal = ((self.location+"").split("http://").pop().split("/")[0] == "local
 var body = document.getElementsByTagName("body")[0];
 
 var style = document.createElement("style");
-style.innerText = "#PerfBar, #PerfToolActiveBar { z-index: 999999; color: #fff; position: fixed; top: 0; left: 0; width: 100%; background-color: #000; box-shadow: 0px 0px 5px #000; }";
-style.innerText += "#PerfToolActiveBar { display: none; height: 28px; }";
+style.innerText = "#PerfBar, #PerfToolActiveBar { z-index: 1000000; color: #fff; position: fixed; top: 0px; left: 0px; width: 100%; background-color: #000; box-shadow: 0px 0px 5px #000; }";
+style.innerText += "#PerfBar { -webkit-transition:-webkit-transform ease-out 0.3s;-webkit-transform:translateY(-450px); }";
+style.innerText += "#PerfToolActiveBar { display: none; }";
 style.innerText += "#PerfBar > div, { padding-right: 50px; }";
 style.innerText += "#PerfBar > div a, #PerfToolActiveBar a { display: inline-block; cursor: pointer; text-decoration: none !important; color: #fff !important; display: inline-block; padding: 5px; }";
 style.innerText += "#PerfBar > div a:hover, #PerfToolActiveBar a:hover { background-color: red !important; }";
@@ -18,7 +19,7 @@ style.innerText += "@media (max-width: 768px) {";
 	style.innerText += "#PerfBar .perfCloseSeparator { display: block; }";
 style.innerText += "}";
 style.innerText += "#PerfBar .perfClose, #PerfToolActiveBar .perfClose { position: absolute; width: 50px; text-align: right; top: 0px; right: 0px; }";
-style.innerText += "#PerfToolTitle { padding: 5px; font-weight: bold; }";
+style.innerText += "#PerfToolTitle { font-weight: bold; }";
 style.innerText += "#PerfToolActiveBar .perfToolBackButton { font-weight: bold; }";
 body.appendChild(style);
 
@@ -26,12 +27,16 @@ var topBarContainer = document.createElement("div");
 topBarContainer.id = "PerfBar";
 
 /*
-topBarContainer.style.height = 28;
+topBarContainer.style.height = 30;
 var oldBodyPaddingTop = body.offsetTop * 1.0;
 body.style.paddingTop = oldBodyPaddingTop + topBarContainer.style.height;
 //*/
 
 body.appendChild(topBarContainer);
+
+setTimeout(function(){
+	topBarContainer.style.cssText += ';-webkit-transform:translateY(0px)';
+}, 10);
 
 var topBar = document.createElement("div");
 topBarContainer.appendChild(topBar);
@@ -48,11 +53,10 @@ var scripts = [
 		href:	"https://micmro.github.io/performance-bookmarklet/dist/performanceBookmarklet.min.js"
 	},
 	{
-		name:		"Waterfall",
+		name:		"Source load waterfall",
 		href:		"https://andydavies.github.io/waterfall/bookmarklet/waterfall.js",
 		localHref:	"/tools/waterfall.js",
 		onclick:	function() {
-			console.log(222);
 			perfBookmarkletAddToolCloseFunction(function()
 			{
 				var waterfall = document.getElementById("PerfWaterfallDiv");
@@ -65,11 +69,19 @@ var scripts = [
 		href:	"https://zeman.github.io/perfmap/perfmap.js"
 	},
 	{
-		name:	"DOM Monster",
-		href:	"https://mir.aculo.us/dom-monster/dommonster.js"
+		name:	"Analyze page for tips",
+		href:	"https://mir.aculo.us/dom-monster/dommonster.js",
+		localHref:	"/tools/dommonster.js",
+		onclick:	function() {
+			perfBookmarkletAddToolCloseFunction(function()
+			{
+				var r = document.getElementById("jr_results_tips");
+				r.parentNode.removeChild(r);
+			});
+		}
 	},
 	{
-		name:		"Display Stats",
+		name:		"FPS display",
 		href:		"https://rawgit.com/mrdoob/stats.js/master/build/stats.min.js",
 		localHref:	"/tools/stats.js",
 		onclick:	function() {
@@ -80,7 +92,7 @@ var scripts = [
 					
 					var stats = new Stats();
 					stats.domElement.style.position = "fixed";
-					stats.domElement.style.paddingTop = 28;
+					stats.domElement.style.paddingTop = 30;
 					stats.domElement.style.left = "0px";
 					stats.domElement.style.top = "0px";
 					stats.domElement.style.zIndex = "10000";

@@ -147,10 +147,10 @@
 			container.id = containerID;
 		}
 
-		container.style.cssText = 'background:#fff;border: 2px solid #000;margin:5px;position:absolute;top:0px;left:0px;z-index:99999;margin:0px;padding:0px;';
+		container.style.cssText = 'background:#fff;border-bottom: 2px solid #000;margin:5px;position:absolute;top:0px;left:0px;z-index:99999;margin:0px;padding:0px;';
 		
 		//* SCALE perf bookmarklet extension
-		container.style.marginTop = 28;
+		container.style.marginTop = 30;
 		//*/
 		
 		container.appendChild(closeBtn);
