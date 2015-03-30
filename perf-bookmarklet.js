@@ -1,11 +1,6 @@
-// Check if PerfBar already exists
-var perfBar = document.getElementById("PerfBar");
-if(perfBar != null)
-{
-	perfBar.style.display = "block";
-}
-else
-{
+var ScalePerformanceBarClass = function() {
+	var superClass = this;
+	
 	var isLocal = ((self.location+"").split("http://").pop().split("/")[0] == "localhost");
 
 	var body = document.getElementsByTagName("body")[0];
@@ -35,24 +30,24 @@ else
 	cssElem.innerHTML = style;
 	head.appendChild(cssElem);
 
-	var topBarContainer = document.createElement("div");
-	topBarContainer.id = "PerfBar";
+	superClass.topBarContainer = document.createElement("div");
+	superClass.topBarContainer.id = "PerfBar";
 
 	/*
-	topBarContainer.style.height = 30;
+	superClass.topBarContainer.style.height = 30;
 	var oldBodyPaddingTop = body.offsetTop * 1.0;
-	body.style.paddingTop = oldBodyPaddingTop + topBarContainer.style.height;
+	body.style.paddingTop = oldBodyPaddingTop + superClass.topBarContainer.style.height;
 	//*/
 
-	body.appendChild(topBarContainer);
+	body.appendChild(superClass.topBarContainer);
 
 	// For the transition animation
 	setTimeout(function(){
-		topBarContainer.style.cssText += 'transform:translateY(0px); -webkit-transform:translateY(0px);';
+		superClass.topBarContainer.style.cssText += 'transform:translateY(0px); -webkit-transform:translateY(0px);';
 	}, 10);
 
 	var topBar = document.createElement("div");
-	topBarContainer.appendChild(topBar);
+	superClass.topBarContainer.appendChild(topBar);
 
 	var scripts = [
 		/*
@@ -66,7 +61,7 @@ else
 			href:	"https://rawgit.com/scale-team/scale-perf/master/tools/performanceBookmarklet.js",
 			localHref:	"/tools/performanceBookmarklet.js",
 			onclick:	function() {
-				perfBookmarkletAddToolCloseFunction(function()
+				addFunctionOnToolClose(function()
 				{
 					var waterfall = document.getElementById("perfbook-iframe");
 					waterfall.parentNode.removeChild(waterfall);
@@ -78,7 +73,7 @@ else
 			href:		"https://rawgit.com/scale-team/scale-perf/master/tools/waterfall.js",
 			localHref:	"/tools/waterfall.js",
 			onclick:	function() {
-				perfBookmarkletAddToolCloseFunction(function()
+				addFunctionOnToolClose(function()
 				{
 					var waterfall = document.getElementById("PerfWaterfallDiv");
 					waterfall.parentNode.removeChild(waterfall);
@@ -90,7 +85,7 @@ else
 			href:		"https://rawgit.com/scale-team/scale-perf/master/tools/perfmap.js",
 			localHref:	"/tools/perfmap.js",
 			onclick:	function() {
-				perfBookmarkletAddToolCloseFunction(function()
+				addFunctionOnToolClose(function()
 				{
 					var elems = document.getElementsByClassName("perfmap");
 					while(elems.length > 0)
@@ -108,7 +103,7 @@ else
 			href:	"https://rawgit.com/scale-team/scale-perf/master/tools/dommonster.js",
 			localHref:	"/tools/dommonster.js",
 			onclick:	function() {
-				perfBookmarkletAddToolCloseFunction(function()
+				addFunctionOnToolClose(function()
 				{
 					var r = document.getElementById("jr_results");
 					r.parentNode.removeChild(r);
@@ -142,7 +137,7 @@ else
 						var interval = setInterval(function(){ stats.update(); }, 1000/60);
 						
 						//* SCALE perf bookmarklet extension
-						perfBookmarkletAddToolCloseFunction(function()
+						addFunctionOnToolClose(function()
 						{
 							document.body.removeChild(stats.domElement);
 							clearInterval(interval);
@@ -182,16 +177,16 @@ else
 				link.href += 'jselem.src = "' + script.href + '?' + randomInt + '";';
 			}
 			
-			link.href += 'body.appendChild(jselem);';
+			link.href += 'document.getElementsByTagName("body")[0].appendChild(jselem);';
 		link.href += '})()';
 		
 		link.onclick = function(elem) {
-			topBarContainer.style.display = "none";
+			superClass.topBarContainer.style.display = "none";
 			toolActiveBar.style.display = "block";
 			toolBarActiveTitle.innerHTML = elem.target.innerHTML;
 			
 			// Add method to remove script after closing tool
-			perfBookmarkletAddToolCloseFunction(function(){
+			addFunctionOnToolClose(function(){
 				var index = elem.target.data.scriptIndex;
 				var scriptElem = document.getElementById('PerfScript' + index);
 				
@@ -225,7 +220,7 @@ else
 	close.innerHTML = "close";
 	close.onclick = function() {
 		//body.style.paddingTop = oldBodyPaddingTop;
-		topBarContainer.style.display = "none";
+		superClass.topBarContainer.style.display = "none";
 	};
 	topBar.appendChild(close);
 
@@ -239,7 +234,7 @@ else
 		toolBarActiveBackButton.className = "perfToolBackButton";
 		toolBarActiveBackButton.innerHTML = "< ";
 		toolBarActiveBackButton.onclick = function(){
-			topBarContainer.style.display = "block";
+			superClass.topBarContainer.style.display = "block";
 			closeToolActiveBar.click();
 		};
 		toolActiveBar.appendChild(toolBarActiveBackButton);
@@ -255,23 +250,42 @@ else
 		closeToolActiveBar.className = "perfClose";
 		closeToolActiveBar.innerHTML = "close";
 		closeToolActiveBar.onclick = function() {
+			//alert(22);
 			toolActiveBar.style.display = "none";
 			
-			perfExecuteOnCloseTool();
+			executeOnCloseTool();
 		};
 		toolActiveBar.appendChild(closeToolActiveBar);
 	}
 
-	var _perfOnCloseTool = [];
-	function perfBookmarkletAddToolCloseFunction(func) {
-		_perfOnCloseTool.push(func);
+	var _onCloseTool = [];
+	function addFunctionOnToolClose(func) {
+		_onCloseTool.push(func);
 	}
 
-	function perfExecuteOnCloseTool(func) {
-		while(_perfOnCloseTool.length > 0)
+	function executeOnCloseTool(func) {
+		while(_onCloseTool.length > 0)
 		{
-			var func = _perfOnCloseTool.pop();
+			var func = _onCloseTool.pop();
 			func();
 		}
 	}
+};
+
+ScalePerformanceBarClass.prototype = {
+	topBarContainer:	null,
+	
+	show: function() {
+		this.topBarContainer.style.display = "block";
+	}
+};
+
+// Check if PerfBar already exists
+if(scalePerformanceBar == null)
+{
+	var scalePerformanceBar = new ScalePerformanceBarClass();
+}
+else
+{
+	scalePerformanceBar.show();
 }
