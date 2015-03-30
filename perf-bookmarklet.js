@@ -63,7 +63,7 @@ var ScalePerformanceBarClass = function() {
 			}
 		},
 		{
-			name:		"Source load waterfall",
+			name:		"Page load waterfall",
 			href:		"https://rawgit.com/scale-team/scale-perf/master/tools/waterfall.js",
 			localHref:	"/tools/waterfall.js",
 			onclick:	function() {
@@ -102,6 +102,10 @@ var ScalePerformanceBarClass = function() {
 					var r = document.getElementById("jr_results");
 					r.parentNode.removeChild(r);
 				});
+				
+				cssElem.innerText += "#jr_stats { float: none !important; width: 100% !important; }";
+				cssElem.innerText += "#jr_stats > div { display: inline-block !important; width: 210px !important; }";
+				cssElem.innerText += "#jr_stats > div > div:first-child { width: 20px !important; height: 20px !important; margin-right: 5px !important; }";
 			}
 		},
 		{
