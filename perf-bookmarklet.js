@@ -5,7 +5,7 @@ var head = document.head || document.getElementsByTagName('head')[0];
 
 var cssElem = document.createElement("style");
 var style = "#PerfBar, #PerfToolActiveBar { z-index: 1000000; color: #fff; position: fixed; top: 0px; left: 0px; width: 100%; background-color: #000; box-shadow: 0px 0px 5px #000; }";
-style += "#PerfBar { -webkit-transition:-webkit-transform ease-out 0.3s;-webkit-transform:translateY(-450px); }";
+style += "#PerfBar { transition:transform ease-out 0.3s; transform:translateY(-450px); }";
 style += "#PerfToolActiveBar { display: none; }";
 style += "#PerfBar > div, { padding-right: 50px; }";
 style += "#PerfBar > div a, #PerfToolActiveBar a { display: inline-block; cursor: pointer; text-decoration: none !important; color: #fff !important; display: inline-block; padding: 5px; }";
@@ -39,7 +39,7 @@ body.appendChild(topBarContainer);
 
 // For the transition animation
 setTimeout(function(){
-	topBarContainer.style.cssText += ';-webkit-transform:translateY(0px)';
+	topBarContainer.style.cssText += 'transform:translateY(0px)';
 }, 10);
 
 var topBar = document.createElement("div");
@@ -124,10 +124,10 @@ var scripts = [
 					document.body.appendChild(stats.domElement);
 					
 					// for the transition animation
-					stats.domElement.style.cssText += "-webkit-transition:-webkit-transform ease-out 0.3s;-webkit-transform:translateY(-450px);";
+					stats.domElement.style.cssText += "transition:transform ease-out 0.3s; transform:translateY(-450px);";
 					
 					setTimeout(function(){
-						stats.domElement.style.cssText += ';-webkit-transform:translateY(30px)';
+						stats.domElement.style.cssText += 'transform:translateY(30px)';
 					}, 10);
 					
 					var interval = setInterval(function(){ stats.update(); }, 1000/60);

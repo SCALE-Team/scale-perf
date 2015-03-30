@@ -154,10 +154,10 @@
 		
 		//* SCALE perf bookmarklet extension
 		// for the transition animation
-		container.style.cssText += "-webkit-transition:-webkit-transform ease-out 0.3s;-webkit-transform:translateY(-450px);";
+		container.style.cssText += "transition:transform ease-out 0.3s; transform:translateY(-450px);";
 		
 		setTimeout(function(){
-			container.style.cssText += ';-webkit-transform:translateY(30px)';
+			container.style.cssText += 'transform:translateY(30px)';
 		}, 10);
 		//*/
 		

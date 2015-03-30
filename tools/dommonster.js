@@ -666,10 +666,10 @@
 		
 		//* SCALE perf bookmarklet extension
 		// for the transition animation
-		node.style.cssText += "-webkit-transition:-webkit-transform ease-out 0.3s;-webkit-transform:translateY(-450px);";
+		node.style.cssText += "transition:transform ease-out 0.3s; transform:translateY(-450px);";
 		
 		setTimeout(function(){
-			node.style.cssText += ';-webkit-transform:translateY(30px)';
+			node.style.cssText += 'transform:translateY(30px)';
 		}, 10);
 		//*/
     }, 10);

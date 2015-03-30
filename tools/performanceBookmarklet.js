@@ -471,10 +471,10 @@ if(iFrameEl){
 	document.body.appendChild(iFrameEl);
 	
 	// for the transition animation
-	iFrameEl.style.cssText += "-webkit-transition:-webkit-transform ease-out 0.3s;-webkit-transform:translateY(-1450px);";
+	iFrameEl.style.cssText += "transition:transform ease-out 0.3s; transform:translateY(-1450px);";
 	
 	setTimeout(function(){
-		iFrameEl.style.cssText += ';-webkit-transform:translateY(30px)';
+		iFrameEl.style.cssText += 'transform:translateY(30px)';
 	}, 10);
 
 }
