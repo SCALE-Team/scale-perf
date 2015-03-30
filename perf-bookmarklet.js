@@ -1,27 +1,30 @@
 var isLocal = ((self.location+"").split("http://").pop().split("/")[0] == "localhost");
 
 var body = document.getElementsByTagName("body")[0];
+var head = document.head || document.getElementsByTagName('head')[0];
 
-var style = document.createElement("style");
-style.innerText = "#PerfBar, #PerfToolActiveBar { z-index: 1000000; color: #fff; position: fixed; top: 0px; left: 0px; width: 100%; background-color: #000; box-shadow: 0px 0px 5px #000; }";
-style.innerText += "#PerfBar { -webkit-transition:-webkit-transform ease-out 0.3s;-webkit-transform:translateY(-450px); }";
-style.innerText += "#PerfToolActiveBar { display: none; }";
-style.innerText += "#PerfBar > div, { padding-right: 50px; }";
-style.innerText += "#PerfBar > div a, #PerfToolActiveBar a { display: inline-block; cursor: pointer; text-decoration: none !important; color: #fff !important; display: inline-block; padding: 5px; }";
-style.innerText += "#PerfBar > div a:hover, #PerfToolActiveBar a:hover { background-color: red !important; }";
-style.innerText += "#PerfBar .perfCloseSeparator { display: none; }";
-style.innerText += "@media (max-width: 768px) {";
-	style.innerText += "#PerfBar { height: auto !important; }";
-	style.innerText += "#PerfBar >div { padding: 0px; }";
-	style.innerText += "#PerfBar > div a { width:	100%; }";
-	style.innerText += "#PerfBar .perfSeparator { display: none; }";
-	style.innerText += "#PerfBar .perfClose { display: block; width: 100% !important; text-align: left !important; position: static !important; }";
-	style.innerText += "#PerfBar .perfCloseSeparator { display: block; }";
-style.innerText += "}";
-style.innerText += "#PerfBar .perfClose, #PerfToolActiveBar .perfClose { position: absolute; width: 50px; text-align: right; top: 0px; right: 0px; }";
-style.innerText += "#PerfToolTitle { font-weight: bold; }";
-style.innerText += "#PerfToolActiveBar .perfToolBackButton { font-weight: bold; }";
-body.appendChild(style);
+var cssElem = document.createElement("style");
+var style = "#PerfBar, #PerfToolActiveBar { z-index: 1000000; color: #fff; position: fixed; top: 0px; left: 0px; width: 100%; background-color: #000; box-shadow: 0px 0px 5px #000; }";
+style += "#PerfBar { -webkit-transition:-webkit-transform ease-out 0.3s;-webkit-transform:translateY(-450px); }";
+style += "#PerfToolActiveBar { display: none; }";
+style += "#PerfBar > div, { padding-right: 50px; }";
+style += "#PerfBar > div a, #PerfToolActiveBar a { display: inline-block; cursor: pointer; text-decoration: none !important; color: #fff !important; display: inline-block; padding: 5px; }";
+style += "#PerfBar > div a:hover, #PerfToolActiveBar a:hover { background-color: red !important; }";
+style += "#PerfBar .perfCloseSeparator { display: none; }";
+style += "@media (max-width: 768px) {";
+	style += "#PerfBar { height: auto !important; }";
+	style += "#PerfBar >div { padding: 0px; }";
+	style += "#PerfBar > div a { width:	100%; }";
+	style += "#PerfBar .perfSeparator { display: none; }";
+	style += "#PerfBar .perfClose { display: block; width: 100% !important; text-align: left !important; position: static !important; }";
+	style += "#PerfBar .perfCloseSeparator { display: block; }";
+style += "}";
+style += "#PerfBar .perfClose, #PerfToolActiveBar .perfClose { position: absolute; width: 50px; text-align: right; top: 0px; right: 0px; }";
+style += "#PerfToolTitle { font-weight: bold; }";
+style += "#PerfToolActiveBar .perfToolBackButton { font-weight: bold; }";
+
+cssElem.innerHTML = style;
+head.appendChild(cssElem);
 
 var topBarContainer = document.createElement("div");
 topBarContainer.id = "PerfBar";
@@ -153,7 +156,7 @@ for(var i in scripts)
 	link.data = {
 		scriptIndex: i
 	};
-	link.innerText = script.name;
+	link.innerHTML = script.name;
 	link._onToolStartTrigger = script.onclick;
 	link.href = 'javascript:(function(){';
 		link.href += 'var jselem = document.createElement("script");';
@@ -176,7 +179,7 @@ for(var i in scripts)
 	link.onclick = function(elem) {
 		topBarContainer.style.display = "none";
 		toolActiveBar.style.display = "block";
-		toolBarActiveTitle.innerText = elem.target.innerText;
+		toolBarActiveTitle.innerHTML = elem.target.innerHTML;
 		
 		// Add method to remove script after closing tool
 		perfBookmarkletAddToolCloseFunction(function(){
@@ -210,7 +213,7 @@ topBar.appendChild(separatorElem);
 // Add close button
 var close = document.createElement("a");
 close.className = "perfClose";
-close.innerText = "close";
+close.innerHTML = "close";
 close.onclick = function() {
 	//body.style.paddingTop = oldBodyPaddingTop;
 	topBarContainer.style.display = "none";
@@ -235,13 +238,13 @@ topBar.appendChild(close);
 		// Add title bar
 		var toolBarActiveTitle = document.createElement("span");
 		toolBarActiveTitle.id = "PerfToolTitle";
-		toolBarActiveTitle.innerText = "Nice tool";
+		toolBarActiveTitle.innerHTML = "Nice tool";
 		toolBarActiveBackButton.appendChild(toolBarActiveTitle);
 	
 	// Add close button
 	var closeToolActiveBar = document.createElement("a");
 	closeToolActiveBar.className = "perfClose";
-	closeToolActiveBar.innerText = "close";
+	closeToolActiveBar.innerHTML = "close";
 	closeToolActiveBar.onclick = function() {
 		toolActiveBar.style.display = "none";
 		
