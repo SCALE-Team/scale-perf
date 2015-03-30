@@ -61,33 +61,35 @@
 		</div>
 		
 		<script>
-			var main = document.getElementById("Main");
-			
-			function scriptLoadFunction(){
-				var isLocal = ((self.location+"").split("http://").pop().split("/")[0] == "localhost");
-				var scriptPath = (isLocal ?
-					"http://localhost/perf-bookmarklet.js"
-					: "https://rawgit.com/scale-team/scale-perf/master/perf-bookmarklet.js");
+			(function(){
+				var main = document.getElementById("Main");
 				
-				var body = document.getElementsByTagName("body")[0];
-				
-				var loadingElem = document.createElement("div");
-				loadingElem.innerHTML = "loading scale performance tests...";
-				loadingElem.style.cssText = "color:#fff;position:absolute;top:0;left:0;background-color:#000;padding:5;box-shadow:0 0 5px #000;";
-				
-				var jselem = document.createElement("script");
-				jselem.type = "text/javascript";
-				jselem.src = scriptPath + "?" + Math.round(Math.random() * Math.pow(2, 16));
-				jselem.onload = function() {
-					body.removeChild(loadingElem);
+				function scriptLoadFunction(){
+					var isLocal = ((self.location+"").split("http://").pop().split("/")[0] == "localhost");
+					var scriptPath = (isLocal ?
+						"http://localhost/perf-bookmarklet.js"
+						: "https://rawgit.com/scale-team/scale-perf/master/perf-bookmarklet.js");
+					
+					var body = document.getElementsByTagName("body")[0];
+					
+					var loadingElem = document.createElement("div");
+					loadingElem.innerHTML = "loading scale performance tests...";
+					loadingElem.style.cssText = "color:#fff;position:absolute;top:0;left:0;background-color:#000;padding:5;box-shadow:0 0 5px #000;";
+					
+					var jselem = document.createElement("script");
+					jselem.type = "text/javascript";
+					jselem.src = scriptPath + "?" + Math.round(Math.random() * Math.pow(2, 16));
+					jselem.onload = function() {
+						body.removeChild(loadingElem);
+					};
+					
+					body.appendChild(loadingElem).appendChild(jselem);
 				};
 				
-				body.appendChild(loadingElem).appendChild(jselem);
-			};
-			
-			var linkElem = document.getElementById("desktopLink");
-			linkElem.href = 'javascript:' + scriptLoadFunction + '; scriptLoadFunction();';
-			document.getElementById("mobileLink").href = "#" + linkElem.href;
+				var linkElem = document.getElementById("desktopLink");
+				linkElem.href = 'javascript:' + scriptLoadFunction + '; scriptLoadFunction();';
+				document.getElementById("mobileLink").href = "#" + linkElem.href;
+			})();
 		</script>
 	</body>
 </html>
