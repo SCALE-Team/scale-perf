@@ -1,7 +1,7 @@
 var ScalePerformanceBarClass = function() {
 	var superClass = this;
 	
-	var isLocal = ((self.location+"").split("http://").pop().split("/")[0] == "localhost");
+	superClass.isLocal = ((self.location+"").split("http://").pop().split("/")[0] == "localhost");
 
 	var body = document.getElementsByTagName("body")[0];
 	var head = document.head || document.getElementsByTagName('head')[0];
@@ -32,13 +32,7 @@ var ScalePerformanceBarClass = function() {
 
 	superClass.topBarContainer = document.createElement("div");
 	superClass.topBarContainer.id = "PerfBar";
-
-	/*
-	superClass.topBarContainer.style.height = 30;
-	var oldBodyPaddingTop = body.offsetTop * 1.0;
-	body.style.paddingTop = oldBodyPaddingTop + superClass.topBarContainer.style.height;
-	//*/
-
+	
 	body.appendChild(superClass.topBarContainer);
 
 	// For the transition animation
@@ -49,7 +43,7 @@ var ScalePerformanceBarClass = function() {
 	var topBar = document.createElement("div");
 	superClass.topBarContainer.appendChild(topBar);
 
-	var scripts = [
+	superClass.scripts = [
 		/*
 		{
 			name:	"Original",
@@ -149,12 +143,12 @@ var ScalePerformanceBarClass = function() {
 		},
 	];
 
-	var maxIndex = (scripts.length - 1);
+	var maxIndex = (superClass.scripts.length - 1);
 	var randomInt = (Math.round(Math.random() * Math.pow(2, 16)));
 
-	for(var i in scripts)
+	for(var i in superClass.scripts)
 	{
-		var script = scripts[i];
+		var script = superClass.scripts[i];
 		
 		var link = document.createElement("a");
 		link.data = {
@@ -162,32 +156,17 @@ var ScalePerformanceBarClass = function() {
 		};
 		link.innerHTML = script.name;
 		link._onToolStartTrigger = script.onclick;
-		link.href = 'javascript:(function(){';
-			link.href += 'var jselem = document.createElement("script");';
-			link.href += 'jselem.id = "PerfScript' + i + '";';
-			link.href += 'jselem.type = "text/javascript";';
-			
-			if(isLocal && script.localHref != null)
-			{
-				link.href += 'console.log("tool loaded locally");';
-				link.href += 'jselem.src = "' + script.localHref + '?' + randomInt + '";';
-			}
-			else
-			{
-				link.href += 'jselem.src = "' + script.href + '?' + randomInt + '";';
-			}
-			
-			link.href += 'document.getElementsByTagName("body")[0].appendChild(jselem);';
-		link.href += '})()';
 		
 		link.onclick = function(elem) {
+			var index = elem.target.data.scriptIndex;
+			var script = superClass.scripts[index];
+			
 			superClass.topBarContainer.style.display = "none";
-			toolActiveBar.style.display = "block";
+			superClass.toolActiveBar.style.display = "block";
 			toolBarActiveTitle.innerHTML = elem.target.innerHTML;
 			
 			// Add method to remove script after closing tool
-			addFunctionOnToolClose(function(){
-				var index = elem.target.data.scriptIndex;
+			addFunctionOnToolClose(function() {
 				var scriptElem = document.getElementById('PerfScript' + index);
 				
 				scriptElem.parentNode.removeChild(scriptElem);
@@ -197,6 +176,26 @@ var ScalePerformanceBarClass = function() {
 			{
 				elem.target._onToolStartTrigger();
 			}
+			
+			// Load specified script
+			var jselem = document.createElement("script");
+			jselem.id = "PerfScript" + index;
+			jselem.type = "text/javascript";
+			
+			// Decide whether to load local or public script
+			if(superClass.isLocal && script.localHref != null)
+			{
+				console.log("tool loaded locally");
+				jselem.src = script.localHref + '?' + randomInt;
+			}
+			else
+			{
+				jselem.src = script.href + '?' + randomInt;
+			}
+			
+			document.getElementsByTagName("body")[0].appendChild(jselem);
+			
+			superClass.avoidPageOverlapWithBar();
 		};
 		
 		topBar.appendChild(link);
@@ -219,15 +218,16 @@ var ScalePerformanceBarClass = function() {
 	close.className = "perfClose";
 	close.innerHTML = "close";
 	close.onclick = function() {
-		//body.style.paddingTop = oldBodyPaddingTop;
 		superClass.topBarContainer.style.display = "none";
+		
+		superClass.avoidPageOverlapWithBar();
 	};
 	topBar.appendChild(close);
 
 	/* Tool close button */ {
-		var toolActiveBar = document.createElement("div");
-		toolActiveBar.id = "PerfToolActiveBar";
-		body.appendChild(toolActiveBar);
+		superClass.toolActiveBar = document.createElement("div");
+		superClass.toolActiveBar.id = "PerfToolActiveBar";
+		body.appendChild(superClass.toolActiveBar);
 
 		// Add back button
 		var toolBarActiveBackButton = document.createElement("a");
@@ -237,7 +237,7 @@ var ScalePerformanceBarClass = function() {
 			superClass.topBarContainer.style.display = "block";
 			closeToolActiveBar.click();
 		};
-		toolActiveBar.appendChild(toolBarActiveBackButton);
+		superClass.toolActiveBar.appendChild(toolBarActiveBackButton);
 		
 			// Add title bar
 			var toolBarActiveTitle = document.createElement("span");
@@ -251,11 +251,13 @@ var ScalePerformanceBarClass = function() {
 		closeToolActiveBar.innerHTML = "close";
 		closeToolActiveBar.onclick = function() {
 			//alert(22);
-			toolActiveBar.style.display = "none";
+			superClass.toolActiveBar.style.display = "none";
 			
 			executeOnCloseTool();
+			
+			superClass.avoidPageOverlapWithBar();
 		};
-		toolActiveBar.appendChild(closeToolActiveBar);
+		superClass.toolActiveBar.appendChild(closeToolActiveBar);
 	}
 
 	var _onCloseTool = [];
@@ -270,14 +272,39 @@ var ScalePerformanceBarClass = function() {
 			func();
 		}
 	}
+	
+	superClass.show();
 };
 
 ScalePerformanceBarClass.prototype = {
 	topBarContainer:	null,
+	oldBodyPaddingTop:	0,
 	
 	show: function() {
+		// Detect height of performance bar
 		this.topBarContainer.style.display = "block";
-	}
+		
+		this.avoidPageOverlapWithBar();
+	},
+	
+	avoidPageOverlapWithBar: function() {
+		var body = document.getElementsByTagName("body")[0];
+		
+		if(this.oldBodyPaddingTop != 0)
+		{
+			body.style.paddingTop = this.oldBodyPaddingTop;
+			
+			this.oldBodyPaddingTop = 0;
+		}
+		
+		this.topBarContainerHeight = Math.max(this.topBarContainer.offsetHeight, this.toolActiveBar.offsetHeight);
+		
+		// Detect and remember the current padding of the page
+		this.oldBodyPaddingTop = body.offsetTop * 1.0;
+		
+		// move the page to the right place
+		body.style.paddingTop = this.oldBodyPaddingTop + this.topBarContainerHeight;
+	},
 };
 
 // Check if PerfBar already exists
