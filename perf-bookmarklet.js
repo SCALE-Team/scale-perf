@@ -14,6 +14,11 @@ var ScalePerformanceBarClass = function() {
 	style += "#PerfBar > div, { padding-right: 50px; }";
 	style += "#PerfBar > div a, #PerfToolActiveBar a { display: inline-block; cursor: pointer; text-decoration: none !important; color: #fff !important; display: inline-block; padding: 5px; }";
 	style += "#PerfBar > div a:hover, #PerfToolActiveBar a:hover { background-color: red !important; }";
+	style += "#PerfBar > div a.disabled { color: #555 !important; cursor: default; }";
+	style += "#PerfBar > div a.disabled:hover { background-color: transparent !important; }";
+	
+	style += "#PerfBar .perfSeparator { cursor: default; }";
+	
 	style += "#PerfBar .perfCloseSeparator { display: none; }";
 	style += "@media (max-width: 768px) {";
 		style += "#PerfBar { height: auto !important; }";
@@ -51,10 +56,11 @@ var ScalePerformanceBarClass = function() {
 		},
 		//*/
 		{
-			name:	"Performance Bookmarklet",
-			href:	"https://rawgit.com/scale-team/scale-perf/master/tools/performanceBookmarklet.js",
-			localHref:	"/tools/performanceBookmarklet.js",
-			onclick:	function() {
+			name:					"Performance Bookmarklet",
+			href:					"https://rawgit.com/scale-team/scale-perf/master/tools/performanceBookmarklet.js",
+			requiresPerformanceApi:	true,
+			localHref:				"/tools/performanceBookmarklet.js",
+			onclick: function() {
 				addFunctionOnToolClose(function()
 				{
 					var waterfall = document.getElementById("perfbook-iframe");
@@ -63,10 +69,11 @@ var ScalePerformanceBarClass = function() {
 			}
 		},
 		{
-			name:		"Page load waterfall",
-			href:		"https://rawgit.com/scale-team/scale-perf/master/tools/waterfall.js",
-			localHref:	"/tools/waterfall.js",
-			onclick:	function() {
+			name:					"Page load waterfall",
+			href:					"https://rawgit.com/scale-team/scale-perf/master/tools/waterfall.js",
+			requiresPerformanceApi:	true,
+			localHref:				"/tools/waterfall.js",
+			onclick: function() {
 				addFunctionOnToolClose(function()
 				{
 					var waterfall = document.getElementById("PerfWaterfallDiv");
@@ -75,10 +82,11 @@ var ScalePerformanceBarClass = function() {
 			}
 		},
 		{
-			name:		"Picture load times",
-			href:		"https://rawgit.com/scale-team/scale-perf/master/tools/perfmap.js",
-			localHref:	"/tools/perfmap.js",
-			onclick:	function() {
+			name:					"Picture load times",
+			href:					"https://rawgit.com/scale-team/scale-perf/master/tools/perfmap.js",
+			requiresPerformanceApi:	true,
+			localHref:				"/tools/perfmap.js",
+			onclick: function() {
 				addFunctionOnToolClose(function()
 				{
 					var elems = document.getElementsByClassName("perfmap");
@@ -154,53 +162,66 @@ var ScalePerformanceBarClass = function() {
 	{
 		var script = superClass.scripts[i];
 		
+		// if performance api required, but api not available, disable
+		var disableTool = (script.requiresPerformanceApi && window.performance == null);
+		
 		var link = document.createElement("a");
 		link.data = {
 			scriptIndex: i
 		};
-		link.innerHTML = script.name;
-		link._onToolStartTrigger = script.onclick;
 		
-		link.onclick = function(elem) {
-			var index = elem.target.data.scriptIndex;
-			var script = superClass.scripts[index];
+		link.className += (disableTool ? " disabled" : "");
+		link.innerHTML = script.name;
+		
+		if(disableTool)
+		{
+			link.title = "This tool was disabled cause your browser doesn't support the Resource Timing API!";
+		}
+		else
+		{
+			link._onToolStartTrigger = script.onclick;
 			
-			superClass.topBarContainer.style.display = "none";
-			superClass.toolActiveBar.style.display = "block";
-			toolBarActiveTitle.innerHTML = elem.target.innerHTML;
-			
-			// Add method to remove script after closing tool
-			addFunctionOnToolClose(function() {
-				var scriptElem = document.getElementById('PerfScript' + index);
+			link.onclick = function(elem) {
+				var index = elem.target.data.scriptIndex;
+				var script = superClass.scripts[index];
 				
-				scriptElem.parentNode.removeChild(scriptElem);
-			});
-			
-			if(typeof(elem.target._onToolStartTrigger) == "function")
-			{
-				elem.target._onToolStartTrigger();
-			}
-			
-			// Load specified script
-			var jselem = document.createElement("script");
-			jselem.id = "PerfScript" + index;
-			jselem.type = "text/javascript";
-			
-			// Decide whether to load local or public script
-			if(superClass.isLocal && script.localHref != null)
-			{
-				console.log("tool loaded locally");
-				jselem.src = script.localHref + '?' + randomInt;
-			}
-			else
-			{
-				jselem.src = script.href + '?' + randomInt;
-			}
-			
-			document.getElementsByTagName("body")[0].appendChild(jselem);
-			
-			superClass.avoidPageOverlapWithBar();
-		};
+				superClass.topBarContainer.style.display = "none";
+				superClass.toolActiveBar.style.display = "block";
+				toolBarActiveTitle.innerHTML = elem.target.innerHTML;
+				
+				// Add method to remove script after closing tool
+				addFunctionOnToolClose(function() {
+					var scriptElem = document.getElementById('PerfScript' + index);
+					
+					scriptElem.parentNode.removeChild(scriptElem);
+				});
+				
+				if(typeof(elem.target._onToolStartTrigger) == "function")
+				{
+					elem.target._onToolStartTrigger();
+				}
+				
+				// Load specified script
+				var jselem = document.createElement("script");
+				jselem.id = "PerfScript" + index;
+				jselem.type = "text/javascript";
+				
+				// Decide whether to load local or public script
+				if(superClass.isLocal && script.localHref != null)
+				{
+					console.log("tool loaded locally");
+					jselem.src = script.localHref + '?' + randomInt;
+				}
+				else
+				{
+					jselem.src = script.href + '?' + randomInt;
+				}
+				
+				document.getElementsByTagName("body")[0].appendChild(jselem);
+				
+				superClass.avoidPageOverlapWithBar();
+			};
+		}
 		
 		topBar.appendChild(link);
 		
