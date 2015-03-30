@@ -296,7 +296,7 @@ ScalePerformanceBarClass.prototype = {
 		
 		if(this.oldBodyPaddingTop != 0)
 		{
-			body.style.paddingTop = this.oldBodyPaddingTop;
+			body.style.paddingTop = this.oldBodyPaddingTop.split("px")[0] * 1.0;
 			
 			this.oldBodyPaddingTop = 0;
 		}
@@ -307,7 +307,7 @@ ScalePerformanceBarClass.prototype = {
 		this.oldBodyPaddingTop = body.offsetTop * 1.0;
 		
 		// move the page to the right place
-		body.style.paddingTop = this.oldBodyPaddingTop + this.topBarContainerHeight;
+		body.style.paddingTop = (this.oldBodyPaddingTop + this.topBarContainerHeight) + "px";
 		
 		//* DEBUG
 		console.log("body.style.paddingTop", body.style.paddingTop);
