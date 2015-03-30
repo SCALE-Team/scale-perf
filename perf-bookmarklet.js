@@ -308,6 +308,10 @@ ScalePerformanceBarClass.prototype = {
 		
 		// move the page to the right place
 		body.style.paddingTop = this.oldBodyPaddingTop + this.topBarContainerHeight;
+		
+		//* DEBUG
+		console.log("body.style.paddingTop", body.style.paddingTop);
+		//*/
 	},
 };
 

@@ -15,23 +15,31 @@ var Stats = function () {
 	var container = document.createElement( 'div' );
 	container.id = 'stats';
 	container.addEventListener( 'mousedown', function ( event ) { event.preventDefault(); setMode( ++ mode % 2 ) }, false );
-	container.style.cssText = 'opacity:0.9;cursor:pointer';
+	container.style.cursor = "pointer";
+	container.style.opacity = 0.9;
 	container.style.width = width;
 
 	var fpsDiv = document.createElement( 'div' );
 	fpsDiv.id = 'fps';
-	fpsDiv.style.cssText = 'padding:0 0 3px 3px;text-align:left;background-color:#002';
+	fpsDiv.style.backgroundColor = "#002";
+	fpsDiv.style.textAlign = "left";
+	fpsDiv.style.padding = "0 0 3px 3px";
 	container.appendChild( fpsDiv );
 
 	var fpsText = document.createElement( 'div' );
 	fpsText.id = 'fpsText';
-	fpsText.style.cssText = 'color:#0ff;font-family:Helvetica,Arial,sans-serif;font-size:9px;font-weight:bold;line-height:15px';
+	fpsText.style.lineHeight = '15px';
+	fpsText.style.fontweight = 'bold';
+	fpsText.style.fontSize = '9px';
+	fpsText.style.fontFamily = "Helvetica,Arial,sans-serif";
+	fpsText.style.color = "#0ff";
 	fpsText.innerHTML = 'FPS';
 	fpsDiv.appendChild( fpsText );
 
 	var fpsGraph = document.createElement( 'div' );
 	fpsGraph.id = 'fpsGraph';
-	fpsGraph.style.cssText = 'position:relative;background-color:#0ff';
+	fpsGraph.style.backgroundColor = '#0ff';
+	fpsGraph.style.position = 'relative';
 	fpsGraph.style.width = bars;
 	fpsGraph.style.height = height;
 	fpsDiv.appendChild( fpsGraph );
@@ -39,7 +47,9 @@ var Stats = function () {
 	while ( fpsGraph.children.length < bars ) {
 
 		var bar = document.createElement( 'span' );
-		bar.style.cssText = 'width:1px;float:left;background-color:#113';
+		bar.style.cssFloat = 'left';
+		bar.style.backgroundColor = '#113';
+		bar.style.width = '1px';
 		bar.style.height = height;
 		fpsGraph.appendChild( bar );
 
@@ -47,18 +57,25 @@ var Stats = function () {
 
 	var msDiv = document.createElement( 'div' );
 	msDiv.id = 'ms';
-	msDiv.style.cssText = 'padding:0 0 3px 3px;text-align:left;background-color:#020;display:none';
+	msDiv.style.backgroundColor = "#020";
+	msDiv.style.display = 'none';
+	msDiv.style.textAlign = 'left';
+	msDiv.style.padding = '0 0 3px 3px';
 	container.appendChild( msDiv );
 
 	var msText = document.createElement( 'div' );
 	msText.id = 'msText';
-	msText.style.cssText = 'color:#0f0;font-family:Helvetica,Arial,sans-serif;font-size:9px;font-weight:bold;line-height:15px';
+	msText.style.color = '#0f0';
+	msText.style.fontFamily = 'Helvetica,Arial,sans-serif';
+	msText.style.fontSize = 9
+	msText.style.fontWeight = 'bold';
 	msText.innerHTML = 'MS';
 	msDiv.appendChild( msText );
 
 	var msGraph = document.createElement( 'div' );
 	msGraph.id = 'msGraph';
-	msGraph.style.cssText = 'position:relative;background-color:#0f0';
+	msGraph.style.position = 'relative';
+	msGraph.style.backgroundColor = '#0f0';
 	msGraph.style.width = bars;
 	msGraph.style.height = height;
 	msDiv.appendChild( msGraph );
@@ -66,7 +83,9 @@ var Stats = function () {
 	while ( msGraph.children.length < bars ) {
 
 		var bar = document.createElement( 'span' );
-		bar.style.cssText = 'width:1px;float:left;background-color:#131';
+		bar.style.width = 1;
+		bar.style.cssFloat = 'left';
+		bar.style.backgroundColor = '#131';
 		bar.style.height = height;
 		msGraph.appendChild( bar );
 
