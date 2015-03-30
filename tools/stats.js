@@ -16,7 +16,7 @@ var Stats = function () {
 	container.id = 'stats';
 	container.addEventListener( 'mousedown', function ( event ) { event.preventDefault(); setMode( ++ mode % 2 ) }, false );
 	container.style.cursor = "pointer";
-	container.style.opacity = 0.9;
+	container.style.opacity = "0.9";
 	container.style.width = width;
 
 	var fpsDiv = document.createElement( 'div' );
@@ -29,7 +29,7 @@ var Stats = function () {
 	var fpsText = document.createElement( 'div' );
 	fpsText.id = 'fpsText';
 	fpsText.style.lineHeight = '15px';
-	fpsText.style.fontweight = 'bold';
+	fpsText.style.fontWeight = 'bold';
 	fpsText.style.fontSize = '9px';
 	fpsText.style.fontFamily = "Helvetica,Arial,sans-serif";
 	fpsText.style.color = "#0ff";
@@ -65,9 +65,10 @@ var Stats = function () {
 
 	var msText = document.createElement( 'div' );
 	msText.id = 'msText';
+	msText.style.lineHeight = '15px';
 	msText.style.color = '#0f0';
 	msText.style.fontFamily = 'Helvetica,Arial,sans-serif';
-	msText.style.fontSize = 9
+	msText.style.fontSize = "9px";
 	msText.style.fontWeight = 'bold';
 	msText.innerHTML = 'MS';
 	msDiv.appendChild( msText );
@@ -76,17 +77,17 @@ var Stats = function () {
 	msGraph.id = 'msGraph';
 	msGraph.style.position = 'relative';
 	msGraph.style.backgroundColor = '#0f0';
-	msGraph.style.width = bars;
-	msGraph.style.height = height;
+	msGraph.style.width = bars + "px";
+	msGraph.style.height = height + "px";
 	msDiv.appendChild( msGraph );
 
 	while ( msGraph.children.length < bars ) {
 
 		var bar = document.createElement( 'span' );
-		bar.style.width = 1;
+		bar.style.width = "1px";
 		bar.style.cssFloat = 'left';
 		bar.style.backgroundColor = '#131';
-		bar.style.height = height;
+		bar.style.height = height + "px";
 		msGraph.appendChild( bar );
 
 	}
