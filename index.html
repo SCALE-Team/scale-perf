@@ -33,6 +33,11 @@
 					width:			980px;
 				}
 			}
+			
+			#MobileInstruction > li { list-style-type: none; }
+			#MobileInstruction:not(.s1) > li.s1 { display: none; }
+			#MobileInstruction:not(.s2) > li.s2 { display: none; }
+			#MobileInstruction:not(.s3) > li.s3 { display: none; }
 		</style>
 	</head>
 	<body>
@@ -41,15 +46,18 @@
 		<div id="Main" class="row">
 			<h2>Desktop</h2>
 			<div>
-				Drag and drop this intop your link bar: <a id="desktopLink">Scale-Perf</a>
+				Drag and drop this intop your link bar: <a id="DesktopLink">Scale-Perf</a>
 			</div>
 			
 			<h2>Mobile</h2>
 			
-			<ol>
-				<li>Click this link: <a id="mobileLink">SCALE Perf bookmarklet</a></li>
-				<li>Bookmark this page</li>
-				<li>
+			<ol id="MobileInstruction" class="s1">
+				<li class="s1">1. Click this link: <a id="MobileLink" onclick="changeToStep(2)">SCALE Perf bookmarklet</a></li>
+				<li class="s2">
+					2. Bookmark this page<br />
+					<button class="btn" onclick="changeToStep(3)">ok, did it!</button>
+				</li>
+				<li class="s3">3.
 					Edit the bookmark URL and remove everything up to and including the hash ("#")
 					so that the bookmark URL starts with "javascript:"
 					<br />
@@ -86,10 +94,14 @@
 					body.appendChild(loadingElem).appendChild(jselem);
 				};
 				
-				var linkElem = document.getElementById("desktopLink");
+				var linkElem = document.getElementById("DesktopLink");
 				linkElem.href = 'javascript:' + scriptLoadFunction + '; scriptLoadFunction();';
-				document.getElementById("mobileLink").href = "#" + linkElem.href;
+				document.getElementById("MobileLink").href = "#" + linkElem.href;
 			})();
+			
+			function changeToStep(nr){
+				document.getElementById("MobileInstruction").className = "s" + nr;
+			}
 		</script>
 	</body>
 </html>
