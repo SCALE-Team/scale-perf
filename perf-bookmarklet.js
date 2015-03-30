@@ -4,6 +4,7 @@ var body = document.getElementsByTagName("body")[0];
 var head = document.head || document.getElementsByTagName('head')[0];
 
 var cssElem = document.createElement("style");
+cssElem.id = "PerfBookmarkletStyle";
 var style = "#PerfBar, #PerfToolActiveBar { z-index: 1000000; color: #fff; position: fixed; top: 0px; left: 0px; width: 100%; background-color: #000; box-shadow: 0px 0px 5px #000; }";
 style += "#PerfBar { transition:transform ease-out 0.3s; transform:translateY(-450px); }";
 style += "#PerfToolActiveBar { display: none; }";
