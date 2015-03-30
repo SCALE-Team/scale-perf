@@ -17,13 +17,13 @@ var Stats = function () {
 	container.addEventListener( 'mousedown', function ( event ) { event.preventDefault(); setMode( ++ mode % 2 ) }, false );
 	container.style.cursor = "pointer";
 	container.style.opacity = "0.9";
-	container.style.width = width;
+	container.style.width = width + "px";
 
 	var fpsDiv = document.createElement( 'div' );
 	fpsDiv.id = 'fps';
 	fpsDiv.style.backgroundColor = "#002";
 	fpsDiv.style.textAlign = "left";
-	fpsDiv.style.padding = "0 0 3px 3px";
+	fpsDiv.style.padding = "0px 0px 3px 3px";
 	container.appendChild( fpsDiv );
 
 	var fpsText = document.createElement( 'div' );
@@ -40,8 +40,8 @@ var Stats = function () {
 	fpsGraph.id = 'fpsGraph';
 	fpsGraph.style.backgroundColor = '#0ff';
 	fpsGraph.style.position = 'relative';
-	fpsGraph.style.width = bars;
-	fpsGraph.style.height = height;
+	fpsGraph.style.width = bars + "px";
+	fpsGraph.style.height = height + "px";
 	fpsDiv.appendChild( fpsGraph );
 
 	while ( fpsGraph.children.length < bars ) {
@@ -50,7 +50,7 @@ var Stats = function () {
 		bar.style.cssFloat = 'left';
 		bar.style.backgroundColor = '#113';
 		bar.style.width = '1px';
-		bar.style.height = height;
+		bar.style.height = height + "px";
 		fpsGraph.appendChild( bar );
 
 	}
@@ -60,7 +60,7 @@ var Stats = function () {
 	msDiv.style.backgroundColor = "#020";
 	msDiv.style.display = 'none';
 	msDiv.style.textAlign = 'left';
-	msDiv.style.padding = '0 0 3px 3px';
+	msDiv.style.padding = '0px 0px 3px 3px';
 	container.appendChild( msDiv );
 
 	var msText = document.createElement( 'div' );
