@@ -104,23 +104,23 @@
 // TODO: Add fetchStart and duration, fix TCP, SSL etc. timings
 
 		return {
-			url: d.URL,
-			start: 0,
-			duration: timing.responseEnd - timing.navigationStart,
-			redirectStart: timing.redirectStart === 0 ? 0 : timing.redirectStart - timing.navigationStart,
-			redirectDuration: timing.redirectEnd - timing.redirectStart,
-			appCacheStart: 0,											// TODO
-			appCacheDuration: 0,										// TODO
-			dnsStart: timing.domainLookupStart - timing.navigationStart,
-			dnsDuration: timing.domainLookupEnd - timing.domainLookupStart,
-			tcpStart: timing.connectStart - timing.navigationStart,
-			tcpDuration: timing.connectEnd - timing.connectStart,		// TODO
-			sslStart: 0,												// TODO
-			sslDuration: 0,												// TODO
-			requestStart: timing.requestStart - timing.navigationStart,
-			requestDuration: timing.responseStart - timing.requestStart,
-			responseStart: timing.responseStart - timing.navigationStart,
-			responseDuration: timing.responseEnd - timing.responseStart
+			url:				d.URL,
+			start:				0,
+			duration:			timing.responseEnd - timing.navigationStart,
+			redirectStart:		timing.redirectStart === 0 ? 0 : timing.redirectStart - timing.navigationStart,
+			redirectDuration:	timing.redirectEnd - timing.redirectStart,
+			appCacheStart:		0,													// TODO
+			appCacheDuration:	0,													// TODO
+			dnsStart:			timing.domainLookupStart - timing.navigationStart,
+			dnsDuration:		timing.domainLookupEnd - timing.domainLookupStart,
+			tcpStart:			timing.connectStart - timing.navigationStart,
+			tcpDuration:		timing.connectEnd - timing.connectStart,			// TODO
+			sslStart:			0,													// TODO
+			sslDuration:		0,													// TODO
+			requestStart:		timing.requestStart - timing.navigationStart,
+			requestDuration:	timing.responseStart - timing.requestStart,
+			responseStart:		timing.responseStart - timing.navigationStart,
+			responseDuration:	timing.responseEnd - timing.responseStart
   		}
 	}
 
@@ -138,24 +138,24 @@
 // SSL: secureConnectionStart can be undefined
 
 		return {
-			url: resource.name,
-			start: resource.startTime,
-			duration: resource.duration,
-			redirectStart: resource.redirectStart,
-			redirectDuration: resource.redirectEnd - resource.redirectStart,
-			appCacheStart: 0,											// TODO
-			appCacheDuration: 0,										// TODO
-			dnsStart: resource.domainLookupStart,
-			dnsDuration: resource.domainLookupEnd - resource.domainLookupStart,
-			tcpStart: resource.connectStart,
-			tcpDuration: resource.connectEnd - resource.connectStart, 	// TODO
-			sslStart: 0,												// TODO
-			sslDuration: 0,												// TODO
-			requestStart: resource.requestStart,
-			requestDuration: resource.responseStart - resource.requestStart,
-			responseStart: resource.responseStart,
+			url:				resource.name,
+			start:				resource.startTime,
+			duration:			resource.duration,
+			redirectStart:		resource.redirectStart,
+			redirectDuration:	resource.redirectEnd - resource.redirectStart,
+			appCacheStart:		0,														// TODO
+			appCacheDuration:	0,														// TODO
+			dnsStart:			resource.domainLookupStart,
+			dnsDuration:		resource.domainLookupEnd - resource.domainLookupStart,
+			tcpStart:			resource.connectStart,
+			tcpDuration:		resource.connectEnd - resource.connectStart,		 	// TODO
+			sslStart:			0,														// TODO
+			sslDuration:		0,														// TODO
+			requestStart:		resource.requestStart,
+			requestDuration:	resource.responseStart - resource.requestStart,
+			responseStart:		resource.responseStart,
 			// ??? - Chromium returns zero for responseEnd for 3rd party URLs, bug?
-			responseDuration: resource.responseStart == 0 ? 0 : resource.responseEnd - resource.responseStart
+			responseDuration:	resource.responseStart == 0 ? 0 : resource.responseEnd - resource.responseStart
   		}
 	}
 
@@ -165,24 +165,26 @@
      */
 	function drawWaterfall(entries) {
 		// Function to draw all the waterfall bars
-		var drawAllBars = function(conf) {
+		var drawAllBars = function(entries) {
 			var rowHeight = 10;
 			var rowPadding = 2;
 			var barOffset = 200;
 			
+			var chartContainer = document.getElementById("ChartContainer");
 			chartContainer.innerHTML = "";
 			
 			// Filter entries
 			var entriesToShow = [];
-			for(var f in conf.entries)
+			for(var f in entries)
 			{
-				var url = conf.entries[f].url;
+				var url = entries[f].url.toLowerCase();
 				var ending = url.split(".").pop().split("?")[0].toLowerCase();
 				
-				if(conf.allowed != null && conf.allowed.length > 0 && conf.allowed.indexOf(ending) == -1) continue;
-				if(conf.notAllowed != null && conf.notAllowed.length > 0 && conf.notAllowed.indexOf(ending) != -1) continue;
+				if(chartContainer.data.allowed != null && chartContainer.data.allowed.length > 0 && chartContainer.data.allowed.indexOf(ending) == -1) continue;
+				if(chartContainer.data.notAllowed != null && chartContainer.data.notAllowed.length > 0 && chartContainer.data.notAllowed.indexOf(ending) != -1) continue;
+				if(chartContainer.data.searchText.length > 0 && url.indexOf(chartContainer.data.searchText) == -1) continue;
 				
-				entriesToShow.push(conf.entries[f]);
+				entriesToShow.push(entries[f]);
 			}
 			
 			//calculate size of chart
@@ -248,10 +250,14 @@
 			container.id = containerID;
 		}
 		
+		container.appendChild(closeBtn);
+		d.body.appendChild(container);
+		
 		/* SCALE perf bookmarklet extension */ {
 			var filterContainer = document.createElement("div");
 			filterContainer.className = "filterContainer";
 			filterContainer.style.padding = "5px";
+			container.appendChild(filterContainer);
 			
 			var leftContainer = document.createElement("div");
 			filterContainer.appendChild(leftContainer);
@@ -265,11 +271,31 @@
 			timeSpanInput.id = "TimeSpanInput";
 			span.appendChild(timeSpanInput);
 			span.innerHTML += " ms";
-			leftContainer.appendChild(span);
+			leftContainer.appendChild(span)
 			
 			var searchFieldContainer = document.createElement("div");
 			var searchField = document.createElement("input");
+			searchField.id = "PerfSearchField";
 			searchField.placeholder = "Search for...";
+			searchField.timeout = null;
+			
+			// Has to be appended with small delay. Element has to exist on screen
+			window.setTimeout(function(){
+				document.getElementById("PerfSearchField").addEventListener("keyup", function(e){
+					chartContainer.data.searchText = e.target.value.trim().toLowerCase();
+					
+					if(e.target.timeout != null)
+					{
+						window.clearTimeout(e.target.timeout);
+					}
+					
+					e.target.timeout = window.setTimeout(function(){
+						drawAllBars(entries);
+					}, 50)
+				},true);
+			}, 500);
+			
+			//searchFieldContainer.innerHTML+='<input onkeydown=\'alert("123")\' />';
 			searchFieldContainer.appendChild(searchField);
 			rightContainer.appendChild(searchFieldContainer);
 			
@@ -287,14 +313,11 @@
 					
 					btn.disabled = true;
 					
-					var allowed = (btn.data!=null ? btn.data.allowed : null);
-					var notAllowed = (btn.data!=null ? btn.data.notAllowed : null);
 					
-					drawAllBars({
-						entries:	entries,
-						allowed:	allowed,
-						notAllowed:	notAllowed
-					});
+					chartContainer.data.allowed = (btn.data!=null ? btn.data.allowed : null);
+					chartContainer.data.notAllowed = (btn.data!=null ? btn.data.notAllowed : null);
+					
+					drawAllBars(entries);
 				};
 				
 				var buttonGroup = document.createElement("div");
@@ -333,14 +356,15 @@
 				rightContainer.appendChild(buttonGroup);
 			}
 			
-			container.appendChild(filterContainer);
-			
 			var chartContainer = document.createElement("div");
+			chartContainer.id = "ChartContainer";
+			chartContainer.data = {
+				allowed:	[],
+				nowAllowed:	[],
+				searchText:	""
+			};
 			container.appendChild(chartContainer);
 		}
-		
-		container.appendChild(closeBtn);
-		d.body.appendChild(container);
 		
 		/* SCALE perf bookmarklet extension */ {
 			// for the transition animation
@@ -351,7 +375,7 @@
 			}, 10);
 		}
 		
-		drawAllBars({ entries: entries });
+		drawAllBars(entries);
 	}
 
 // TODO: Split out row, bar and axis drawing
