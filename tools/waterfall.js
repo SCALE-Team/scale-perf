@@ -281,7 +281,9 @@
 			
 			// Has to be appended with small delay. Element has to exist on screen
 			window.setTimeout(function(){
-				document.getElementById("PerfSearchField").addEventListener("keyup", function(e){
+				var searchField = document.getElementById("PerfSearchField");
+				
+				searchField.addEventListener("keyup", function(e){
 					chartContainer.data.searchText = e.target.value.trim().toLowerCase();
 					
 					if(e.target.timeout != null)
@@ -289,9 +291,18 @@
 						window.clearTimeout(e.target.timeout);
 					}
 					
-					e.target.timeout = window.setTimeout(function(){
+					var isEnter = (e.keyCode == 13);
+					
+					if(isEnter)
+					{
 						drawAllBars(entries);
-					}, 50)
+					}
+					else
+					{
+						e.target.timeout = window.setTimeout(function(){
+							drawAllBars(entries);
+						}, 50);
+					}
 				},true);
 			}, 500);
 			
