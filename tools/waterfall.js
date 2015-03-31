@@ -12,7 +12,42 @@
  */
 
 (function waterfall(w,d) {
+	
+	var head = document.head || document.getElementsByTagName('head')[0];
 
+	var cssElem = document.createElement("style");
+	cssElem.id = "PerfBookmarkletStyle";
+	var style = "#PerfWaterfallDiv { background: #fff; border-bottom: 2px solid #000; margin: 5px; position: absolute; top: 0px; left: 0px; z-index: 99999; margin: 0px; padding: 5px 0px 10px 0px; }";
+	style += "#PerfWaterfallDiv input, #PerfWaterfallDiv button { outline: none; border-radius: 5px; padding: 5px; border: 1px solid #ccc; }";
+	style += "#PerfWaterfallDiv button { background-color: #ddd; padding: 5px 10px; }";
+	style += "#PerfWaterfallDiv #TimeSpanInput { width: 60px; }";
+	
+	style += "#PerfWaterfallDiv .filterContainer { height: 40px; position: relative; }";
+	
+	style += "#PerfWaterfallDiv .filterContainer > div:first-child { position: absolute; left: 0px; top: 0px; right: 200px; padding:5px; }";
+	style += "#PerfWaterfallDiv .filterContainer > div:last-child { position: absolute; right: 0px; width: 450px; top: 0px; text-align: right; padding:5px; }";
+	
+	style += "#PerfWaterfallDiv .filterContainer > div:last-child > :first-child { display: inline-block; }";
+	style += "#PerfWaterfallDiv .filterContainer > div:last-child > :first-child input { width: 100%; }";
+	
+	style += "@media (max-width: 768px) {";
+		style += "#PerfWaterfallDiv .filterContainer { height: auto; }";
+		style += "#PerfWaterfallDiv .filterContainer > div { position: relative !important; width:100% !important; top: 0px !important; right: 0px !important; left: 0px !important; display: block !important; text-align: left !important; }";
+		style += "#PerfWaterfallDiv .filterContainer > div:last-child > :first-child { position: absolute; left: 0px; top: 0px; right: 240px; }";
+		style += "#PerfWaterfallDiv .filterContainer > div:last-child > :last-child { position: absolute; right: 0px; top: 0px; width: 240px; text-align: right; }";
+	style += "}";
+	
+	style += "#PerfWaterfallDiv .button-group { display: inline-block; }";
+	style += "#PerfWaterfallDiv .button-group button { border-radius: 0px 0px 0px 0px; border-right: none; }";
+	style += "#PerfWaterfallDiv .button-group button:hover { background-color: #eee; }";
+	style += "#PerfWaterfallDiv .button-group button:active { background-color: #ccc; }";
+	style += "#PerfWaterfallDiv .button-group button[disabled] { background-color: #ccc !important; }";
+	style += "#PerfWaterfallDiv .button-group :first-child { border-radius: 5px 0px 0px 5px; }";
+	style += "#PerfWaterfallDiv .button-group :last-child { border-radius: 0px 5px 5px 0px; border-right: 1px solid #ccc; }";
+
+	cssElem.innerHTML = style;
+	head.appendChild(cssElem);
+	
 	var xmlns = "http://www.w3.org/2000/svg";
 
 	var barColors = {
@@ -146,8 +181,64 @@
 			container = d.createElement('div');
 			container.id = containerID;
 		}
-
-		container.style.cssText = 'background:#fff;border-bottom: 2px solid #000;margin:5px;position:absolute;top:0px;left:0px;z-index:99999;margin:0px;padding:0px;';
+		
+		//* SCALE perf bookmarklet extension
+		var filterContainer = document.createElement("div");
+		filterContainer.className = "filterContainer";
+		filterContainer.style.padding = "5px";
+		
+		var leftContainer = document.createElement("div");
+		filterContainer.appendChild(leftContainer);
+		
+		var rightContainer = document.createElement("div");
+		filterContainer.appendChild(rightContainer);
+		
+		var span = document.createElement("span");
+		span.innerHTML = "Show first ";
+		var timeSpanInput = document.createElement("input");
+		timeSpanInput.id = "TimeSpanInput";
+		span.appendChild(timeSpanInput);
+		span.innerHTML += " ms";
+		leftContainer.appendChild(span);
+		
+		var searchFieldContainer = document.createElement("div");
+		var searchField = document.createElement("input");
+		searchField.placeholder = "Search for...";
+		searchFieldContainer.appendChild(searchField);
+		rightContainer.appendChild(searchFieldContainer);
+		
+		rightContainer.innerHTML += "&nbsp;";
+		
+		/* Button Group */ {
+			var buttonGroup = document.createElement("div");
+			buttonGroup.className = "button-group";
+			
+			var allBtn = document.createElement("button");
+			allBtn.innerHTML = "All";
+			allBtn.disabled = true;
+			buttonGroup.appendChild(allBtn);
+			
+			var allBtn = document.createElement("button");
+			allBtn.innerHTML = "JS";
+			buttonGroup.appendChild(allBtn);
+			
+			var allBtn = document.createElement("button");
+			allBtn.innerHTML = "CSS";
+			buttonGroup.appendChild(allBtn);
+			
+			var allBtn = document.createElement("button");
+			allBtn.innerHTML = "Images";
+			buttonGroup.appendChild(allBtn);
+			
+			var allBtn = document.createElement("button");
+			allBtn.innerHTML = "Else";
+			buttonGroup.appendChild(allBtn);
+			
+			rightContainer.appendChild(buttonGroup);
+		}
+		
+		container.appendChild(filterContainer);
+		//*/
 		
 		container.appendChild(closeBtn);
 		d.body.appendChild(container);
