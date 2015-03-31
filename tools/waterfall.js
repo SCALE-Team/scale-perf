@@ -20,7 +20,7 @@
 	var style = "#PerfWaterfallDiv { background: #fff; border-bottom: 2px solid #000; margin: 5px; position: absolute; top: 0px; left: 0px; z-index: 99999; margin: 0px; padding: 5px 0px 10px 0px; }";
 	style += "#PerfWaterfallDiv input, #PerfWaterfallDiv button { outline: none; border-radius: 5px; padding: 5px; border: 1px solid #ccc; }";
 	style += "#PerfWaterfallDiv button { background-color: #ddd; padding: 5px 10px; }";
-	style += "#PerfWaterfallDiv #TimeSpanInput { width: 60px; }";
+	style += "#PerfWaterfallDiv #TimeSpanInput { width: 70px; }";
 	
 	style += "#PerfWaterfallDiv .filterContainer { height: 40px; position: relative; }";
 	
@@ -51,15 +51,15 @@
 	var xmlns = "http://www.w3.org/2000/svg";
 
 	var barColors = {
-		blocked: "rgb(204, 204, 204)",
-		thirdParty: "rgb(0, 0, 0)",
-		redirect: "rgb(255, 221, 0)",
-		appCache: "rgb(161, 103, 38)",
-		dns: "rgb(48, 150, 158)",
-		tcp: "rgb(255, 157, 66)",
-		ssl: "rgb(213,102, 223)",
-		request: "rgb(64, 255, 64)",
-		response: "rgb(52, 150, 255)"
+		blocked:	"rgb(204, 204, 204)",
+		thirdParty:	"rgb(  0,   0,   0)",
+		redirect:	"rgb(255, 221,   0)",
+		appCache:	"rgb(161, 103,  38)",
+		dns:		"rgb( 48, 150, 158)",
+		tcp:		"rgb(255, 157,  66)",
+		ssl:		"rgb(213, 102, 223)",
+		request:	"rgb( 64, 255,  64)",
+		response:	"rgb( 52, 150, 255)"
 	}
 
 	/**
@@ -158,7 +158,49 @@
 			responseDuration:	resource.responseStart == 0 ? 0 : resource.responseEnd - resource.responseStart
   		}
 	}
-
+	
+	function getPageLoadTime(entries) {
+		var pageLoadTime = 0;
+		for(var f in entries)
+		{
+			var entry = entries[f];
+			
+			if((entry.start - pageLoadTime) >= 2000) break;
+			
+			pageLoadTime = entry.start + entry.duration;
+		}
+		
+		return Math.round(pageLoadTime);
+	}
+	
+	function filterEntries(entries) {
+		var chartContainer = document.getElementById("ChartContainer");
+		chartContainer.innerHTML = "";
+		
+		var allowed = chartContainer.data.allowed;
+		var notAllowed = chartContainer.data.notAllowed;
+		var searchText = chartContainer.data.searchText;
+		var timeSpan = chartContainer.data.timeSpan;
+		
+		// Filter entries
+		var filteredEntries = [];
+		for(var f in entries)
+		{
+			var url = entries[f].url.toLowerCase();
+			var ending = url.split(".").pop().split("?")[0].toLowerCase();
+			var startTime = entries[f].start;
+			
+			if(allowed != null && allowed.length > 0 && allowed.indexOf(ending) == -1) continue;
+			if(notAllowed != null && notAllowed.length > 0 && notAllowed.indexOf(ending) != -1) continue;
+			if(searchText.length > 0 && url.indexOf(searchText) == -1) continue;
+			if(timeSpan > 0 && startTime > timeSpan) continue;
+			
+			filteredEntries.push(entries[f]);
+		}
+		
+		return filteredEntries;
+	}
+	
 	/**
      * Draw waterfall
      * @param {object[]} entries
@@ -170,21 +212,11 @@
 			var rowPadding = 2;
 			var barOffset = 200;
 			
-			var chartContainer = document.getElementById("ChartContainer");
-			chartContainer.innerHTML = "";
+			var entriesToShow = filterEntries(entries);
 			
-			// Filter entries
-			var entriesToShow = [];
-			for(var f in entries)
-			{
-				var url = entries[f].url.toLowerCase();
-				var ending = url.split(".").pop().split("?")[0].toLowerCase();
-				
-				if(chartContainer.data.allowed != null && chartContainer.data.allowed.length > 0 && chartContainer.data.allowed.indexOf(ending) == -1) continue;
-				if(chartContainer.data.notAllowed != null && chartContainer.data.notAllowed.length > 0 && chartContainer.data.notAllowed.indexOf(ending) != -1) continue;
-				if(chartContainer.data.searchText.length > 0 && url.indexOf(chartContainer.data.searchText) == -1) continue;
-				
-				entriesToShow.push(entries[f]);
+			var maxTime = 0;
+			for(var n = 0; n < entriesToShow.length; n++) {
+				maxTime = Math.max(maxTime, entriesToShow[n].start + entriesToShow[n].duration);
 			}
 			
 			//calculate size of chart
@@ -232,11 +264,6 @@
 
 			chartContainer.appendChild(svg);
 		};
-		
-		var maxTime = 0;
-		for(var n = 0; n < entries.length; n++) {
-			maxTime = Math.max(maxTime, entries[n].start + entries[n].duration);
-		}
 
 		var containerID = "waterfall-div",
 		//* SCALE perf bookmarklet extension
@@ -269,15 +296,52 @@
 			span.innerHTML = "Show first ";
 			var timeSpanInput = document.createElement("input");
 			timeSpanInput.id = "TimeSpanInput";
+			timeSpanInput.type = "number";
+			
+			timeSpanInput.timeout = null;
 			span.appendChild(timeSpanInput);
 			span.innerHTML += " ms";
-			leftContainer.appendChild(span)
+			leftContainer.appendChild(span);
+			
+			// Has to be appended with small delay. Element has to exist on screen
+			window.setTimeout(function(){
+				var timeSpanInput = document.getElementById("TimeSpanInput");
+				timeSpanInput.value = getPageLoadTime(entries);
+				
+				var change = function(e){
+					chartContainer.data.timeSpan = e.target.value.trim() * 1.0;
+					
+					if(e.target.timeout != null)
+					{
+						window.clearTimeout(e.target.timeout);
+					}
+					
+					var isEnter = (e.keyCode == 13);
+					
+					if(isEnter)
+					{
+						drawAllBars(entries);
+					}
+					else
+					{
+						e.target.timeout = window.setTimeout(function(){
+							drawAllBars(entries);
+						}, 50);
+					}
+				};
+				
+				timeSpanInput.addEventListener("change", change,true);
+				timeSpanInput.addEventListener("keyup", change,true);
+			}, 500);
 			
 			var searchFieldContainer = document.createElement("div");
 			var searchField = document.createElement("input");
 			searchField.id = "PerfSearchField";
 			searchField.placeholder = "Search for...";
 			searchField.timeout = null;
+			//searchFieldContainer.innerHTML+='<input onkeydown=\'alert("123")\' />';
+			searchFieldContainer.appendChild(searchField);
+			rightContainer.appendChild(searchFieldContainer);
 			
 			// Has to be appended with small delay. Element has to exist on screen
 			window.setTimeout(function(){
@@ -305,10 +369,6 @@
 					}
 				},true);
 			}, 500);
-			
-			//searchFieldContainer.innerHTML+='<input onkeydown=\'alert("123")\' />';
-			searchFieldContainer.appendChild(searchField);
-			rightContainer.appendChild(searchFieldContainer);
 			
 			rightContainer.innerHTML += "&nbsp;";
 			
@@ -370,9 +430,10 @@
 			var chartContainer = document.createElement("div");
 			chartContainer.id = "ChartContainer";
 			chartContainer.data = {
-				allowed:	[],
-				nowAllowed:	[],
-				searchText:	""
+				allowed:		[],
+				nowAllowed:		[],
+				searchText:		"",
+				timeSpan:		getPageLoadTime(entries)
 			};
 			container.appendChild(chartContainer);
 		}
