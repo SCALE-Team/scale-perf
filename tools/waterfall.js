@@ -181,19 +181,37 @@
 		var notAllowed = chartContainer.data.notAllowed;
 		var searchText = chartContainer.data.searchText;
 		var timeSpan = chartContainer.data.timeSpan;
+		var filesToHide = chartContainer.data.filesToHide;
 		
 		// Filter entries
 		var filteredEntries = [];
 		for(var f in entries)
 		{
-			var url = entries[f].url.toLowerCase();
-			var ending = url.split(".").pop().split("?")[0].toLowerCase();
+			var url = entries[f].url.toLowerCase().split("?")[0].toLowerCase();
+			var file = url.split("/").pop();
+			var ending = file.split(".").pop();
 			var startTime = entries[f].start;
 			
 			if(allowed != null && allowed.length > 0 && allowed.indexOf(ending) == -1) continue;
 			if(notAllowed != null && notAllowed.length > 0 && notAllowed.indexOf(ending) != -1) continue;
 			if(searchText.length > 0 && url.indexOf(searchText) == -1) continue;
 			if(timeSpan > 0 && startTime > timeSpan) continue;
+			if(filesToHide != null)
+			{
+				var hideThis = false;
+				for(var g in filesToHide)
+				{
+					var hideMe = filesToHide[g];
+					
+					if(url.length >= hideMe.length && hideMe == url.substr(url.length - hideMe.length))
+					{
+						hideThis = true;
+						break;
+					}
+				}
+				
+				if(hideThis) continue;
+			}
 			
 			filteredEntries.push(entries[f]);
 		}
@@ -430,6 +448,7 @@
 			var chartContainer = document.createElement("div");
 			chartContainer.id = "ChartContainer";
 			chartContainer.data = {
+				filesToHide:	[ "perf-bookmarklet.js", "tools/dommonster.js", "tools/perfmap.js", "tools/performanceBookmarklet.js", "tools/stats.js", "tools/waterfall.js" ],
 				allowed:		[],
 				nowAllowed:		[],
 				searchText:		"",
