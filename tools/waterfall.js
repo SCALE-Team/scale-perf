@@ -164,142 +164,194 @@
      * @param {object[]} entries
      */
 	function drawWaterfall(entries) {
-	
+		// Function to draw all the waterfall bars
+		var drawAllBars = function(conf) {
+			var rowHeight = 10;
+			var rowPadding = 2;
+			var barOffset = 200;
+			
+			chartContainer.innerHTML = "";
+			
+			// Filter entries
+			var entriesToShow = [];
+			for(var f in conf.entries)
+			{
+				var url = conf.entries[f].url;
+				var ending = url.split(".").pop().split("?")[0].toLowerCase();
+				
+				if(conf.allowed != null && conf.allowed.length > 0 && conf.allowed.indexOf(ending) == -1) continue;
+				if(conf.notAllowed != null && conf.notAllowed.length > 0 && conf.notAllowed.indexOf(ending) != -1) continue;
+				
+				entriesToShow.push(conf.entries[f]);
+			}
+			
+			//calculate size of chart
+			// - max time
+			// - number of entries
+			var width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+			var height = (entriesToShow.length + 1) * (rowHeight + rowPadding); // +1 for axis
+
+			container.width = width;
+			container.height = height;
+
+			var svg = createSVG(width, height);
+
+			// scale
+			// TO DO - When to switch from seconds to milliseconds ???
+			var scaleFactor = maxTime / (width - 5 - barOffset);
+
+			// draw axis
+			var interval = 1000 / scaleFactor;
+			var numberOfLines = maxTime / interval;
+			var x1 = barOffset,
+				y1 = rowHeight + rowPadding,
+				y2 = height;
+
+			for(var n = 0; n < numberOfLines; n++) {
+				svg.appendChild(createSVGText(x1, 0, 0, rowHeight, "font: 10px sans-serif;", "middle", n));
+				svg.appendChild(createSVGLine(x1, y1, x1, y2, "stroke: #ccc;"));
+				x1 += interval;
+			} 
+
+			// draw resource entries
+			for(var n = 0; n < entriesToShow.length; n++) {
+
+				var entry = entriesToShow[n]; 
+
+				var row = createSVGGroup("translate(0," + (n + 1) * (rowHeight + rowPadding) + ")");
+
+				row.appendChild(createSVGText(5, 0, 0, rowHeight, "font: 10px sans-serif;", "start", shortenURL(entry.url)));
+
+				row.appendChild(drawBar(entry, barOffset, rowHeight, scaleFactor));
+
+				svg.appendChild(row);
+	//			console.log(JSON.stringify(entry) + "\n" );
+			}
+
+			chartContainer.appendChild(svg);
+		};
+		
 		var maxTime = 0;
 		for(var n = 0; n < entries.length; n++) {
 			maxTime = Math.max(maxTime, entries[n].start + entries[n].duration);
 		}
 
-		var containerID= "waterfall-div",
+		var containerID = "waterfall-div",
 		//* SCALE perf bookmarklet extension
 		containerID = "PerfWaterfallDiv";
 		//*/
-			container = d.getElementById(containerID),
-			closeBtn = createCloseBtn();
+		container = d.getElementById(containerID),
+		closeBtn = createCloseBtn();
 
 		if (container === null) {
 			container = d.createElement('div');
 			container.id = containerID;
 		}
 		
-		//* SCALE perf bookmarklet extension
-		var filterContainer = document.createElement("div");
-		filterContainer.className = "filterContainer";
-		filterContainer.style.padding = "5px";
-		
-		var leftContainer = document.createElement("div");
-		filterContainer.appendChild(leftContainer);
-		
-		var rightContainer = document.createElement("div");
-		filterContainer.appendChild(rightContainer);
-		
-		var span = document.createElement("span");
-		span.innerHTML = "Show first ";
-		var timeSpanInput = document.createElement("input");
-		timeSpanInput.id = "TimeSpanInput";
-		span.appendChild(timeSpanInput);
-		span.innerHTML += " ms";
-		leftContainer.appendChild(span);
-		
-		var searchFieldContainer = document.createElement("div");
-		var searchField = document.createElement("input");
-		searchField.placeholder = "Search for...";
-		searchFieldContainer.appendChild(searchField);
-		rightContainer.appendChild(searchFieldContainer);
-		
-		rightContainer.innerHTML += "&nbsp;";
-		
-		/* Button Group */ {
-			var buttonGroup = document.createElement("div");
-			buttonGroup.className = "button-group";
+		/* SCALE perf bookmarklet extension */ {
+			var filterContainer = document.createElement("div");
+			filterContainer.className = "filterContainer";
+			filterContainer.style.padding = "5px";
 			
-			var allBtn = document.createElement("button");
-			allBtn.innerHTML = "All";
-			allBtn.disabled = true;
-			buttonGroup.appendChild(allBtn);
+			var leftContainer = document.createElement("div");
+			filterContainer.appendChild(leftContainer);
 			
-			var allBtn = document.createElement("button");
-			allBtn.innerHTML = "JS";
-			buttonGroup.appendChild(allBtn);
+			var rightContainer = document.createElement("div");
+			filterContainer.appendChild(rightContainer);
 			
-			var allBtn = document.createElement("button");
-			allBtn.innerHTML = "CSS";
-			buttonGroup.appendChild(allBtn);
+			var span = document.createElement("span");
+			span.innerHTML = "Show first ";
+			var timeSpanInput = document.createElement("input");
+			timeSpanInput.id = "TimeSpanInput";
+			span.appendChild(timeSpanInput);
+			span.innerHTML += " ms";
+			leftContainer.appendChild(span);
 			
-			var allBtn = document.createElement("button");
-			allBtn.innerHTML = "Images";
-			buttonGroup.appendChild(allBtn);
+			var searchFieldContainer = document.createElement("div");
+			var searchField = document.createElement("input");
+			searchField.placeholder = "Search for...";
+			searchFieldContainer.appendChild(searchField);
+			rightContainer.appendChild(searchFieldContainer);
 			
-			var allBtn = document.createElement("button");
-			allBtn.innerHTML = "Else";
-			buttonGroup.appendChild(allBtn);
+			rightContainer.innerHTML += "&nbsp;";
 			
-			rightContainer.appendChild(buttonGroup);
+			/* Button Group */ {
+				var filterByType = function(elem) {
+					var btn = elem.target;
+					
+					var childs = btn.parentNode.children;
+					for(var i=0; i<childs.length; i++)
+					{
+						childs[i].disabled = false;
+					}
+					
+					btn.disabled = true;
+					
+					var allowed = (btn.data!=null ? btn.data.allowed : null);
+					var notAllowed = (btn.data!=null ? btn.data.notAllowed : null);
+					
+					drawAllBars({
+						entries:	entries,
+						allowed:	allowed,
+						notAllowed:	notAllowed
+					});
+				};
+				
+				var buttonGroup = document.createElement("div");
+				buttonGroup.className = "button-group";
+				
+				var allBtn = document.createElement("button");
+				allBtn.innerHTML = "All";
+				allBtn.disabled = true;
+				allBtn.onclick = filterByType;
+				buttonGroup.appendChild(allBtn);
+				
+				var jsBtn = document.createElement("button");
+				jsBtn.innerHTML = "JS";
+				jsBtn.data = { allowed: [ "js" ] };
+				jsBtn.onclick = filterByType;
+				buttonGroup.appendChild(jsBtn);
+				
+				var cssBtn = document.createElement("button");
+				cssBtn.innerHTML = "CSS";
+				cssBtn.data = { allowed: [ "css" ] };
+				cssBtn.onclick = filterByType;
+				buttonGroup.appendChild(cssBtn);
+				
+				var imgBtn = document.createElement("button");
+				imgBtn.innerHTML = "Images";
+				imgBtn.data = { allowed: [ "png", "jpg", "jpeg", "gif", "bmp", "svg", "tif" ] };
+				imgBtn.onclick = filterByType;
+				buttonGroup.appendChild(imgBtn);
+				
+				var elseBtn = document.createElement("button");
+				elseBtn.innerHTML = "Else";
+				elseBtn.data = { notAllowed: jsBtn.data.allowed.concat(cssBtn.data.allowed).concat(imgBtn.data.allowed) };
+				elseBtn.onclick = filterByType;
+				buttonGroup.appendChild(elseBtn);
+				
+				rightContainer.appendChild(buttonGroup);
+			}
+			
+			container.appendChild(filterContainer);
+			
+			var chartContainer = document.createElement("div");
+			container.appendChild(chartContainer);
 		}
-		
-		container.appendChild(filterContainer);
-		//*/
 		
 		container.appendChild(closeBtn);
 		d.body.appendChild(container);
 		
-		//* SCALE perf bookmarklet extension
-		// for the transition animation
-		container.style.cssText += "transition:transform ease-out 0.3s; transform:translateY(-450px); -webkit-transition:-webkit-transform ease-out 0.3s; -webkit-transform:translateY(-450px);";
-		
-		setTimeout(function(){
-			container.style.cssText += '-webkit-transform:translateY(30px); transform:translateY(30px);';
-		}, 10);
-		//*/
-		
-		var rowHeight = 10;
-		var rowPadding = 2;
-		var barOffset = 200;
-
-		//calculate size of chart
-		// - max time
-		// - number of entries
-		var width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
-		var height = (entries.length + 1) * (rowHeight + rowPadding); // +1 for axis
-
-		container.width = width;
-		container.height = height;
-
-		var svg = createSVG(width, height);
-
-		// scale
-		// TO DO - When to switch from seconds to milliseconds ???
-		var scaleFactor = maxTime / (width - 5 - barOffset);
-
-		// draw axis
-		var interval = 1000 / scaleFactor;
-		var numberOfLines = maxTime / interval;
-		var x1 = barOffset,
-			y1 = rowHeight + rowPadding,
-			y2 = height;
-
-		for(var n = 0; n < numberOfLines; n++) {
-			svg.appendChild(createSVGText(x1, 0, 0, rowHeight, "font: 10px sans-serif;", "middle", n));
-			svg.appendChild(createSVGLine(x1, y1, x1, y2, "stroke: #ccc;"));
-			x1 += interval;
-		} 
-
-		// draw resource entries
-		for(var n = 0; n < entries.length; n++) {
-
-			var entry = entries[n]; 
-
-			var row = createSVGGroup("translate(0," + (n + 1) * (rowHeight + rowPadding) + ")");
-
-			row.appendChild(createSVGText(5, 0, 0, rowHeight, "font: 10px sans-serif;", "start", shortenURL(entry.url)));
-
-			row.appendChild(drawBar(entry, barOffset, rowHeight, scaleFactor));
-
-			svg.appendChild(row);
-//			console.log(JSON.stringify(entry) + "\n" );
+		/* SCALE perf bookmarklet extension */ {
+			// for the transition animation
+			container.style.cssText += "transition:transform ease-out 0.3s; transform:translateY(-450px); -webkit-transition:-webkit-transform ease-out 0.3s; -webkit-transform:translateY(-450px);";
+			
+			setTimeout(function(){
+				container.style.cssText += '-webkit-transform:translateY(30px); transform:translateY(30px);';
+			}, 10);
 		}
-
-		container.appendChild(svg);
+		
+		drawAllBars({ entries: entries });
 	}
 
 // TODO: Split out row, bar and axis drawing
