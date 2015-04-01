@@ -28,7 +28,8 @@ var ScalePerformanceBarClass = function() {
 		style += "#PerfBar .perfClose { display: block; width: 100% !important; text-align: left !important; position: static !important; }";
 		style += "#PerfBar .perfCloseSeparator { display: block; }";
 	style += "}";
-	style += "#PerfBar .perfClose, #PerfToolActiveBar .perfClose { position: absolute; width: 50px; text-align: right; top: 0px; right: 0px; }";
+	style += "#PerfBar .perfClose, #PerfToolActiveBar .perfClose, #PerfBar .perfHelp, #PerfToolActiveBar .perfHelp { position: absolute; width: 30px; text-align: center; top: 0px; right: 0px; }";
+	style += "#PerfBar .perfHelp, #PerfToolActiveBar .perfHelp { width: 30px; right: 30px; }";
 	style += "#PerfToolTitle { font-weight: bold; }";
 	style += "#PerfToolActiveBar .perfToolBackButton { font-weight: bold; }";
 
@@ -241,12 +242,18 @@ var ScalePerformanceBarClass = function() {
 	// Add close button
 	var close = document.createElement("a");
 	close.className = "perfClose";
-	close.innerHTML = "close";
+	close.innerHTML = "X";
 	close.onclick = function() {
 		superClass.topBarContainer.style.display = "none";
 		
 		superClass.avoidPageOverlapWithBar();
 	};
+	
+	topBar.appendChild(close);
+	var close = document.createElement("a");
+	close.href = "https://github.com/SCALE-Team/scale-perf/blob/master/README.md";
+	close.className = "perfHelp";
+	close.innerHTML = "?";
 	topBar.appendChild(close);
 
 	/* Tool close button */ {
@@ -273,7 +280,7 @@ var ScalePerformanceBarClass = function() {
 		// Add close button
 		var closeToolActiveBar = document.createElement("a");
 		closeToolActiveBar.className = "perfClose";
-		closeToolActiveBar.innerHTML = "close";
+		closeToolActiveBar.innerHTML = "X";
 		closeToolActiveBar.onclick = function() {
 			//alert(22);
 			superClass.toolActiveBar.style.display = "none";
