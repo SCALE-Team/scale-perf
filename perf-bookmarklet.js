@@ -218,8 +218,7 @@ var ScalePerformanceBarClass = function() {
 	superClass.topBarContainer.appendChild(symbolsBlock);
 	
 	var maxIndex = (superClass.scripts.length - 1);
-	var randomInt = (Math.round(Math.random() * Math.pow(2, 16)));
-
+	
 	for(var i in superClass.scripts)
 	{
 		var script = superClass.scripts[i];
@@ -306,11 +305,11 @@ var ScalePerformanceBarClass = function() {
 					if(superClass.isLocal && script.localHref != null)
 					{
 						console.log("tool loaded locally");
-						jselem.src = script.localHref + '?' + randomInt;
+						jselem.src = script.localHref;
 					}
 					else
 					{
-						jselem.src = script.href + '?' + randomInt;
+						jselem.src = script.href;
 					}
 					
 					document.getElementsByTagName("body")[0].appendChild(jselem);

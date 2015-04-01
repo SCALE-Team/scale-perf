@@ -86,7 +86,7 @@
 					
 					var jselem = document.createElement("script");
 					jselem.type = "text/javascript";
-					jselem.src = scriptPath + "?" + Math.round(Math.random() * Math.pow(2, 16));
+					jselem.src = scriptPath;
 					jselem.onload = function() {
 						body.removeChild(loadingElem);
 					};
