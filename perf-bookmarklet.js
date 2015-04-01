@@ -106,7 +106,7 @@ var ScalePerformanceBarClass = function() {
 			}
 		},
 		{
-			name:	"Analyze page for tips",
+			name:	"Analyze DOM tree",
 			href:	"https://scale-team.github.io/scale-perf/tools/dommonster.js",
 			localHref:	"/tools/dommonster.js",
 			onclick:	function() {
@@ -136,7 +136,7 @@ var ScalePerformanceBarClass = function() {
 						stats.domElement.style.left = "0px";
 						stats.domElement.style.top = "0px";
 						stats.domElement.style.zIndex = "10000";
-						document.body.appendChild(stats.domElement);
+						body.appendChild(stats.domElement);
 						
 						// for the transition animation
 						stats.domElement.style.cssText += "transition:transform ease-out 0.3s; transform:translateY(-450px); -webkit-transition:-webkit-transform ease-out 0.3s; -webkit-transform:translateY(-450px);";
@@ -150,7 +150,7 @@ var ScalePerformanceBarClass = function() {
 						//* SCALE perf bookmarklet extension
 						addFunctionOnToolClose(function()
 						{
-							document.body.removeChild(stats.domElement);
+							body.removeChild(stats.domElement);
 							clearInterval(interval);
 						});
 						//*/
@@ -162,8 +162,43 @@ var ScalePerformanceBarClass = function() {
 			name:			"Help",
 			symbol:			"?",
 			pullToSymbols:	true,
-			href:			"https://scale-team.github.io/scale-perf/tools/stats.js",
-			localHref:		"/tools/stats.js"
+			url:			"https://github.com/SCALE-Team/scale-perf/blob/master/README.md#readme"		
+			/*
+			onclick: function() {
+				//self.location.href = "https://github.com/SCALE-Team/scale-perf/blob/master/README.md#readme";
+				
+				var jselem = document.createElement("script");
+				jselem.type = "text/javascript";
+				jselem.src = "https://scale-team.github.io/scale-perf/markdown.min.js";
+				jselem.onload = function() {
+					xmlhttp.onreadystatechange = function()
+					{
+						if (xmlhttp.readyState==4 && xmlhttp.status==200)
+						{
+							document.getElementById("myDiv").innerHTML=xmlhttp.responseText;
+						}
+					}
+					
+					xmlhttp.open("GET", "ajax_info.txt",true);
+					xmlhttp.send();
+				};
+				body.appendChild(jselem);
+				
+				
+				return;
+				
+				var iframe = document.createElement("iframe");
+				iframe.src = "https://github.com/SCALE-Team/scale-perf/blob/master/README.md#readme";
+				body.appendChild(iframe);
+				
+				// For the transition animation
+				iframe.style.cssText += "transition:transform ease-out 0.3s; transform:translateY(-450px); -webkit-transition:-webkit-transform ease-out 0.3s; -webkit-transform:translateY(-450px);";
+				
+				setTimeout(function(){
+					iframe.style.cssText += '-webkit-transform:translateY(30px); transform:translateY(30px);';
+				}, 10);
+			}
+			//*/
 		},
 		{
 			name:			"Close",
@@ -233,48 +268,56 @@ var ScalePerformanceBarClass = function() {
 		}
 		else
 		{
-			link.onclick = function(elem) {
-				var index = (elem.target.data != null ? elem.target.data.scriptIndex : elem.target.parentNode.data.scriptIndex);
-				var script = superClass.scripts[index];
-				
-				if(typeof(elem.target._onToolStartTrigger) == "function")
-				{
-					elem.target._onToolStartTrigger();
-				}
-				
-				if(script.href == null && script.localHref == null) return;
-				
-				superClass.topBarContainer.style.display = "none";
-				superClass.toolActiveBar.style.display = "block";
-				toolBarActiveTitle.innerHTML = script.name || script.symbol;
-				
-				// Add method to remove script after closing tool
-				addFunctionOnToolClose(function() {
-					var scriptElem = document.getElementById('PerfScript' + index);
+			if(script.url != null)
+			{
+				link.href = script.url;
+				link.target = "_blank";
+			}
+			else
+			{
+				link.onclick = function(elem) {
+					var index = (elem.target.data != null ? elem.target.data.scriptIndex : elem.target.parentNode.data.scriptIndex);
+					var script = superClass.scripts[index];
 					
-					scriptElem.parentNode.removeChild(scriptElem);
-				});
-				
-				// Load specified script
-				var jselem = document.createElement("script");
-				jselem.id = "PerfScript" + index;
-				jselem.type = "text/javascript";
-				
-				// Decide whether to load local or public script
-				if(superClass.isLocal && script.localHref != null)
-				{
-					console.log("tool loaded locally");
-					jselem.src = script.localHref + '?' + randomInt;
-				}
-				else
-				{
-					jselem.src = script.href + '?' + randomInt;
-				}
-				
-				document.getElementsByTagName("body")[0].appendChild(jselem);
-				
-				superClass.avoidPageOverlapWithBar();
-			};
+					if(typeof(elem.target._onToolStartTrigger) == "function")
+					{
+						elem.target._onToolStartTrigger();
+					}
+					
+					if(script.href == null && script.localHref == null) return;
+					
+					superClass.topBarContainer.style.display = "none";
+					superClass.toolActiveBar.style.display = "block";
+					toolBarActiveTitle.innerHTML = script.name || script.symbol;
+					
+					// Add method to remove script after closing tool
+					addFunctionOnToolClose(function() {
+						var scriptElem = document.getElementById('PerfScript' + index);
+						
+						scriptElem.parentNode.removeChild(scriptElem);
+					});
+					
+					// Load specified script
+					var jselem = document.createElement("script");
+					jselem.id = "PerfScript" + index;
+					jselem.type = "text/javascript";
+					
+					// Decide whether to load local or public script
+					if(superClass.isLocal && script.localHref != null)
+					{
+						console.log("tool loaded locally");
+						jselem.src = script.localHref + '?' + randomInt;
+					}
+					else
+					{
+						jselem.src = script.href + '?' + randomInt;
+					}
+					
+					document.getElementsByTagName("body")[0].appendChild(jselem);
+					
+					superClass.avoidPageOverlapWithBar();
+				};
+			}
 		}
 		
 		if(script.pullToSymbols) symbolsBlock.appendChild(link);
