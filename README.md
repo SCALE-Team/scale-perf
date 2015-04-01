@@ -8,6 +8,13 @@ Go [there](http://scale-team.github.io/scale-perf/). And follow the instructions
 !["How it works"][howitworks]
 
 ### Tools included
+
+- [Performance Bookmarklet](#performance-bookmarklet)
+- [Page load waterfall](#page-load-waterfall)
+- [Picture load times](#picture-load-times)
+- [Analze DOM tree](#analze-dom-tree)
+- [FPS display](#fps-display)
+
 ##### Performance Bookmarklet
 Use it to view several performance metrics for your page.
 
