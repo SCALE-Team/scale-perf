@@ -285,7 +285,6 @@
 			var svg = this.svg.createSVG(width, height);
 			
 			// scale
-			// TO DO - When to switch from seconds to milliseconds ???
 			var scaleFactor = maxTime / (width - 5 - barOffset);
 			
 			// draw axis
@@ -319,9 +318,6 @@
 			this.chartContainer.appendChild(svg);
 		},
 		
-		// TODO: Split out row, bar and axis drawing
-		// drawAxis
-		// drawRow()
 		/**
 		 * Draw bar for resource 
 		 * @param {object} entry Details of URL, and timings for individual resource
@@ -329,16 +325,12 @@
 		 * @param {int} rowHeight 
 		 * @param {double} scaleFactor Factor used to scale down chart elements
 		 * @returns {element} SVG Group element containing bar
-		 *
-		 * TODO: Scale bar using SVG transform? - any accuracy issues?
 		 */
 		drawBar: function(entry, barOffset, rowHeight, scaleFactor) {
-
 			var bar = this.svg.createSVGGroup("translate(" + barOffset + ", 0)");
 
 			bar.appendChild(this.svg.createSVGRect(entry.start / scaleFactor, 0, entry.duration / scaleFactor, rowHeight, "fill:" + this.barColors.blocked));
-
-			// TODO: Test for 3rd party and colour appropriately
+			
 			if(entry.redirectDuration > 0) {
 				bar.appendChild(this.svg.createSVGRect(entry.redirectStart / scaleFactor , 0, entry.redirectDuration / scaleFactor, rowHeight, "fill:" + this.barColors.redirect));
 			}
@@ -451,9 +443,7 @@
 				resources = window.performance.webkitGetEntriesByType("resource");
 			}
 			
-			// TODO: .length - 1 is a really hacky way of removing the bookmarklet script
-			// Do it by name???
-			for(var n = 0; n < resources.length - 1; n++) {
+			for(var n = 0; n < resources.length; n++) {
 				entries.push(this.createEntryFromResourceTiming(resources[n]));
 			}
 
@@ -467,8 +457,7 @@
 		 */
 		createEntryFromNavigationTiming: function() {
 			var timing = window.performance.timing;
-
-			// TODO: Add fetchStart and duration, fix TCP, SSL etc. timings
+			
 			return {
 				url:				document.URL,
 				start:				0,
@@ -496,7 +485,6 @@
 		 * @returns {object}
 		 */
 		createEntryFromResourceTiming: function(resource) {
-			// TODO: Add fetchStart and duration, fix TCP, SSL timings
 			// NB
 			// AppCache: start = fetchStart, end = domainLookupStart, connectStart or requestStart
 			// TCP: start = connectStart, end = secureConnectionStart or connectEnd
@@ -527,8 +515,6 @@
 		 * Shorten URLs over 40 characters
 		 * @param {string} url URL to be shortened
 		 * @returns {string} Truncated URL
-		 *
-		 * TODO: Remove protocol
 		 */
 		shortenURL: function(url) {
 			// Strip off any query string and fragment
