@@ -58,7 +58,7 @@ var ScalePerformanceBarClass = function() {
 		//*/
 		{
 			name:					"Performance Bookmarklet",
-			href:					"https://rawgit.com/scale-team/scale-perf/master/tools/performanceBookmarklet.js",
+			href:					"http://scale-team.github.io/scale-perf/tools/performanceBookmarklet.js",
 			requiresPerformanceApi:	true,
 			localHref:				"/tools/performanceBookmarklet.js",
 			onclick: function() {
@@ -71,7 +71,7 @@ var ScalePerformanceBarClass = function() {
 		},
 		{
 			name:					"Page load waterfall",
-			href:					"https://rawgit.com/scale-team/scale-perf/master/tools/waterfall.js",
+			href:					"http://scale-team.github.io/scale-perf/tools/waterfall.js",
 			requiresPerformanceApi:	true,
 			localHref:				"/tools/waterfall.js",
 			onclick: function() {
@@ -84,7 +84,7 @@ var ScalePerformanceBarClass = function() {
 		},
 		{
 			name:					"Picture load times",
-			href:					"https://rawgit.com/scale-team/scale-perf/master/tools/perfmap.js",
+			href:					"http://scale-team.github.io/scale-perf/tools/perfmap.js",
 			requiresPerformanceApi:	true,
 			localHref:				"/tools/perfmap.js",
 			onclick: function() {
@@ -103,7 +103,7 @@ var ScalePerformanceBarClass = function() {
 		},
 		{
 			name:	"Analyze page for tips",
-			href:	"https://rawgit.com/scale-team/scale-perf/master/tools/dommonster.js",
+			href:	"http://scale-team.github.io/scale-perf/tools/dommonster.js",
 			localHref:	"/tools/dommonster.js",
 			onclick:	function() {
 				addFunctionOnToolClose(function()
@@ -119,7 +119,7 @@ var ScalePerformanceBarClass = function() {
 		},
 		{
 			name:		"FPS display",
-			href:		"https://rawgit.com/scale-team/scale-perf/master/tools/stats.js",
+			href:		"http://scale-team.github.io/scale-perf/tools/stats.js",
 			localHref:	"/tools/stats.js",
 			onclick:	function() {
 				var displayStatsInterval = setInterval(function(){
