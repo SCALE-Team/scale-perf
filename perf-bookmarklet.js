@@ -1,5 +1,6 @@
 var ScalePerformanceBarClass = function() {
 	var superClass = this;
+	this.tools.superClass = this;
 	
 	// add all CSS styles
 	this.addStyles();
@@ -17,120 +18,6 @@ var ScalePerformanceBarClass = function() {
 		superClass.topBarContainer.style['transform'] = "translateY(0px)";
 		superClass.topBarContainer.style['-webkit-transform'] = "translateY(0px)";
 	}, 0);
-	
-	// All tool scripts to be included
-	superClass.scripts = [
-		{
-			name:					"Performance Bookmarklet",
-			href:					"https://scale-team.github.io/scale-perf/tools/performanceBookmarklet.js",
-			requiresPerformanceApi:	true,
-			localHref:				"/tools/performanceBookmarklet.js",
-			onclick: function() {
-				superClass.toolCloseHandler.add(function()
-				{
-					var waterfall = document.getElementById("perfbook-iframe");
-					waterfall.parentNode.removeChild(waterfall);
-				});
-			}
-		},
-		{
-			name:					"Page load waterfall",
-			href:					"https://scale-team.github.io/scale-perf/tools/waterfall.js",
-			requiresPerformanceApi:	true,
-			localHref:				"/tools/waterfall.js",
-			onclick: function() {
-				superClass.toolCloseHandler.add(function() {
-					var waterfall = document.getElementById("PerfWaterfallDiv");
-					waterfall.parentNode.removeChild(waterfall);
-				});
-			}
-		},
-		{
-			name:					"Picture load times",
-			href:					"https://scale-team.github.io/scale-perf/tools/perfmap.js",
-			requiresPerformanceApi:	true,
-			localHref:				"/tools/perfmap.js",
-			onclick: function() {
-				superClass.toolCloseHandler.add(function() {
-					var elems = document.getElementsByClassName("perfmap");
-					while(elems.length > 0)
-					{
-						elems[0].parentNode.removeChild(elems[0]);
-					}
-					
-					var perfmap = document.getElementById("perfmap");
-					perfmap.parentNode.removeChild(perfmap);
-				});
-			}
-		},
-		{
-			name:	"Analyze DOM tree",
-			href:	"https://scale-team.github.io/scale-perf/tools/dommonster.js",
-			localHref:	"/tools/dommonster.js",
-			onclick:	function() {
-				superClass.toolCloseHandler.add(function() {
-					var r = document.getElementById("jr_results");
-					r.parentNode.removeChild(r);
-				});
-				
-				cssElem.innerText += "#jr_stats { float: none !important; width: 100% !important; }";
-				cssElem.innerText += "#jr_stats > div { display: inline-block !important; width: 210px !important; }";
-				cssElem.innerText += "#jr_stats > div > div:first-child { width: 20px !important; height: 20px !important; margin-right: 5px !important; }";
-			}
-		},
-		{
-			name:		"FPS display",
-			href:		"https://scale-team.github.io/scale-perf/tools/stats.js",
-			localHref:	"/tools/stats.js",
-			onclick:	function() {
-				var displayStatsInterval = window.setInterval(function() {
-					if(typeof Stats == "function")
-					{
-						window.clearInterval(displayStatsInterval);
-						
-						var stats = new Stats();
-						stats.domElement.style.position = "fixed";
-						stats.domElement.style.left = "0px";
-						stats.domElement.style.top = "0px";
-						stats.domElement.style.zIndex = "10000";
-						body.appendChild(stats.domElement);
-						
-						// for the transition animation
-						stats.domElement.style.cssText += "transition:transform ease-out 0.3s; transform:translateY(-450px); -webkit-transition:-webkit-transform ease-out 0.3s; -webkit-transform:translateY(-450px);";
-						
-						setTimeout(function(){
-							stats.domElement.style.cssText += 'transform:translateY(30px); -webkit-transform:translateY(30px);';
-						}, 10);
-						
-						var interval = window.setInterval(function(){ stats.update(); }, 1000/60);
-						
-						superClass.toolCloseHandler.add(function()
-						{
-							body.removeChild(stats.domElement);
-							window.clearInterval(interval);
-						});
-					}
-				}, 100);
-			}
-		},
-		{
-			name:			"Help",
-			symbol:			"?",
-			pullToSymbols:	true,
-			url:			"https://github.com/SCALE-Team/scale-perf/blob/master/README.md#readme"	
-		},
-		{
-			name:			"Close",
-			symbol:			"X",
-			pullToSymbols:	true,
-			onclick: function() {
-				var bar = document.getElementById("PerfToolActiveBar");
-				
-				bar.superClass.topBarContainer.style.display = "none";
-				bar.superClass.avoidPageOverlapWithBar();
-			}
-		}
-	];
 	
 	var toolsMenu = document.createElement("div");
 	superClass.topBarContainer.appendChild(toolsMenu);
@@ -211,17 +98,17 @@ var ScalePerformanceBarClass = function() {
 					
 					if(typeof(elem.target._onToolStartTrigger) == "function")
 					{
-						elem.target._onToolStartTrigger();
+						elem.target._onToolStartTrigger(superClass);
 					}
 					
 					if(script.href == null && script.localHref == null) return;
 					
-					toolsMenu.style.display = "none";
+					superClass.topBarContainer.style.display = "none";
 					superClass.toolActiveBar.style.display = "block";
-					toolBarActiveTitle.innerHTML = script.name || script.symbol;
+					superClass.toolBarActiveTitle.innerHTML = script.name || script.symbol;
 					
 					// Add method to remove script after closing tool
-					superClass.toolCloseHandler.add(function() {
+					superClass.tools.onCloseTool(function() {
 						var scriptElem = document.getElementById('PerfScript' + index);
 						
 						scriptElem.parentNode.removeChild(scriptElem);
@@ -254,49 +141,8 @@ var ScalePerformanceBarClass = function() {
 		else toolsMenu.appendChild(link);
 	}
 	
-	/* Tool Active Bary */ {
-		superClass.toolActiveBar = document.createElement("div");
-		superClass.toolActiveBar.id = "PerfToolActiveBar";
-		superClass.toolActiveBar.superClass = this;
-		body.appendChild(superClass.toolActiveBar);
-		
-		var symbolsBlockInToolActiveBar = document.createElement("div");
-		symbolsBlockInToolActiveBar.className = "perf-symbols";
-		superClass.toolActiveBar.appendChild(symbolsBlockInToolActiveBar);
-		
-		// Add back button
-		var toolBarActiveBackButton = document.createElement("a");
-		toolBarActiveBackButton.className = "perfToolBackButton";
-		toolBarActiveBackButton.innerHTML = "< ";
-		toolBarActiveBackButton.onclick = function(){
-			superClass.topBarContainer.style.display = "block";
-			closeToolActiveBar.click();
-		};
-		superClass.toolActiveBar.appendChild(toolBarActiveBackButton);
-		
-		// Add title bar
-		var toolBarActiveTitle = document.createElement("span");
-		toolBarActiveTitle.id = "PerfToolTitle";
-		toolBarActiveTitle.innerHTML = "Nice tool";
-		toolBarActiveBackButton.appendChild(toolBarActiveTitle);
-		
-		// Add close button
-		var symbolsBlockInToolActiveBar = document.createElement("div");
-		symbolsBlockInToolActiveBar.className = "perf-symbols";
-		superClass.toolActiveBar.appendChild(symbolsBlockInToolActiveBar);
-		
-		var closeToolActiveBar = document.createElement("a");
-		closeToolActiveBar.innerHTML = "X";
-		closeToolActiveBar.onclick = function() {
-			//alert(22);
-			superClass.toolActiveBar.style.display = "none";
-			
-			superClass.toolCloseHandler.execute();
-			
-			superClass.avoidPageOverlapWithBar();
-		};
-		symbolsBlockInToolActiveBar.appendChild(closeToolActiveBar);
-	}
+	// Add the tool-active bar
+	superClass.tools.addToolActiveBar();
 	
 	superClass.show();
 };
@@ -304,12 +150,130 @@ var ScalePerformanceBarClass = function() {
 ScalePerformanceBarClass.prototype = {
 	topBarContainer:	null,
 	oldBodyPaddingTop:	0,
+	style:				null,
+	
+	// All tool scripts to be included
+	scripts: [
+		{
+			name:					"Performance Bookmarklet",
+			href:					"https://scale-team.github.io/scale-perf/tools/performanceBookmarklet.js",
+			requiresPerformanceApi:	true,
+			localHref:				"/tools/performanceBookmarklet.js",
+			onclick: function(superClass) {
+				superClass.tools.onCloseTool(function()
+				{
+					var waterfall = document.getElementById("perfbook-iframe");
+					waterfall.parentNode.removeChild(waterfall);
+				});
+			}
+		},
+		{
+			name:					"Page load waterfall",
+			href:					"https://scale-team.github.io/scale-perf/tools/waterfall.js",
+			requiresPerformanceApi:	true,
+			localHref:				"/tools/waterfall.js",
+			onclick: function(superClass) {
+				superClass.tools.onCloseTool(function() {
+					var waterfall = document.getElementById("PerfWaterfallDiv");
+					waterfall.parentNode.removeChild(waterfall);
+				});
+			}
+		},
+		{
+			name:					"Picture load times",
+			href:					"https://scale-team.github.io/scale-perf/tools/perfmap.js",
+			requiresPerformanceApi:	true,
+			localHref:				"/tools/perfmap.js",
+			onclick: function(superClass) {
+				superClass.tools.onCloseTool(function() {
+					var elems = document.getElementsByClassName("perfmap");
+					while(elems.length > 0)
+					{
+						elems[0].parentNode.removeChild(elems[0]);
+					}
+					
+					var perfmap = document.getElementById("perfmap");
+					perfmap.parentNode.removeChild(perfmap);
+				});
+			}
+		},
+		{
+			name:	"Analyze DOM tree",
+			href:	"https://scale-team.github.io/scale-perf/tools/dommonster.js",
+			localHref:	"/tools/dommonster.js",
+			onclick:	function(superClass) {
+				superClass.tools.onCloseTool(function() {
+					var r = document.getElementById("jr_results");
+					r.parentNode.removeChild(r);
+				});
+				
+				// Add some styles
+				superClass.style.innerText += "#jr_stats { float: none !important; width: 100% !important; }";
+				superClass.style.innerText += "#jr_stats > div { display: inline-block !important; width: 210px !important; }";
+				superClass.style.innerText += "#jr_stats > div > div:first-child { width: 20px !important; height: 20px !important; margin-right: 5px !important; }";
+			}
+		},
+		{
+			name:		"FPS display",
+			href:		"https://scale-team.github.io/scale-perf/tools/stats.js",
+			localHref:	"/tools/stats.js",
+			onclick:	function(superClass) {
+				var body = document.getElementsByTagName("body")[0];
+				
+				var displayStatsInterval = window.setInterval(function() {
+					if(typeof Stats == "function")
+					{
+						window.clearInterval(displayStatsInterval);
+						
+						var stats = new Stats();
+						stats.domElement.style.position = "fixed";
+						stats.domElement.style.left = "0px";
+						stats.domElement.style.top = "0px";
+						stats.domElement.style.zIndex = "10000";
+						body.appendChild(stats.domElement);
+						
+						// for the transition animation
+						stats.domElement.style.cssText += "transition:transform ease-out 0.3s; transform:translateY(-450px); -webkit-transition:-webkit-transform ease-out 0.3s; -webkit-transform:translateY(-450px);";
+						
+						setTimeout(function(){
+							stats.domElement.style.cssText += 'transform:translateY(30px); -webkit-transform:translateY(30px);';
+						}, 10);
+						
+						var interval = window.setInterval(function(){ stats.update(); }, 1000/60);
+						
+						superClass.tools.onCloseTool(function()
+						{
+							body.removeChild(stats.domElement);
+							window.clearInterval(interval);
+						});
+					}
+				}, 100);
+			}
+		},
+		{
+			name:			"Help",
+			symbol:			"?",
+			pullToSymbols:	true,
+			url:			"https://github.com/SCALE-Team/scale-perf/blob/master/README.md#readme"	
+		},
+		{
+			name:			"Close",
+			symbol:			"X",
+			pullToSymbols:	true,
+			onclick: function(superClass) {
+				var bar = document.getElementById("PerfToolActiveBar");
+				
+				bar.superClass.topBarContainer.style.display = "none";
+				bar.superClass.avoidPageOverlapWithBar();
+			}
+		}
+	],
 	
 	addStyles: function() {
 		var head = document.head || document.getElementsByTagName('head')[0];
 		
-		var cssElem = document.createElement("style");
-		cssElem.id = "PerfBookmarkletStyle";
+		this.style = document.createElement("style");
+		this.style.id = "PerfBookmarkletStyle";
 		var style = "#PerfBar, #PerfToolActiveBar { font-family: Arial !important; font-size: 14px !important; z-index: 1000000; color: #fff; position: fixed; top: 0px; left: 0px; width: 100%; background-color: #000; box-shadow: 0px 0px 5px #000; }";
 		style += "#PerfBar { transition:transform ease-out 0.3s; transform:translateY(-450px); -webkit-transition:-webkit-transform ease-out 0.3s; -webkit-transform:translateY(-450px); }";
 		style += "#PerfBar #Perf-logo { height: 20px; }";
@@ -343,8 +307,8 @@ ScalePerformanceBarClass.prototype = {
 		style += "#PerfToolTitle { font-weight: bold; }";
 		style += "#PerfToolActiveBar .perfToolBackButton { font-weight: bold; }";
 
-		cssElem.innerHTML = style;
-		head.appendChild(cssElem);
+		this.style.innerHTML = style;
+		head.appendChild(this.style);
 	},
 	
 	isLocal: function() {
@@ -378,14 +342,64 @@ ScalePerformanceBarClass.prototype = {
 		body.style.paddingTop = (this.oldBodyPaddingTop + this.topBarContainerHeight) + "px";
 	},
 	
-	toolCloseHandler: {
-		_onCloseTool: [],
+	tools: {
+		superClass:		null,
+		_onCloseTool:	[],
 		
-		add: function(func) {
+		addToolActiveBar: function() {
+			var superClass = this.superClass;
+			
+			var body = document.getElementsByTagName("body")[0];		
+			
+			/* Tool Active Bar */ {
+				superClass.toolActiveBar = document.createElement("div");
+				superClass.toolActiveBar.id = "PerfToolActiveBar";
+				superClass.toolActiveBar.superClass = superClass;
+				body.appendChild(superClass.toolActiveBar);
+				
+				var symbolsBlockInToolActiveBar = document.createElement("div");
+				symbolsBlockInToolActiveBar.className = "perf-symbols";
+				superClass.toolActiveBar.appendChild(symbolsBlockInToolActiveBar);
+				
+				// Add back button
+				var toolBarActiveBackButton = document.createElement("a");
+				toolBarActiveBackButton.className = "perfToolBackButton";
+				toolBarActiveBackButton.innerHTML = "< ";
+				toolBarActiveBackButton.onclick = function(){
+					superClass.topBarContainer.style.display = "block";
+					closeToolActiveBar.click();
+				};
+				superClass.toolActiveBar.appendChild(toolBarActiveBackButton);
+				
+				// Add title bar
+				superClass.toolBarActiveTitle = document.createElement("span");
+				superClass.toolBarActiveTitle.id = "PerfToolTitle";
+				superClass.toolBarActiveTitle.innerHTML = "Nice tool";
+				toolBarActiveBackButton.appendChild(superClass.toolBarActiveTitle);
+				
+				// Add close button
+				var symbolsBlockInToolActiveBar = document.createElement("div");
+				symbolsBlockInToolActiveBar.className = "perf-symbols";
+				superClass.toolActiveBar.appendChild(symbolsBlockInToolActiveBar);
+				
+				var closeToolActiveBar = document.createElement("a");
+				closeToolActiveBar.innerHTML = "X";
+				closeToolActiveBar.onclick = function() {
+					superClass.toolActiveBar.style.display = "none";
+					
+					superClass.tools.executeOnCloseTool();
+					
+					superClass.avoidPageOverlapWithBar();
+				};
+				symbolsBlockInToolActiveBar.appendChild(closeToolActiveBar);
+			}
+		},
+		
+		onCloseTool: function(func) {
 			this._onCloseTool.push(func);
 		},
 		
-		execute: function(func) {
+		executeOnCloseTool: function(func) {
 			while(this._onCloseTool.length > 0)
 			{
 				var func = this._onCloseTool.pop();
