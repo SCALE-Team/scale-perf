@@ -469,15 +469,6 @@ if(iFrameEl){
 		}
 	}, "position:absolute; margin-bottom:1em; z-index: 9999; width:100%; top:0px; left:0px; border:0; box-shadow:0 0 25px 0 rgba(0,0,0,0.5); background:#fff;");
 	document.body.appendChild(iFrameEl);
-	
-	//* SCALE perf bookmarklet extension
-	// for the transition animation
-	iFrameEl.style.cssText += "-webkit-transition:-webkit-transform ease-out 0.3s; -webkit-transform:translateY(-1450px);";
-	
-	setTimeout(function(){
-		iFrameEl.style.cssText += '-webkit-transform:translateY(30px)';
-	}, 10);
-	//*/
 }
 
 onIFrameLoaded(function(helper, dom, svg){
