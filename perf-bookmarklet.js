@@ -10,6 +10,7 @@ var ScalePerformanceBarClass = function() {
 	cssElem.id = "PerfBookmarkletStyle";
 	var style = "#PerfBar, #PerfToolActiveBar { z-index: 1000000; color: #fff; position: fixed; top: 0px; left: 0px; width: 100%; background-color: #000; box-shadow: 0px 0px 5px #000; }";
 	style += "#PerfBar { transition:transform ease-out 0.3s; transform:translateY(-450px); -webkit-transition:-webkit-transform ease-out 0.3s; -webkit-transform:translateY(-450px); }";
+	style += "#PerfBar #Perf-logo { height: 20px; }";
 	style += "#PerfToolActiveBar { display: none; }";
 	style += "#PerfBar > div, { padding-right: 50px; }";
 	style += "#PerfBar > div a, #PerfToolActiveBar a { display: inline-block; cursor: pointer; text-decoration: none !important; color: #fff !important; display: inline-block; padding: 5px; }";
@@ -22,7 +23,8 @@ var ScalePerformanceBarClass = function() {
 	style += "#PerfBar .perfCloseSeparator { display: none; }";
 	style += "@media (max-width: 768px) {";
 		style += "#PerfBar { height: auto !important; }";
-		style += "#PerfBar >div { padding: 0px; }";
+		style += "#PerfBar #Perf-logo { display: none; }";
+		style += "#PerfBar > div { padding: 0px; }";
 		style += "#PerfBar > div a { width:	100%; }";
 		style += "#PerfBar .perfSeparator { display: none; }";
 		style += "#PerfBar .perf-symbols { display: block; width: 100% !important; text-align: left !important; position: static !important; }";
@@ -216,6 +218,11 @@ var ScalePerformanceBarClass = function() {
 	var symbolsBlock = document.createElement("div");
 	symbolsBlock.className = "perf-symbols";
 	superClass.topBarContainer.appendChild(symbolsBlock);
+	
+	var logo = document.createElement("img");
+	logo.id = "Perf-logo";
+	logo.src = "images/logo_scale_inverted.png";
+	symbolsBlock.appendChild(logo);
 	
 	var maxIndex = (superClass.scripts.length - 1);
 	
