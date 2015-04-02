@@ -277,9 +277,11 @@
 			var width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
 			var height = (entriesToShow.length + 1) * (rowHeight + rowPadding); // +1 for axis
 			
-			this.toolContainer.style.width = width;
+			width -= 25;
 			
-			this.chartContainer.style.width = width;
+			this.toolContainer.style.width = "100%";
+			
+			this.chartContainer.style.width = "100%";
 			this.chartContainer.style.height = height;
 			
 			var svg = this.svg.createSVG(width, height);
