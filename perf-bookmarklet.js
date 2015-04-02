@@ -56,12 +56,6 @@ var ScalePerformanceBarClass = function() {
 	superClass.topBarContainer.appendChild(topBar);
 
 	superClass.scripts = [
-		/*
-		{
-			name:	"Original",
-			href:	"//stevesouders.com/mobileperf/mobileperfbkm.js"
-		},
-		//*/
 		{
 			name:					"Performance Bookmarklet",
 			href:					"https://scale-team.github.io/scale-perf/tools/performanceBookmarklet.js",
@@ -149,13 +143,11 @@ var ScalePerformanceBarClass = function() {
 						
 						var interval = setInterval(function(){ stats.update(); }, 1000/60);
 						
-						//* SCALE perf bookmarklet extension
 						addFunctionOnToolClose(function()
 						{
 							body.removeChild(stats.domElement);
 							clearInterval(interval);
 						});
-						//*/
 					}
 				}, 100);
 			}
@@ -164,43 +156,7 @@ var ScalePerformanceBarClass = function() {
 			name:			"Help",
 			symbol:			"?",
 			pullToSymbols:	true,
-			url:			"https://github.com/SCALE-Team/scale-perf/blob/master/README.md#readme"		
-			/*
-			onclick: function() {
-				//self.location.href = "https://github.com/SCALE-Team/scale-perf/blob/master/README.md#readme";
-				
-				var jselem = document.createElement("script");
-				jselem.type = "text/javascript";
-				jselem.src = "https://scale-team.github.io/scale-perf/markdown.min.js";
-				jselem.onload = function() {
-					xmlhttp.onreadystatechange = function()
-					{
-						if (xmlhttp.readyState==4 && xmlhttp.status==200)
-						{
-							document.getElementById("myDiv").innerHTML=xmlhttp.responseText;
-						}
-					}
-					
-					xmlhttp.open("GET", "ajax_info.txt",true);
-					xmlhttp.send();
-				};
-				body.appendChild(jselem);
-				
-				
-				return;
-				
-				var iframe = document.createElement("iframe");
-				iframe.src = "https://github.com/SCALE-Team/scale-perf/blob/master/README.md#readme";
-				body.appendChild(iframe);
-				
-				// For the transition animation
-				iframe.style.cssText += "transition:transform ease-out 0.3s; transform:translateY(-450px); -webkit-transition:-webkit-transform ease-out 0.3s; -webkit-transform:translateY(-450px);";
-				
-				setTimeout(function(){
-					iframe.style.cssText += '-webkit-transform:translateY(30px); transform:translateY(30px);';
-				}, 10);
-			}
-			//*/
+			url:			"https://github.com/SCALE-Team/scale-perf/blob/master/README.md#readme"	
 		},
 		{
 			name:			"Close",
