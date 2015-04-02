@@ -96,6 +96,7 @@
 				
 				var linkElem = document.getElementById("DesktopLink");
 				linkElem.href = 'javascript:' + scriptLoadFunction + '; scriptLoadFunction();';
+				linkElem.href = linkElem.href.replace(new RegExp("\n", 'g'), "");
 				document.getElementById("MobileLink").href = "#" + linkElem.href;
 			})();
 			
