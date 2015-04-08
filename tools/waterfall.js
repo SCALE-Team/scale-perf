@@ -1,9 +1,21 @@
 (function() {
-	function Waterfall() {
+	function Waterfall(conf) {
 		// Check for Navigation Timing and Resource Timing APIs
 		if(window.performance == null || (window.performance.getEntriesByType == null && window.performance.webkitGetEntriesByType == null))
 		{
 			alert("Resource Timing API not supported");
+			return;
+		}
+		
+		conf = conf||{};
+		
+		// Remmeber configs
+		this.getPageLoadTime = conf.getPageLoadTime;
+		
+		// look for erros
+		if(typeof(this.getPageLoadTime) != "function")
+		{
+			alert("Waterfall.js: config.getPageLoadTime must be set in constructor!");
 			return;
 		}
 		
@@ -355,20 +367,6 @@
 			return bar;
 		},
 		
-		getPageLoadTime: function(entries) {
-			var pageLoadTime = 0;
-			for(var f in entries)
-			{
-				var entry = entries[f];
-				
-				if((entry.start - pageLoadTime) >= 2000) break;
-				
-				pageLoadTime = entry.start + entry.duration;
-			}
-			
-			return Math.round(pageLoadTime);
-		},
-		
 		filterEntries: function(entries) {
 			//this.chartContainer = document.getElementById("ChartContainer");
 			this.chartContainer.innerHTML = "";
@@ -420,7 +418,7 @@
 			}
 			
 			/* SCALE bookmarklet extension */ {
-				resources = scalePerformanceBar.helpers.filterRessources(resources);
+				resources = scalePerformanceBar.helpers.removeOwnSourcesFromRessources(resources);
 			}
 			
 			for(var n = 0; n < resources.length; n++) {
@@ -609,5 +607,5 @@
 		}
 	};
 	
-	new Waterfall();
+	new Waterfall({ getPageLoadTime: scalePerformanceBar.helpers.getPageLoadTimeFromRessources });
 })();
