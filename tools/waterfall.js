@@ -312,7 +312,7 @@
 
 				var row = this.svg.createSVGGroup("translate(0," + (n + 1) * (rowHeight + rowPadding) + ")");
 
-				row.appendChild(this.svg.createSVGText(5, 0, 0, rowHeight, "font: 10px sans-serif;", "start", this.shortenURL(entry.url)));
+				row.appendChild(this.svg.createSVGText(5, 0, 0, rowHeight, "font: 10px sans-serif;", "start", this.shortenURL(entry.url), entry.url));
 
 				row.appendChild(this.drawBar(entry, barOffset, rowHeight, scaleFactor));
 
@@ -387,8 +387,15 @@
 				
 				if(allowed != null && allowed.length > 0 && allowed.indexOf(ending) == -1) continue;
 				if(notAllowed != null && notAllowed.length > 0 && notAllowed.indexOf(ending) != -1) continue;
-				if(searchText.length > 0 && url.indexOf(searchText) == -1) continue;
 				if(timeSpan > 0 && startTime > timeSpan) continue;
+				if(searchText.length > 0 && url.indexOf(searchText) == -1) continue;
+				/*
+				else
+				{
+					entries[f].url = url.replace(searchText, "<b>" + searchText + "</b>");
+					console.log(url);
+				}
+				//*/
 				
 				filteredEntries.push(entries[f]);
 			}
@@ -590,7 +597,7 @@
 			 * @param {string} text
 			 * @returns {element} SVG Text element
 			 */
-			createSVGText: function(x, y, dx, dy, style, anchor, text) {
+			createSVGText: function(x, y, dx, dy, style, anchor, text, title) {
 				var el = document.createElementNS(this.xmlns, "text");
 
 				el.setAttribute("x", x);
@@ -599,6 +606,7 @@
 				el.setAttribute("dy", dy);
 				el.setAttribute("style", style);
 				el.setAttribute("text-anchor", anchor);
+				if(title != null) el.setAttribute("title", title);
 
 				el.appendChild(document.createTextNode(text));
 
