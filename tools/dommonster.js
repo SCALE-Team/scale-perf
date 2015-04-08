@@ -544,6 +544,11 @@
             prop, found = [],
             clean, iframe = document.createElement('iframe');
         iframe.style.display = 'none';
+		
+		/* SCALE bookmarklet extension */ {
+			iframe.className = "dommonster_iframe";
+		}
+		
         iframe.src = 'about:blank';
         document.body.appendChild(iframe);
         clean = iframe.contentWindow;

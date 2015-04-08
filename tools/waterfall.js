@@ -239,7 +239,6 @@
 			superClass.chartContainer = document.createElement("div");
 			superClass.chartContainer.id = "ChartContainer";
 			superClass.chartContainer.data = {
-				filesToHide:	[ "perf-bookmarklet.js", "tools/dommonster.js", "tools/perfmap.js", "tools/performanceBookmarklet.js", "tools/stats.js", "tools/waterfall.js" ],
 				allowed:		[],
 				nowAllowed:		[],
 				searchText:		"",
@@ -378,7 +377,6 @@
 			var notAllowed = this.chartContainer.data.notAllowed;
 			var searchText = this.chartContainer.data.searchText;
 			var timeSpan = this.chartContainer.data.timeSpan;
-			var filesToHide = this.chartContainer.data.filesToHide;
 			
 			// Filter entries
 			var filteredEntries = [];
@@ -393,22 +391,6 @@
 				if(notAllowed != null && notAllowed.length > 0 && notAllowed.indexOf(ending) != -1) continue;
 				if(searchText.length > 0 && url.indexOf(searchText) == -1) continue;
 				if(timeSpan > 0 && startTime > timeSpan) continue;
-				if(filesToHide != null)
-				{
-					var hideThis = false;
-					for(var g in filesToHide)
-					{
-						var hideMe = filesToHide[g];
-						
-						if(url.length >= hideMe.length && hideMe == url.substr(url.length - hideMe.length))
-						{
-							hideThis = true;
-							break;
-						}
-					}
-					
-					if(hideThis) continue;
-				}
 				
 				filteredEntries.push(entries[f]);
 			}
@@ -435,6 +417,10 @@
 			}
 			else if(window.performance.webkitGetEntriesByType !== undefined) {
 				resources = window.performance.webkitGetEntriesByType("resource");
+			}
+			
+			/* SCALE bookmarklet extension */ {
+				resources = scalePerformanceBar.helpers.filterRessources(resources);
 			}
 			
 			for(var n = 0; n < resources.length; n++) {

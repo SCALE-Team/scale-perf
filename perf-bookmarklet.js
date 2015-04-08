@@ -80,10 +80,12 @@ ScalePerformanceBarClass.prototype = {
 				superClass.tools.onCloseTool(function() {
 					var r = document.getElementById("jr_results");
 					r.parentNode.removeChild(r);
+					
+					var iframe = document.getElementsByClassName("dommonster_iframe")[0];
+					iframe.parentNode.removeChild(iframe);
 				});
 				
 				// Add some styles
-				//superClass.styleElem.innerHTML += "#jr_stats { opacity: ; }";
 				superClass.styleElem.innerHTML += "#jr_stats { float: none !important; width: 100% !important; top:	-450px; }";
 				superClass.styleElem.innerHTML += "#jr_stats > div { display: inline-block !important; width: 210px !important; }";
 				superClass.styleElem.innerHTML += "#jr_stats > div > div:first-child { width: 20px !important; height: 20px !important; margin-right: 5px !important; }";
@@ -509,6 +511,35 @@ ScalePerformanceBarClass.prototype = {
 					window.clearInterval(interval);
 				}
 			}, 10);
+		},
+		
+		filesToHide: [ "perf-bookmarklet.js", "tools/dommonster.js", "tools/perfmap.js", "tools/performanceBookmarklet.js", "tools/stats.js", "tools/waterfall.js" ],
+		filterRessources: function(ressources) {
+			var filteredRessources = [];
+			
+			for(var f in ressources)
+			{
+				var r = ressources[f];
+				var url = r.url || r.name;
+				
+				var hideThis = false;
+				for(var g in this.filesToHide)
+				{
+					var hideMe = this.filesToHide[g];
+					
+					if(url.length >= hideMe.length && hideMe == url.substr(url.length - hideMe.length))
+					{
+						hideThis = true;
+						break;
+					}
+				}
+				
+				if(hideThis) continue;
+				
+				filteredRessources.push(r);
+			}
+			
+			return filteredRessources;
 		}
 	}
 };
