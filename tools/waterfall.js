@@ -247,14 +247,6 @@
 			};
 			superClass.toolContainer.appendChild(superClass.chartContainer);
 			
-			/* For the transition animation */ {
-				superClass.toolContainer.style.cssText += "transition:transform ease-out 0.3s; transform:translateY(-450px); -webkit-transition:-webkit-transform ease-out 0.3s; -webkit-transform:translateY(-450px);";
-				
-				setTimeout(function(){
-					superClass.toolContainer.style.cssText += '-webkit-transform:translateY(30px); transform:translateY(30px);';
-				}, 10);
-			}
-			
 			superClass.drawAllBars(entries);
 		},
 		

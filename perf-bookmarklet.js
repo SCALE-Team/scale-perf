@@ -28,22 +28,14 @@ ScalePerformanceBarClass.prototype = {
 			requiresPerformanceApi:	true,
 			localHref:				"/tools/performanceBookmarklet.js",
 			onclick: function(superClass) {
-				superClass.tools.onCloseTool(function()
-				{
+				superClass.tools.onCloseTool(function() {
 					var waterfall = document.getElementById("perfbook-iframe");
 					waterfall.parentNode.removeChild(waterfall);
 				});
 				
-				var displayStatsInterval = window.setInterval(function() {
-					var iframe = document.getElementById("perfbook-iframe");
-					
-					if(iframe != null)
-					{
-						superClass.helpers.animate(iframe, 30);
-						
-						window.clearInterval(displayStatsInterval);
-					}
-				}, 10);
+				superClass.helpers.waitForExist("perfbook-iframe", function(elem) {
+					superClass.helpers.animate(elem, 1000, 30);
+				});
 			}
 		},
 		{
@@ -55,6 +47,10 @@ ScalePerformanceBarClass.prototype = {
 				superClass.tools.onCloseTool(function() {
 					var waterfall = document.getElementById("PerfWaterfallDiv");
 					waterfall.parentNode.removeChild(waterfall);
+				});
+				
+				superClass.helpers.waitForExist("PerfWaterfallDiv", function(elem) {
+					superClass.helpers.animate(elem, 450, 30);
 				});
 			}
 		},
@@ -87,9 +83,14 @@ ScalePerformanceBarClass.prototype = {
 				});
 				
 				// Add some styles
-				superClass.styleElem.innerHTML += "#jr_stats { float: none !important; width: 100% !important; }";
+				//superClass.styleElem.innerHTML += "#jr_stats { opacity: ; }";
+				superClass.styleElem.innerHTML += "#jr_stats { float: none !important; width: 100% !important; top:	-450px; }";
 				superClass.styleElem.innerHTML += "#jr_stats > div { display: inline-block !important; width: 210px !important; }";
 				superClass.styleElem.innerHTML += "#jr_stats > div > div:first-child { width: 20px !important; height: 20px !important; margin-right: 5px !important; }";
+				
+				superClass.helpers.waitForExist("jr_results", function(elem) {
+					superClass.helpers.animate(elem, 450, 30);
+				});
 			}
 		},
 		{
@@ -112,7 +113,7 @@ ScalePerformanceBarClass.prototype = {
 						body.appendChild(stats.domElement);
 						
 						// for the transition animation
-						superClass.helpers.animate(stats.domElement, 30);
+						superClass.helpers.animate(stats.domElement, 100, 30);
 						
 						var interval = window.setInterval(function(){ stats.update(); }, 1000/60);
 						
@@ -205,7 +206,7 @@ ScalePerformanceBarClass.prototype = {
 			body.appendChild(menu.bar);
 			
 			// For the transition animation
-			superClass.helpers.animate(menu.bar);
+			superClass.helpers.animate(menu.bar, 30);
 			
 			/* Build the scaffold for the bar */ {
 				// Container for the tool links
@@ -483,19 +484,31 @@ ScalePerformanceBarClass.prototype = {
 			body.style.paddingTop = (superClass.helpers.oldBodyPaddingTop + superClass.menu.barHeight) + "px";
 		},
 		
-		animate: function(elem, endPosition) {
+		animate: function(elem, height, endPosition) {
 			endPosition = endPosition||0;
 			
-			elem.style['transition'] = "transform ease-out 0.3s";
-			elem.style['transform'] = "translateY(-450px)";
-			elem.style['-webkit-transition'] = "-webkit-transform ease-out 0.3s";
-			elem.style['-webkit-transform'] = "translateY(-450px)";
+			elem.style.opacity = 0;
+			elem.style.top = -height + "px";
+			elem.style.transition = elem.style['-webkit-transition'] = "top ease-out 0.5s, opacity ease-out 0.5s";
 			
 			// async execution to let it happen after current function executed
 			setTimeout(function() {
-				elem.style['transform'] = "translateY(" + endPosition + "px)";
-				elem.style['-webkit-transform'] = "translateY(" + endPosition + "px)";
+				elem.style.opacity = 1;
+				elem.style.top = endPosition + "px";
 			}, 0);
+		},
+		
+		waitForExist: function(elemId, callback) {
+			var interval = window.setInterval(function() {
+				var element = document.getElementById(elemId);
+				
+				if(element != null)
+				{
+					callback(element);
+					
+					window.clearInterval(interval);
+				}
+			}, 10);
 		}
 	}
 };
