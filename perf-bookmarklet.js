@@ -129,7 +129,7 @@ ScalePerformanceBarClass.prototype = {
 			name:			"Help",
 			symbol:			"?",
 			pullToSymbols:	true,
-			url:			"https://github.com/SCALE-Team/scale-perf/blob/master/README.md#readme"	
+			url:			"https://github.com/SCALE-Team/scale-perf/blob/master/README.md#readme"
 		},
 		{
 			name:			"Close",
@@ -277,6 +277,7 @@ ScalePerformanceBarClass.prototype = {
 				}
 				else
 				{
+					link.href = "javascript:;";
 					link.onclick = menu._onLinkClick;
 				}
 				
@@ -312,7 +313,7 @@ ScalePerformanceBarClass.prototype = {
 			this.superClass.helpers.avoidPageOverlapWithBar();
 		},
 		
-		// Show the menu bar
+		// Hide the menu bar
 		hide: function() {
 			this.bar.style.display = "none";
 			this.superClass.helpers.avoidPageOverlapWithBar();
@@ -393,10 +394,14 @@ ScalePerformanceBarClass.prototype = {
 				// Add back button
 				var toolBarActiveBackButton = document.createElement("a");
 				toolBarActiveBackButton.className = "perfToolBackButton";
+				toolBarActiveBackButton.href = "javascript:;";
 				toolBarActiveBackButton.innerHTML = "< ";
-				toolBarActiveBackButton.onclick = function(){
-					superClass.menu.bar.style.display = "block";
-					close.click();
+				toolBarActiveBackButton.onclick = function() {
+					// Show menu bar
+					superClass.menu.show();
+					
+					// Trigger close of tool-active bar
+					close.onclick();
 				};
 				tools.bar.appendChild(toolBarActiveBackButton);
 				
@@ -412,6 +417,7 @@ ScalePerformanceBarClass.prototype = {
 				tools.bar.appendChild(symbolsBlock);
 				
 				var close = document.createElement("a");
+				close.href = "javascript:;";
 				close.innerHTML = "X";
 				close.onclick = function() {
 					tools.hide();
