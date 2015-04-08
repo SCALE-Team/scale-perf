@@ -87,9 +87,9 @@ ScalePerformanceBarClass.prototype = {
 				});
 				
 				// Add some styles
-				superClass.styleElem.innerText += "#jr_stats { float: none !important; width: 100% !important; }";
-				superClass.styleElem.innerText += "#jr_stats > div { display: inline-block !important; width: 210px !important; }";
-				superClass.styleElem.innerText += "#jr_stats > div > div:first-child { width: 20px !important; height: 20px !important; margin-right: 5px !important; }";
+				superClass.styleElem.innerHTML += "#jr_stats { float: none !important; width: 100% !important; }";
+				superClass.styleElem.innerHTML += "#jr_stats > div { display: inline-block !important; width: 210px !important; }";
+				superClass.styleElem.innerHTML += "#jr_stats > div > div:first-child { width: 20px !important; height: 20px !important; margin-right: 5px !important; }";
 			}
 		},
 		{
