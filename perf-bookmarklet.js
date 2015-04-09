@@ -32,15 +32,8 @@ ScalePerformanceBarClass.prototype = {
 			href:					"https://scale-team.github.io/scale-perf/tools/performanceBookmarklet.js",
 			requiresPerformanceApi:	true,
 			localHref:				"/tools/performanceBookmarklet.js",
-			onclick: function(superClass) {
-				superClass.tools.oncloseTool(function() {
-					var iframe = document.getElementById("perfbook-iframe");
-					if(iframe != null) iframe.parentNode.removeChild(iframe);
-				});
-				
-				superClass.helpers.waitForElementExist("perfbook-iframe", function(elem) {
-					superClass.helpers.animate(elem, 1000, 30);
-				});
+			onload: function(superClass) {
+				superClass.tools.activeTool = new PerfBookmarklet();
 			}
 		},
 		{

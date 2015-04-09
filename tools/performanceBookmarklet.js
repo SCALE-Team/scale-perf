@@ -1,3 +1,15 @@
+var PerfBookmarklet = function() {
+	return {
+		/* SCALE performance tool IO functions */
+			containerId:		"perfbook-iframe",
+			isContainerFixed:	false,
+			onclose: function() {
+				var iframe = document.getElementById(this.containerId);
+				iframe.parentNode.removeChild(iframe);
+			}
+	};
+};
+
 /*https://github.com/micmro/performance-bookmarklet
  by Michael Mrowetz @MicMro*/
 
@@ -473,7 +485,7 @@ if(iFrameEl){
 			
 			triggerEvent(window, "iFrameLoaded");
 		}
-	}, "position:absolute; margin-bottom:1em; z-index: 9999; width:100%; top:0px; left:0px; border:0; box-shadow:0 0 25px 0 rgba(0,0,0,0.5); background:#fff;");
+	}, "position:absolute; margin-bottom:1em; z-index: 9999; width:100%;left:0px; border:0; box-shadow:0 0 25px 0 rgba(0,0,0,0.5); background:#fff;");
 	document.body.appendChild(iFrameEl);
 }
 
