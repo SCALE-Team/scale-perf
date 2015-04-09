@@ -7,6 +7,8 @@ var ScalePerformanceBarClass = function() {
 	// add all CSS styles
 	this.addStyles();
 	
+	this.putPageContentsToDiv();
+	
 	// Add the menu
 	this.menu.addBar();
 	
@@ -184,9 +186,34 @@ ScalePerformanceBarClass.prototype = {
 		style += "}";
 		style += "#PerfToolTitle { font-weight: bold; }";
 		style += "#ToolsActiveBar .perfToolBackButton { font-weight: bold; }";
+		
+		style += "#ScalePageContent { position: absolute; left:	0px; top: 0px; width: 100%; }";
 
 		this.styleElem.innerHTML = style;
 		head.appendChild(this.styleElem);
+	},
+	
+	putPageContentsToDiv: function() {
+		var body = document.getElementsByTagName("body")[0];
+		
+		this.pageContent = document.createElement("div");
+		this.pageContent.id = "ScalePageContent";
+		
+		for(var i = (body.childNodes.length - 1); i>=0; i--)
+		{
+			if(body.childNodes[i].nodeName == "SCRIPT") continue;
+			if(body.childNodes[i].id == "ScalePerfLoadingHint") continue;
+			if(body.childNodes[i].id == "PerfBar") continue;
+			if(body.childNodes[i].id == "ToolsActiveBar") continue;
+			
+			console.log(i, body.childNodes[i]);
+			console.log(i, body.childNodes[i].nodeName);
+			
+			if(this.pageContent.childNodes.length == 0) this.pageContent.appendChild(body.childNodes[i]);
+			else this.pageContent.insertBefore(body.childNodes[i], this.pageContent.firstChild);
+		}
+		
+		body.appendChild(this.pageContent);
 	},
 	
 	menu: {
@@ -209,6 +236,7 @@ ScalePerformanceBarClass.prototype = {
 			
 			// For the transition animation
 			superClass.helpers.animate(menu.bar, 30);
+			superClass.helpers.animate(superClass.pageContent, null, 30);
 			
 			/* Build the scaffold for the bar */ {
 				// Container for the tool links
@@ -464,33 +492,26 @@ ScalePerformanceBarClass.prototype = {
 			return ((self.location+"").split("http://").pop().split("/")[0] == "localhost");
 		},
 		
-		oldBodyPaddingTop:	0,
 		avoidPageOverlapWithBar: function() {
 			var superClass = this.superClass;
 			
 			var body = document.getElementsByTagName("body")[0];
 			
-			if(superClass.helpers.oldBodyPaddingTop != 0)
-			{
-				body.style.paddingTop = superClass.helpers.oldBodyPaddingTop.split("px")[0] * 1.0;
-				
-				superClass.helpers.oldBodyPaddingTop = 0;
-			}
-			
 			superClass.menu.barHeight = Math.max(superClass.menu.bar.offsetHeight, superClass.tools.bar.offsetHeight);
 			
-			// Detect and remember the current padding of the page
-			superClass.helpers.oldBodyPaddingTop = body.offsetTop * 1.0;
-			
 			// move the page to the right place
-			body.style.paddingTop = (superClass.helpers.oldBodyPaddingTop + superClass.menu.barHeight) + "px";
+			superClass.pageContent.style.top = (superClass.menu.barHeight) + "px";
 		},
 		
 		animate: function(elem, height, endPosition) {
 			endPosition = endPosition||0;
 			
-			elem.style.opacity = 0;
-			elem.style.top = -height + "px";
+			if(height != null)
+			{
+				elem.style.opacity = 0;
+				elem.style.top = -height + "px";
+			}
+			
 			elem.style.transition = elem.style['-webkit-transition'] = "top ease-out 0.5s, opacity ease-out 0.5s";
 			
 			// async execution to let it happen after current function executed
