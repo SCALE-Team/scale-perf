@@ -50,17 +50,8 @@ ScalePerformanceBarClass.prototype = {
 			href:					"https://scale-team.github.io/scale-perf/tools/perfmap.js",
 			requiresPerformanceApi:	true,
 			localHref:				"/tools/perfmap.js",
-			onclick: function(superClass) {
-				superClass.tools.oncloseTool(function() {
-					var elems = document.getElementsByClassName("perfmap");
-					while(elems.length > 0)
-					{
-						elems[0].parentNode.removeChild(elems[0]);
-					}
-					
-					var perfmap = document.getElementById("perfmap");
-					perfmap.parentNode.removeChild(perfmap);
-				});
+			onload: function(superClass) {
+				superClass.tools.activeTool = new PerfMap();
 			}
 		},
 		{
