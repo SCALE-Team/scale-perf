@@ -16,7 +16,10 @@ var ScalePerformanceBarClass = function() {
 	this.tools.addBar();
 	
 	// show the menu
-	this.menu.show();
+	var superClass = this;
+	window.setTimeout(function(){
+		superClass.menu.show();
+	}, 0);
 };
 
 ScalePerformanceBarClass.prototype = {
@@ -141,10 +144,8 @@ ScalePerformanceBarClass.prototype = {
 			symbol:			"X",
 			pullToSymbols:	true,
 			onclick: function(superClass) {
-				var bar = document.getElementById("ToolsActiveBar");
-				
-				bar.superClass.menu.bar.style.display = "none";
-				bar.superClass.helpers.avoidPageOverlapWithBar();
+				superClass.menu.hide();
+				//superClass.helpers.avoidPageOverlapWithBar();
 			}
 		}
 	],
@@ -155,9 +156,8 @@ ScalePerformanceBarClass.prototype = {
 		this.styleElem = document.createElement("style");
 		this.styleElem.id = "PerfBookmarkletStyle";
 		
-		var style = "#PerfBar, #ToolsActiveBar { font-family: Arial !important; font-size: 14px !important; z-index: 1000000; color: #fff; position: fixed; top: 0px; left: 0px; width: 100%; background-color: #000; box-shadow: 0px 0px 5px #000; }";
+		var style = "#PerfBar, #ToolsActiveBar { font-family: Arial !important; font-size: 14px !important; z-index: 1000000; color: #fff; position: fixed; top: -40px; left: 0px; width: 100%; background-color: #000; box-shadow: 0px 0px 5px #000; }";
 		style += "#PerfBar #Perf-logo { height: 20px; }";
-		style += "#ToolsActiveBar { display: none; }";
 		style += "#PerfBar a, #ToolsActiveBar a { display: inline-block; cursor: pointer; text-decoration: none !important; color: #fff !important; display: inline-block; padding: 5px; }";
 		style += "#PerfBar a:hover, #ToolsActiveBar a:hover { background-color: red !important; }";
 		style += "#PerfBar a.disabled { color: #555 !important; cursor: default; }";
@@ -187,7 +187,10 @@ ScalePerformanceBarClass.prototype = {
 		style += "#PerfToolTitle { font-weight: bold; }";
 		style += "#ToolsActiveBar .perfToolBackButton { font-weight: bold; }";
 		
-		style += "#ScalePageContent { position: absolute; left:	0px; top: 0px; width: 100%; }";
+		style += "#ScalePageContent { position: absolute; left: 0px; top: 0px; width: 100%; }";
+		
+		style += "#PerfBar, #ToolsActiveBar { transition: top ease-out 0.5s, opacity ease-out 0.5s; -webkit-transition: top ease-out 0.5s, opacity ease-out 0.5s; }";
+		style += "#ScalePageContent { transition: top ease-out 0.5s, opacity ease-out 0.5s; -webkit-transition: top ease-out 0.5s, opacity ease-out 0.5s; }";
 
 		this.styleElem.innerHTML = style;
 		head.appendChild(this.styleElem);
@@ -205,9 +208,6 @@ ScalePerformanceBarClass.prototype = {
 			if(body.childNodes[i].id == "ScalePerfLoadingHint") continue;
 			if(body.childNodes[i].id == "PerfBar") continue;
 			if(body.childNodes[i].id == "ToolsActiveBar") continue;
-			
-			console.log(i, body.childNodes[i]);
-			console.log(i, body.childNodes[i].nodeName);
 			
 			if(this.pageContent.childNodes.length == 0) this.pageContent.appendChild(body.childNodes[i]);
 			else this.pageContent.insertBefore(body.childNodes[i], this.pageContent.firstChild);
@@ -233,10 +233,6 @@ ScalePerformanceBarClass.prototype = {
 			menu.bar.id = "PerfBar";
 			menu.bar.superClass = superClass;
 			body.appendChild(menu.bar);
-			
-			// For the transition animation
-			superClass.helpers.animate(menu.bar, 30);
-			superClass.helpers.animate(superClass.pageContent, null, 30);
 			
 			/* Build the scaffold for the bar */ {
 				// Container for the tool links
@@ -340,14 +336,14 @@ ScalePerformanceBarClass.prototype = {
 		
 		// Show the menu bar
 		show: function() {
-			this.bar.style.display = "block";
-			this.superClass.helpers.avoidPageOverlapWithBar();
+			this.bar.style.top = 0;
+			this.superClass.pageContent.style.top = 30;
 		},
 		
 		// Hide the menu bar
 		hide: function() {
-			this.bar.style.display = "none";
-			this.superClass.helpers.avoidPageOverlapWithBar();
+			this.bar.style.top = -40;
+			this.superClass.pageContent.style.top = 0;
 		},
 		
 		_onLinkClick: function(e) {
@@ -397,7 +393,7 @@ ScalePerformanceBarClass.prototype = {
 				jselem.parentNode.removeChild(jselem);
 			});
 			
-			superClass.helpers.avoidPageOverlapWithBar();
+			//superClass.helpers.avoidPageOverlapWithBar();
 		}
 	},
 	
@@ -455,7 +451,7 @@ ScalePerformanceBarClass.prototype = {
 					
 					superClass.tools.executeOnCloseTool();
 					
-					superClass.helpers.avoidPageOverlapWithBar();
+					//superClass.helpers.avoidPageOverlapWithBar();
 				};
 				symbolsBlock.appendChild(close);
 			}
@@ -463,14 +459,19 @@ ScalePerformanceBarClass.prototype = {
 		
 		// Show the tools bar
 		show: function() {
-			this.bar.style.display = "block";
-			this.superClass.helpers.avoidPageOverlapWithBar();
+			var superClass = this.superClass;
+			
+			this.bar.style.top = 0;
+			
+			var h1 = (superClass.menu.bar != null ? superClass.menu.bar.offsetHeight : 0);
+			var h2 = (superClass.tools.bar != null ? superClass.tools.bar.offsetHeight : 0);
+			
+			this.superClass.pageContent.style.top = Math.max(h1, h2);
 		},
 		
 		// Hide the tools bar
 		hide: function() {
-			this.bar.style.display = "none";
-			this.superClass.helpers.avoidPageOverlapWithBar();
+			this.bar.style.top = -40;
 		},
 		
 		onCloseTool: function(func) {
@@ -492,16 +493,20 @@ ScalePerformanceBarClass.prototype = {
 			return ((self.location+"").split("http://").pop().split("/")[0] == "localhost");
 		},
 		
+		/*
 		avoidPageOverlapWithBar: function() {
 			var superClass = this.superClass;
 			
 			var body = document.getElementsByTagName("body")[0];
 			
-			superClass.menu.barHeight = Math.max(superClass.menu.bar.offsetHeight, superClass.tools.bar.offsetHeight);
+			var h1 = (superClass.menu.bar != null ? superClass.menu.bar.offsetHeight : 0);
+			var h2 = (superClass.tools.bar != null ? superClass.tools.bar.offsetHeight : 0);
+			superClass.menu.barHeight = Math.max(h1, h2);
 			
 			// move the page to the right place
 			superClass.pageContent.style.top = (superClass.menu.barHeight) + "px";
 		},
+		//*/
 		
 		animate: function(elem, height, endPosition) {
 			endPosition = endPosition||0;
