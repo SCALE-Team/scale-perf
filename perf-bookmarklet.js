@@ -71,26 +71,11 @@ ScalePerformanceBarClass.prototype = {
 			}
 		},
 		{
-			name:	"Analyze DOM tree",
-			href:	"https://scale-team.github.io/scale-perf/tools/dommonster.js",
+			name:		"Analyze DOM tree",
+			href:		"https://scale-team.github.io/scale-perf/tools/dommonster.js",
 			localHref:	"/tools/dommonster.js",
-			onclick:	function(superClass) {
-				superClass.tools.oncloseTool(function() {
-					var jrResults = document.getElementById("jr_results");
-					if(jrResults != null) jrResults.parentNode.removeChild(jrResults);
-					
-					var iframe = document.getElementsByClassName("dommonster_iframe")[0];
-					if(iframe != null) iframe.parentNode.removeChild(iframe);
-				});
-				
-				// Add some styles
-				superClass.styleElem.innerHTML += "#jr_stats { float: none !important; width: 100% !important; top:	-450px; }";
-				superClass.styleElem.innerHTML += "#jr_stats > div { display: inline-block !important; width: 210px !important; }";
-				superClass.styleElem.innerHTML += "#jr_stats > div > div:first-child { width: 20px !important; height: 20px !important; margin-right: 5px !important; }";
-				
-				superClass.helpers.waitForElementExist("jr_results", function(elem) {
-					superClass.helpers.animate(elem, 450, 30);
-				});
+			onload: function(superClass) {
+				superClass.tools.activeTool = new DomMonster();
 			}
 		},
 		{
@@ -98,10 +83,7 @@ ScalePerformanceBarClass.prototype = {
 			href:		"https://scale-team.github.io/scale-perf/tools/stats.js",
 			localHref:	"/tools/stats.js",
 			onload: function(superClass) {
-				var body = document.getElementsByTagName("body")[0];
-				
 				superClass.tools.activeTool = new Stats();
-				body.appendChild(superClass.tools.activeTool.domElement);
 			}
 		},
 		{

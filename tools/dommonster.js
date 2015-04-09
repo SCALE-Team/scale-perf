@@ -1,3 +1,36 @@
+var DomMonster = function() {
+	return {
+		styleElem: null,
+		
+		/* SCALE performance tool IO functions */
+			containerId:		"jr_results",
+			isContainerFixed:	false,
+			onload: function() {
+				this.jrResults = document.getElementById("jr_results");
+				
+				// Add some styles
+				this.styleElem = document.createElement("style");
+				this.styleElem.id = "DomMonsterStyle";
+				this.styleElem.innerHTML = "";
+				this.styleElem.innerHTML += "#jr_stats { float: none !important; width: 100% !important; }";
+				this.styleElem.innerHTML += "#jr_stats > div { display: inline-block !important; width: 210px !important; }";
+				this.styleElem.innerHTML += "#jr_stats > div > div:first-child { width: 20px !important; height: 20px !important; margin-right: 5px !important; }";
+				
+				var body = document.getElementsByTagName("body")[0];
+				body.appendChild(this.styleElem);
+			},
+			onclose: function() {
+				var jrResults = document.getElementById(this.containerId);
+				jrResults.parentNode.removeChild(jrResults);
+				
+				var iframe = document.getElementsByClassName("dommonster_iframe")[0];
+				iframe.parentNode.removeChild(iframe);
+				
+				this.styleElem.parentNode.removeChild(this.styleElem);
+			}
+	};
+};
+
 (function() {
     var JR = {
         Version: '1.3.2'
@@ -665,7 +698,7 @@
             node = document.createElement('div');
         node.id = 'jr_results';
         body.appendChild(node);
-        node.style.cssText = JR.reset + ';width:100%;text-align:left;z-index:999999;letter-spacing:0;position:fixed;top:0px;' + 'color:#444;';
+        node.style.cssText = JR.reset + ';width:100%;text-align:left;z-index:999999;letter-spacing:0;position:fixed;' + 'color:#444;';
         node.innerHTML = '<div id="jr_results_tips" style="' + JR.reset + 'max-height:400px;padding:5px;overflow:auto;background:#fff;border-top:1px solid #000;box-shadow: 1px 0px 5px #000;">' + '<div style="' + JR.reset + 'height:23px;font-size:16px;font-weight:normal;margin-top:0px;margin-bottom:5px;color:#444">' + '<div style="' + JR.reset + 'float:left;padding:5px 0px 3px 5px" id="jr_results_prognosis_container">' + '<span id="jr_results_prognosis" style="' + JR.reset + '"></span> ' + '<span style="' + JR.reset + 'font-size:12px;font-weight:normal" id="jr_results_warnings_container"><span id="jr_results_warnings" style="' + JR.reset + '"></span></span>' + '</div></div>' + '<div style="' + JR.reset + 'float:left;width:220px;padding:4px;margin-top:2px;" id="jr_stats">' + '</div>' + '</div>';
         JR.flush();
     }, 10);

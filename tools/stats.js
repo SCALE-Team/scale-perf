@@ -128,6 +128,9 @@ var Stats = function () {
 				stats.domElement.style.visibility = "hidden";
 				stats.domElement.style.zIndex = "10000";
 				
+				var body = document.getElementsByTagName("body")[0];
+				body.appendChild(stats.domElement);
+				
 				stats.interval = window.setInterval(function(){ stats.update(); }, 1000/60);
 			},
 			onclose: function() {
