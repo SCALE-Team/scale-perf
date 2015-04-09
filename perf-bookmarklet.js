@@ -514,12 +514,12 @@ ScalePerformanceBarClass.prototype = {
 		},
 		
 		filesToHide: [ "perf-bookmarklet.js", "tools/dommonster.js", "tools/perfmap.js", "tools/performanceBookmarklet.js", "tools/stats.js", "tools/waterfall.js" ],
-		removeOwnSourcesFromRessources: function(ressources) {
-			var filteredRessources = [];
+		removeOwnSourcesFromResources: function(resources) {
+			var filteredResources = [];
 			
-			for(var f in ressources)
+			for(var f in resources)
 			{
-				var r = ressources[f];
+				var r = resources[f];
 				var url = r.url || r.name;
 				
 				var hideThis = false;
@@ -536,21 +536,21 @@ ScalePerformanceBarClass.prototype = {
 				
 				if(hideThis) continue;
 				
-				filteredRessources.push(r);
+				filteredResources.push(r);
 			}
 			
-			return filteredRessources;
+			return filteredResources;
 		},
 		
-		getPageLoadTimeFromRessources: function(ressources) {
+		getPageLoadTimeFromResources: function(resources) {
 			var pageLoadTime = 0;
-			for(var f in ressources)
+			for(var f in resources)
 			{
-				var ressource = ressources[f];
+				var resource = resources[f];
 				
-				if((ressource.start - pageLoadTime) >= 2000) break;
+				if((resource.start - pageLoadTime) >= 2000) break;
 				
-				pageLoadTime = ressource.start + ressource.duration;
+				pageLoadTime = resource.start + resource.duration;
 			}
 			
 			return Math.round(pageLoadTime);

@@ -425,7 +425,7 @@
 			}
 			
 			/* SCALE bookmarklet extension */ {
-				resources = scalePerformanceBar.helpers.removeOwnSourcesFromRessources(resources);
+				resources = scalePerformanceBar.helpers.removeOwnSourcesFromResources(resources);
 			}
 			
 			for(var n = 0; n < resources.length; n++) {
@@ -615,5 +615,5 @@
 		}
 	};
 	
-	new Waterfall({ getPageLoadTime: scalePerformanceBar.helpers.getPageLoadTimeFromRessources });
+	new Waterfall({ getPageLoadTime: scalePerformanceBar.helpers.getPageLoadTimeFromResources });
 })();

@@ -326,9 +326,9 @@ if(window.performance && window.performance.getEntriesByType !== undefined) {
 }
 
 /* SCALE bookmarklet extension */ {
-	data.resources = scalePerformanceBar.helpers.removeOwnSourcesFromRessources(data.resources);
-	data.marks = scalePerformanceBar.helpers.removeOwnSourcesFromRessources(data.marks);
-	data.measures = scalePerformanceBar.helpers.removeOwnSourcesFromRessources(data.measures);
+	data.resources = scalePerformanceBar.helpers.removeOwnSourcesFromResources(data.resources);
+	data.marks = scalePerformanceBar.helpers.removeOwnSourcesFromResources(data.marks);
+	data.measures = scalePerformanceBar.helpers.removeOwnSourcesFromResources(data.measures);
 }
 
 if(window.performance.timing){

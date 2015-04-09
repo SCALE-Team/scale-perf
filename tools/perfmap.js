@@ -173,7 +173,7 @@ var legend = "<div style='width:16.666666667%; height: 50px; float:left; backgro
 if(hasFirstPaint == 1){
 	legend += "<div style='position:absolute; z-index:3; left:" + firstPaintLeft + "%; padding-top:5px; border-left:2px solid white;padding-left:5px;height:100%;color:#fff;'>First Paint " + parseInt(firstPaint) + "ms</div></div>";
 }
-perfmap.style.cssText = "position: fixed; width:100%; bottom:0; left:0; z-index:5000; height: 25px; color:#fff; font-family:\"Helvetica Neue\",sans-serif; font-size:14px; font-weight:800; line-height:14px;";
+perfmap.style.cssText = "position: fixed; width:100%; bottom:0; left:0; z-index:10000; height: 25px; color:#fff; font-family:\"Helvetica Neue\",sans-serif; font-size:14px; font-weight:800; line-height:14px;";
 perfmap.innerHTML = legend;
 document.body.appendChild(perfmap);
 
