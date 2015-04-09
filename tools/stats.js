@@ -118,7 +118,24 @@ var Stats = function () {
 	};
 
 	return {
-
+		/* SCALE performance tool IO functions */
+			containerId:		"stats",
+			isContainerFixed:	true,
+			onload: function() {
+				var stats = this;
+				stats.domElement.style.position = "fixed";
+				stats.domElement.style.left = "0px";
+				stats.domElement.style.visibility = "hidden";
+				stats.domElement.style.zIndex = "10000";
+				
+				stats.interval = window.setInterval(function(){ stats.update(); }, 1000/60);
+			},
+			onclose: function() {
+				this.domElement.parentNode.removeChild(this.domElement);
+				
+				window.clearInterval(this.interval);
+			},
+		
 		REVISION: 12,
 
 		domElement: container,

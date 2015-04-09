@@ -431,11 +431,11 @@ var triggerEvent = function(element, name){
 
 var onIFrameLoaded = (function(){
 	var hasLoaded = false;
-	var callOnLoad = [];
+	var callonload = [];
 	var onIFrameLoadedCb = function(){
 		hasLoaded = true;
 		window.removeEventListener("iFrameLoaded", onIFrameLoadedCb, false);
-		callOnLoad.forEach(function(cb){
+		callonload.forEach(function(cb){
 			cb(helper, dom, svg);
 		})
 	};
@@ -444,7 +444,7 @@ var onIFrameLoaded = (function(){
 		if(hasLoaded){
 			cb(helper, dom, svg);
 		}else{
-			callOnLoad.push(cb);
+			callonload.push(cb);
 		}
 	};
 })();
@@ -1389,7 +1389,7 @@ onIFrameLoaded(function(helper, dom, svgs){
 		resourceSectionSegment("Response", calc.responseStart, calc.responseEnd, "#1977dd"),
 		resourceSectionSegment("DOM Processing", calc.domLoading, calc.domComplete, "#9cc"),
 		resourceSectionSegment("domContentLoaded Event", calc.domContentLoadedEventStart, calc.domContentLoadedEventEnd, "#d888df"),
-		resourceSectionSegment("Onload Event", calc.loadEventStart, calc.loadEventEnd, "#c0c0ff")
+		resourceSectionSegment("onload Event", calc.loadEventStart, calc.loadEventEnd, "#c0c0ff")
 	];
 
 	if(calc.secureConnectionStart){
