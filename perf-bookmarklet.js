@@ -336,14 +336,14 @@ ScalePerformanceBarClass.prototype = {
 		
 		// Show the menu bar
 		show: function() {
-			this.bar.style.top = 0;
-			this.superClass.pageContent.style.top = 30;
+			this.bar.style.top = "0px";
+			this.superClass.pageContent.style.top = "30px";
 		},
 		
 		// Hide the menu bar
 		hide: function() {
-			this.bar.style.top = -40;
-			this.superClass.pageContent.style.top = 0;
+			this.bar.style.top = "-40px";
+			this.superClass.pageContent.style.top = "0px";
 		},
 		
 		_onLinkClick: function(e) {
@@ -461,17 +461,17 @@ ScalePerformanceBarClass.prototype = {
 		show: function() {
 			var superClass = this.superClass;
 			
-			this.bar.style.top = 0;
+			this.bar.style.top = "0px";
 			
 			var h1 = (superClass.menu.bar != null ? superClass.menu.bar.offsetHeight : 0);
 			var h2 = (superClass.tools.bar != null ? superClass.tools.bar.offsetHeight : 0);
 			
-			this.superClass.pageContent.style.top = Math.max(h1, h2);
+			this.superClass.pageContent.style.top = Math.max(h1, h2) + "px";
 		},
 		
 		// Hide the tools bar
 		hide: function() {
-			this.bar.style.top = -40;
+			this.bar.style.top = "-40px";
 		},
 		
 		onCloseTool: function(func) {
