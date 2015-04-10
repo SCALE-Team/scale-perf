@@ -355,19 +355,11 @@ ScalePerformanceBarClass.prototype = {
 			}
 			
 			document.getElementsByTagName("body")[0].appendChild(jselem);
-			
-			// Add method to remove script after closing tool
-			superClass.tools.oncloseTool(function() {
-				jselem.parentNode.removeChild(jselem);
-			});
-			
-			//superClass.helpers.avoidPageOverlapWithBar();
 		}
 	},
 	
 	tools: {
 		superClass:		null,
-		_oncloseTool:	[],
 		bar:			null,
 		
 		addBar: function() {
@@ -455,18 +447,6 @@ ScalePerformanceBarClass.prototype = {
 			var superClass = this.superClass;
 			
 			this.bar.style.top = (-this.bar.offsetHeight - 10) + "px";
-		},
-		
-		oncloseTool: function(func) {
-			this._oncloseTool.push(func);
-		},
-		
-		executeoncloseTool: function(func) {
-			while(this._oncloseTool.length > 0)
-			{
-				var func = this._oncloseTool.pop();
-				func();
-			}
 		},
 		
 		_onActiveToolLoaded: [],
