@@ -92,7 +92,7 @@ ScalePerformanceBarClass.prototype = {
 		this.styleElem = document.createElement("style");
 		this.styleElem.id = "PerfBookmarkletStyle";
 		
-		var style = "#PerfBar, #ToolsActiveBar { font-family: Arial !important; font-size: 14px !important; z-index: 1000000; color: #fff; position: fixed; top: -40px; left: 0px; width: 100%; background-color: #000; box-shadow: 0px 0px 5px #000; }";
+		var style = "#PerfBar, #ToolsActiveBar { font-family: Arial !important; font-size: 14px !important; z-index: 1000000; color: #fff; position: fixed; top: -30px; left: 0px; width: 100%; background-color: #000; box-shadow: 0px 0px 5px #000; }";
 		style += "#PerfBar #Perf-logo { height: 20px; }";
 		style += "#PerfBar a, #ToolsActiveBar a { display: inline-block; cursor: pointer; text-decoration: none !important; color: #fff !important; display: inline-block; padding: 5px; }";
 		style += "#PerfBar a:hover, #ToolsActiveBar a:hover { background-color: red !important; }";
@@ -108,7 +108,7 @@ ScalePerformanceBarClass.prototype = {
 		
 		style += "#PerfBar .perfSymbolsSeparator { display: none; }";
 		style += "@media (max-width: 768px) {";
-			style += "#PerfBar { height: auto !important; }";
+			style += "#PerfBar { height: auto !important; top: -250px; }";
 			style += "#PerfBar #Perf-logo { display: none; }";
 			style += "#PerfBar { padding: 0px; }";
 			style += "#PerfBar a { width:	100%; }";
