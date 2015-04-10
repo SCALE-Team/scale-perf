@@ -38,6 +38,8 @@ Waterfall.prototype = {
 		onclose: function() {
 			var waterfall = document.getElementById(this.containerId);
 			if(waterfall != null) waterfall.parentNode.removeChild(waterfall);
+			
+			this.cssElem.parentNode.removeChild(this.cssElem);
 		},
 		
 	
@@ -56,8 +58,8 @@ Waterfall.prototype = {
 	addStyles: function() {
 		var head = document.head || document.getElementsByTagName('head')[0];
 
-		var cssElem = document.createElement("style");
-		cssElem.id = "PerfBookmarkletStyle";
+		this.cssElem = document.createElement("style");
+		this.cssElem.id = "ScaleWaterfallStyle";
 		var style = "#" + this.containerId + " { background: #fff; border-bottom: 2px solid #000; margin: 5px; position: absolute; visibility: hidden; left: 0px; z-index: 99999; margin: 0px; padding: 5px 0px 10px 0px; }";
 		style += "#" + this.containerId + " input, #" + this.containerId + " button { outline: none; border-radius: 5px; padding: 5px; border: 1px solid #ccc; }";
 		style += "#" + this.containerId + " button { background-color: #ddd; padding: 5px 10px; }";
@@ -86,8 +88,8 @@ Waterfall.prototype = {
 		style += "#" + this.containerId + " .button-group :first-child { border-radius: 5px 0px 0px 5px; }";
 		style += "#" + this.containerId + " .button-group :last-child { border-radius: 0px 5px 5px 0px; border-right: 1px solid #ccc; }";
 
-		cssElem.innerHTML = style;
-		head.appendChild(cssElem);
+		this.cssElem.innerHTML = style;
+		head.appendChild(this.cssElem);
 	},
 	
 	/**
