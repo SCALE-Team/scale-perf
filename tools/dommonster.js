@@ -98,7 +98,7 @@ var DomMonster = function() {
     };
     JR.flush = function(string) {
         var results = $('jr_results_tips'),
-            html = '<div style="' + JR.reset + ';Xmargin-left:230px;padding-top:4px">';
+            html = '<div style="' + JR.reset + ';padding-top:4px">';
 
         function flushArray(array) {
             for (var i = 0; i < array.length; i++)
