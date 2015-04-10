@@ -119,6 +119,8 @@ ScalePerformanceBarClass.prototype = {
 			style += "#PerfBar .perf-symbols .symbol { display: none; }";
 			style += "#PerfBar .perf-symbols .fullName { display: block !important; }";
 			style += "#PerfBar .perfSymbolsSeparator { display: block; }";
+			
+			style += "#ScalePageContent, #PerfBar, #ToolsActiveBar, .scaleToolContainer { transition: none !important; } ";
 		style += "}";
 		style += "#PerfToolTitle { font-weight: bold; }";
 		style += "#ToolsActiveBar .perfToolBackButton { font-weight: bold; }";
@@ -245,6 +247,7 @@ ScalePerformanceBarClass.prototype = {
 						superClass.tools.onActiveToolLoaded(function() {
 							// Wait for the tool container to exist and afterwards move the page content down
 							superClass.helpers.waitForElementExist(superClass.tools.activeTool.containerId, function(containerElem) {
+								containerElem.className += " scaleToolContainer";
 								containerElem.style.top = -containerElem.offsetHeight + "px";
 								containerElem.style.visibility = "visible";
 								containerElem.style.transition = containerElem.style['-webkit-transition'] = "top ease-out 0.5s, opacity ease-out 0.5s";
@@ -325,36 +328,40 @@ ScalePerformanceBarClass.prototype = {
 			menu.hide();
 			tools.show();
 			
-			// Set teh tools-bar title
+			// Set the tools-bar title
 			superClass.toolBarActiveTitle.innerHTML = script.name || script.symbol;
 			
-			// Load specified script
-			var jselem = document.createElement("script");
-			jselem.id = "PerfScript";
-			jselem.type = "text/javascript";
-			
-			// Decide whether to load local or public script
-			if(superClass.helpers.isLocal() && script.localHref != null)
-			{
-				jselem.src = script.localHref;
-			}
-			else
-			{
-				jselem.src = script.href;
-			}
-			
-			if(script.onload != null)
-			{
-				jselem.onload = function() {
-					script.onload(superClass);
-					
-					if(tools.activeTool.onload != null) tools.activeTool.onload();
-					
-					tools.executeOnActiveToolLoaded();
+			var loadScript = function() {
+				// Load specified script
+				var jselem = document.createElement("script");
+				jselem.id = "PerfScript";
+				jselem.type = "text/javascript";
+				
+				// Decide whether to load local or public script
+				if(superClass.helpers.isLocal() && script.localHref != null)
+				{
+					jselem.src = script.localHref;
 				}
-			}
+				else
+				{
+					jselem.src = script.href;
+				}
+				
+				if(script.onload != null)
+				{
+					jselem.onload = function() {
+						script.onload(superClass);
+						
+						if(tools.activeTool.onload != null) tools.activeTool.onload();
+						
+						tools.executeOnActiveToolLoaded();
+					}
+				}
+				
+				document.getElementsByTagName("body")[0].appendChild(jselem);
+			};
 			
-			document.getElementsByTagName("body")[0].appendChild(jselem);
+			loadScript();
 		}
 	},
 	
