@@ -3,7 +3,7 @@
  */
 
 var Stats = function () {
-	var height = 60;
+	var height = 70;
 	var padding = 3;
 	var bars = Math.max(screen.availWidth, screen.availHeight); // height cause of mobile screens that can be turned
 	
@@ -232,14 +232,13 @@ var Stats = function () {
 		},
 
 		end: function () {
-
 			var time = Date.now();
-
+			
 			ms = time - startTime;
 			msMin = Math.min( msMin, ms );
 			msMax = Math.max( msMax, ms );
 
-			msText.textContent = ms + ' MS (' + msMin + '-' + msMax + ')';
+			msText.textContent = ms + ' MS (min ' + msMin + ', max ' + msMax + ')';
 			//var msBarHeight = Math.min( height, height - ( ms / 200 ) * height );
 			var msBarHeight = height - ms;
 			updateGraph( msGraph, msBarHeight );
@@ -259,7 +258,7 @@ var Stats = function () {
 				fpsMax = Math.max( fpsMax, fps );
 				
 				// Set new text
-				fpsText.textContent = fps + ' FPS (' + fpsMin + '-' + fpsMax + ')';
+				fpsText.textContent = fps + ' FPS (min ' + fpsMin + ', max ' + fpsMax + ')';
 				
 				// draw the graph bar
 				//var fsBarHeight = Math.min( height, height - ( fps / 100 ) * height );
