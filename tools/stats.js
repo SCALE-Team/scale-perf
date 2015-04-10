@@ -5,12 +5,14 @@
 var Stats = function () {
 	var height = 60;
 	var padding = 3;
-	var bars = screen.availWidth;
+	var bars = Math.max(screen.availWidth, screen.availHeight); // height cause of mobile screens that can be turned
 	
 	var startTime = Date.now(), prevTime = startTime;
 	var ms = 0, msMin = Infinity, msMax = 0;
 	var fps = 0, fpsMin = Infinity, fpsMax = 0;
 	var frames = 0, mode = 0;
+	
+	var body = document.getElementsByTagName("body")[0];
 
 	var container = document.createElement( 'div' );
 	container.id = 'stats';
@@ -18,6 +20,7 @@ var Stats = function () {
 	container.style.cursor = "pointer";
 	container.style.opacity = "0.9";
 	container.style.width = "100%";
+	body.appendChild(container);
 	
 	var fpsDiv = document.createElement( 'div' );
 	fpsDiv.id = 'fps';
@@ -26,14 +29,41 @@ var Stats = function () {
 	fpsDiv.style.padding = "0px 0px 3px 3px";
 	container.appendChild( fpsDiv );
 	
-	var body = document.getElementsByTagName("body")[0];
-	body.appendChild(container);
-
+	var fpsMinLine = document.createElement( 'div' );
+	fpsMinLine.style.position = 'absolute';
+	fpsMinLine.style.height = '16px';
+	fpsMinLine.style.bottom = (30 + padding - 16) + 'px';
+	fpsMinLine.style.left = fpsMinLine.style.right = '3px';
+	fpsMinLine.style["z-index"] = '10';
+	fpsMinLine.style["border-top"] = '1px solid red';
+	fpsMinLine.style.lineHeight = '15px';
+	fpsMinLine.style.fontWeight = 'bold';
+	fpsMinLine.style.fontSize = '9px';
+	fpsMinLine.style.fontFamily = "Helvetica,Arial,sans-serif";
+	fpsMinLine.style.color = "red";
+	fpsMinLine.innerHTML = '30 FPS';
+	fpsDiv.appendChild( fpsMinLine );
+	
+	var fpsMaxLine = document.createElement( 'div' );
+	fpsMaxLine.style.position = 'absolute';
+	fpsMaxLine.style.height = '16px';
+	fpsMaxLine.style.bottom = (60 + padding - 16) + 'px';
+	fpsMaxLine.style.left = fpsMaxLine.style.right = '3px';
+	fpsMaxLine.style["z-index"] = '10';
+	fpsMaxLine.style["border-top"] = '1px solid green';
+	fpsMaxLine.style.lineHeight = '15px';
+	fpsMaxLine.style.fontWeight = 'bold';
+	fpsMaxLine.style.fontSize = '9px';
+	fpsMaxLine.style.fontFamily = "Helvetica,Arial,sans-serif";
+	fpsMaxLine.style.color = "green";
+	fpsMaxLine.innerHTML = '60 FPS';
+	fpsDiv.appendChild( fpsMaxLine );
+	
 	var fpsText = document.createElement( 'div' );
 	fpsText.id = 'fpsText';
 	fpsText.style.lineHeight = '15px';
 	fpsText.style.fontWeight = 'bold';
-	fpsText.style.fontSize = '9px';
+	fpsText.style.fontSize = '12px';
 	fpsText.style.fontFamily = "Helvetica,Arial,sans-serif";
 	fpsText.style.color = "#0ff";
 	fpsText.innerHTML = 'FPS';
@@ -75,13 +105,43 @@ var Stats = function () {
 	msDiv.style.textAlign = 'left';
 	msDiv.style.padding = '0px 0px 3px 3px';
 	container.appendChild( msDiv );
+	
+	var msMinLine = document.createElement( 'div' );
+	msMinLine.style.position = 'absolute';
+	msMinLine.style.height = '16px';
+	msMinLine.style.bottom = (padding + 33 - 16) + 'px';
+	msMinLine.style.left = msMinLine.style.right = '3px';
+	msMinLine.style["z-index"] = '10';
+	msMinLine.style["border-top"] = '1px solid red';
+	msMinLine.style.lineHeight = '15px';
+	msMinLine.style.fontWeight = 'bold';
+	msMinLine.style.fontSize = '9px';
+	msMinLine.style.fontFamily = "Helvetica,Arial,sans-serif";
+	msMinLine.style.color = "red";
+	msMinLine.innerHTML = '30 FPS';
+	msDiv.appendChild( msMinLine );
+	
+	var msMaxLine = document.createElement( 'div' );
+	msMaxLine.style.position = 'absolute';
+	msMaxLine.style.height = '16px';
+	msMaxLine.style.bottom = (padding + 16 - 16) + 'px';
+	msMaxLine.style.left = msMaxLine.style.right = '3px';
+	msMaxLine.style["z-index"] = '10';
+	msMaxLine.style["border-top"] = '1px solid green';
+	msMaxLine.style.lineHeight = '15px';
+	msMaxLine.style.fontWeight = 'bold';
+	msMaxLine.style.fontSize = '9px';
+	msMaxLine.style.fontFamily = "Helvetica,Arial,sans-serif";
+	msMaxLine.style.color = "green";
+	msMaxLine.innerHTML = '60 FPS';
+	msDiv.appendChild( msMaxLine );
 
 	var msText = document.createElement( 'div' );
 	msText.id = 'msText';
 	msText.style.lineHeight = '15px';
 	msText.style.color = '#0f0';
 	msText.style.fontFamily = 'Helvetica,Arial,sans-serif';
-	msText.style.fontSize = "9px";
+	msText.style.fontSize = "12px";
 	msText.style.fontWeight = 'bold';
 	msText.innerHTML = 'MS';
 	msDiv.appendChild( msText );
@@ -180,22 +240,37 @@ var Stats = function () {
 			msMax = Math.max( msMax, ms );
 
 			msText.textContent = ms + ' MS (' + msMin + '-' + msMax + ')';
-			updateGraph( msGraph, Math.min( 30, 30 - ( ms / 200 ) * 30 ) );
-
-			frames ++;
-
-			if ( time > prevTime + 1000 ) {
-
+			//var msBarHeight = Math.min( height, height - ( ms / 200 ) * height );
+			var msBarHeight = height - ms;
+			updateGraph( msGraph, msBarHeight );
+			
+			// Increment the frames counter by one
+			frames++;
+			
+			// Only update if the new update is at least one second from the last update
+			if(time > prevTime + 1000)
+			{
+				/* The frames counter may not be exact enough cause the last measurement
+				was maybe more than one second ago. So better calculate it */
 				fps = Math.round( ( frames * 1000 ) / ( time - prevTime ) );
+				
+				// Determine new FPS min and max values
 				fpsMin = Math.min( fpsMin, fps );
 				fpsMax = Math.max( fpsMax, fps );
-
+				
+				// Set new text
 				fpsText.textContent = fps + ' FPS (' + fpsMin + '-' + fpsMax + ')';
-				updateGraph( fpsGraph, Math.min( 30, 30 - ( fps / 100 ) * 30 ) );
-
+				
+				// draw the graph bar
+				//var fsBarHeight = Math.min( height, height - ( fps / 100 ) * height );
+				var fsBarHeight = height - fps;
+				updateGraph( fpsGraph, fsBarHeight );
+				
+				// Remember current time
 				prevTime = time;
+				
+				// Reset farmes counter
 				frames = 0;
-
 			}
 
 			return time;
