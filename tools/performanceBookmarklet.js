@@ -1,8 +1,8 @@
 var PerfBookmarklet = function() {
 	return {
 		/* SCALE performance tool IO functions */
-			containerId:		"perfbook-iframe",
-			isContainerFixed:	false,
+			containerId:			"perfbook-iframe",
+			shouldMovePageContent:	true,
 			onclose: function() {
 				var iframe = document.getElementById(this.containerId);
 				iframe.parentNode.removeChild(iframe);

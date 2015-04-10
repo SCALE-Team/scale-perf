@@ -1,8 +1,8 @@
 var PerfMap = function() {
 	return {
 		/* SCALE performance tool IO functions */
-			containerId:		"perfmap",
-			isContainerFixed:	true,
+			containerId:			"perfmap",
+			shouldMovePageContent:	false,
 			onload: function() {
 				onload();
 				

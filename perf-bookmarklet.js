@@ -254,7 +254,7 @@ ScalePerformanceBarClass.prototype = {
 									
 									var pageContentTop = superClass.tools.bar.offsetHeight;
 									
-									if(!superClass.tools.activeTool.isContainerFixed) pageContentTop += containerElem.offsetHeight;
+									if(superClass.tools.activeTool.shouldMovePageContent) pageContentTop += containerElem.offsetHeight;
 									
 									superClass.pageContent.style.top = pageContentTop + "px";
 								}, 0);

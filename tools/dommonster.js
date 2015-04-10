@@ -3,8 +3,8 @@ var DomMonster = function() {
 		styleElem: null,
 		
 		/* SCALE performance tool IO functions */
-			containerId:		"jr_results",
-			isContainerFixed:	false,
+			containerId:			"jr_results",
+			shouldMovePageContent:	true,
 			onload: function() {
 				this.jrResults = document.getElementById("jr_results");
 				

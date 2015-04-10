@@ -33,8 +33,8 @@ Waterfall.prototype = {
 	toolContainer:		null,
 	
 	/* SCALE performance tool IO functions */
-		containerId: 		"PerfWaterfallDiv",
-		isContainerFixed:	false,
+		containerId: 			"PerfWaterfallDiv",
+		shouldMovePageContent:	true,
 		onclose: function() {
 			var waterfall = document.getElementById(this.containerId);
 			if(waterfall != null) waterfall.parentNode.removeChild(waterfall);
