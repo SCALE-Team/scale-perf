@@ -122,14 +122,14 @@ Waterfall.prototype = {
 			filterContainer.appendChild(rightContainer);
 			
 			var span = document.createElement("span");
-			span.innerHTML = "Show first ";
+			span.innerHTML = "Show until ";
 			var timeSpanInput = document.createElement("input");
 			timeSpanInput.id = "TimeSpanInput";
 			timeSpanInput.type = "number";
 			
 			timeSpanInput.timeout = null;
 			span.appendChild(timeSpanInput);
-			span.innerHTML += " ms";
+			span.innerHTML += " ms after page call";
 			leftContainer.appendChild(span);
 			
 			// Has to be appended with small delay. Element has to exist on screen
