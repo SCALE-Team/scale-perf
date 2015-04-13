@@ -18,6 +18,9 @@ var DomMonster = function() {
 				this.styleElem.innerHTML += "#jr_stats > div { display: inline-block !important; width: 210px !important; }";
 				this.styleElem.innerHTML += "#jr_stats > div > div:first-child { width: 20px !important; height: 20px !important; margin-right: 5px !important; }";
 				
+				this.styleElem.innerHTML += ".dommonster_dashed_red { border: 1px dashed #f00 }";
+				this.styleElem.innerHTML += ".dommonster_dashed_blue { border: 1px dashed #00f }";
+				
 				var body = document.getElementsByTagName("body")[0];
 				body.appendChild(this.styleElem);
 			},
@@ -415,7 +418,7 @@ var DomMonster = function() {
         while (i--) {
             var opacity = JR.getStyle(nodes[i], 'opacity') || 1;
             if (opacity < 1) {
-                nodes[i].style.cssText += ';border:1px dashed #00f';
+                nodes[i].className += ' dommonster_dashed_blue';
                 op.push(nodes[i]);
                 if (JR._console) console.info('Transparent node', nodes[i]);
             }
@@ -629,7 +632,7 @@ var DomMonster = function() {
             average += parentNodes(nodes[i]);
             if (parentNodes(nodes[i]) > 15) {
                 very = true;
-                nodes[i].style.cssText += ';border:1px dashed #f00';
+                nodes[i].className += ' dommonster_dashed_red';
             }
         }
         average = average / nodes.length;
