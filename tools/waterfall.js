@@ -63,7 +63,7 @@ Waterfall.prototype = {
 		var style = "#" + this.containerId + " { background: #fff; border-bottom: 2px solid #000; margin: 5px; position: absolute; visibility: hidden; left: 0px; z-index: 99999; margin: 0px; padding: 5px 0px 10px 0px; }";
 		style += "#" + this.containerId + " input, #" + this.containerId + " button { outline: none; border-radius: 5px; padding: 5px; border: 1px solid #ccc; }";
 		style += "#" + this.containerId + " button { background-color: #ddd; padding: 5px 10px; }";
-		style += "#" + this.containerId + " #TimeSpanInput { width: 70px; }";
+		style += "#" + this.containerId + " .timeSpanInput { width: 70px; }";
 		
 		style += "#" + this.containerId + " .filterContainer { height: 40px; position: relative; }";
 		
@@ -125,23 +125,44 @@ Waterfall.prototype = {
 			filterContainer.appendChild(rightContainer);
 			
 			var span = document.createElement("span");
-			span.innerHTML = "Show until ";
-			var timeSpanInput = document.createElement("input");
-			timeSpanInput.id = "TimeSpanInput";
-			timeSpanInput.type = "number";
+			span.innerHTML = "Show from ";
 			
-			timeSpanInput.timeout = null;
-			span.appendChild(timeSpanInput);
-			span.innerHTML += " ms after page call";
+			var timeSpanFromInput = document.createElement("input");
+			timeSpanFromInput.className = "timeSpanInput";
+			timeSpanFromInput.id = "timeSpanFromInput";
+			timeSpanFromInput.type = "number";
+			span.appendChild(timeSpanFromInput);
+			
+			span.innerHTML += " ms until ";
+			
+			var timeSpanUntilInput = document.createElement("input");
+			timeSpanUntilInput.className = "timeSpanInput";
+			timeSpanUntilInput.id = "timeSpanUntilInput";
+			timeSpanUntilInput.type = "number";
+			timeSpanUntilInput.timeout = null;
+			span.appendChild(timeSpanUntilInput);
+			
+			span.innerHTML += " ms";
+			
 			leftContainer.appendChild(span);
 			
 			// Has to be appended with small delay. Element has to exist on screen
 			window.setTimeout(function(){
-				var timeSpanInput = document.getElementById("TimeSpanInput");
-				timeSpanInput.value = superClass.getPageLoadTime(entries);
+				var timeSpanUntilInput = document.getElementById("timeSpanUntilInput");
+				timeSpanUntilInput.value = superClass.getPageLoadTime(entries);
 				
-				var change = function(e){
-					superClass.chartContainer.data.timeSpan = e.target.value.trim() * 1.0;
+				var timeSpanFromInput = document.getElementById("timeSpanFromInput");
+				timeSpanFromInput.value = 0;
+				
+				var change = function(e, isFrom){
+					if(isFrom)
+					{
+						superClass.chartContainer.data.timeSpanFrom = e.target.value.trim() * 1.0;
+					}
+					else
+					{
+						superClass.chartContainer.data.timeSpanUntil = e.target.value.trim() * 1.0;
+					}
 					
 					if(e.target.timeout != null)
 					{
@@ -162,8 +183,10 @@ Waterfall.prototype = {
 					}
 				};
 				
-				timeSpanInput.addEventListener("change", change,true);
-				timeSpanInput.addEventListener("keyup", change,true);
+				timeSpanFromInput.addEventListener("change", function(e){change(e, true)}, true);
+				timeSpanFromInput.addEventListener("keyup", function(e){change(e, true)}, true);
+				timeSpanUntilInput.addEventListener("change", function(e){change(e, false)}, true);
+				timeSpanUntilInput.addEventListener("keyup", function(e){change(e, false)}, true);
 			}, 500);
 			
 			var searchFieldContainer = document.createElement("div");
@@ -411,7 +434,8 @@ Waterfall.prototype = {
 		var allowed = this.chartContainer.data.allowed;
 		var notAllowed = this.chartContainer.data.notAllowed;
 		var searchText = this.chartContainer.data.searchText;
-		var timeSpan = this.chartContainer.data.timeSpan;
+		var timeSpanUntil = this.chartContainer.data.timeSpanUntil;
+		var timeSpanFrom = this.chartContainer.data.timeSpanFrom;
 		
 		// Filter entries
 		var filteredEntries = [];
@@ -424,7 +448,8 @@ Waterfall.prototype = {
 			
 			if(allowed != null && allowed.length > 0 && allowed.indexOf(ending) == -1) continue;
 			if(notAllowed != null && notAllowed.length > 0 && notAllowed.indexOf(ending) != -1) continue;
-			if(timeSpan > 0 && startTime > timeSpan) continue;
+			if(timeSpanUntil > 0 && startTime > timeSpanUntil) continue;
+			if(timeSpanFrom > 0 && startTime < timeSpanFrom) continue;
 			if(searchText.length > 0 && url.indexOf(searchText) == -1) continue;
 			/*
 			else
