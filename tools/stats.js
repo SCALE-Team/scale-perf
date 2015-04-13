@@ -5,7 +5,9 @@
 var Stats = function () {
 	var height = 70;
 	var padding = 3;
-	var bars = window.innerWidth;
+	var width = 300;
+	//var bars = window.innerWidth;
+	var bars = width;
 	
 	// performance of this is really bad
 	//var bars = Math.max(screen.availWidth, screen.availHeight); // height cause of mobile screens that can be turned
@@ -22,7 +24,7 @@ var Stats = function () {
 	container.addEventListener( 'mousedown', function ( event ) { event.preventDefault(); setMode( ++ mode % 2 ) }, false );
 	container.style.cursor = "pointer";
 	container.style.opacity = "0.9";
-	container.style.width = "100%";
+	container.style.width = width + "px";
 	body.appendChild(container);
 	
 	var fpsDiv = document.createElement( 'div' );
@@ -210,7 +212,8 @@ var Stats = function () {
 			onload: function() {
 				var stats = this;
 				stats.domElement.style.position = "fixed";
-				stats.domElement.style.left = "0px";
+				stats.domElement.style.left = "50%";
+				stats.domElement.style["margin-left"] = -Math.round(width / 2) + "px";
 				stats.domElement.style.visibility = "hidden";
 				stats.domElement.style.zIndex = "10000";
 				
