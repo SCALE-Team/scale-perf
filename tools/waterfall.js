@@ -362,7 +362,6 @@ Waterfall.prototype = {
 		//var bar = this.svg.createSVGGroup("translate(" + barOffset + ", 0)");
 		var bar = this.svg.createSVGGroup();
 		
-		console.log("### New row #############################");
 		// Calculates the percentage relation of part to max
 		var isWidth = false;
 		function toP(part, max) {
