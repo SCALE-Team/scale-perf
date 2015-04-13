@@ -43,34 +43,36 @@
 		</style>
 	</head>
 	<body>
-		<h1 class="full_row">SCALE performance bookmarklet</h1>
-		
-		<div id="Main" class="row full_row">
-			<h2>Desktop</h2>
-			<div>
-				Drag and drop this intop your link bar: <a id="DesktopLink">Scale-Perf</a>
+		<div class="container">
+			<h1 class="full_row">SCALE performance bookmarklet</h1>
+			
+			<div id="Main" class="row full_row">
+				<h2>Desktop</h2>
+				<div>
+					Drag and drop this intop your link bar: <a id="DesktopLink">Scale-Perf</a>
+				</div>
+				
+				<h2>Mobile</h2>
+				
+				<ol id="MobileInstruction" class="s1">
+					<li class="s1">1. Click this link: <a id="MobileLink" onclick="changeToStep(2)">SCALE Perf bookmarklet</a></li>
+					<li class="s2">
+						2. Bookmark this page<br />
+						<button class="btn" onclick="changeToStep(3)">ok, did it!</button>
+					</li>
+					<li class="s3">3.
+						Edit the bookmark URL and remove everything up to and including the hash ("#")
+						so that the bookmark URL starts with "javascript:"
+						<br />
+						Example:
+						<br />
+						<img class="img-responsive" src="images/mobileAddBokkmarkletExample.png" />
+					</li>
+				</ol>
 			</div>
 			
-			<h2>Mobile</h2>
-			
-			<ol id="MobileInstruction" class="s1">
-				<li class="s1">1. Click this link: <a id="MobileLink" onclick="changeToStep(2)">SCALE Perf bookmarklet</a></li>
-				<li class="s2">
-					2. Bookmark this page<br />
-					<button class="btn" onclick="changeToStep(3)">ok, did it!</button>
-				</li>
-				<li class="s3">3.
-					Edit the bookmark URL and remove everything up to and including the hash ("#")
-					so that the bookmark URL starts with "javascript:"
-					<br />
-					Example:
-					<br />
-					<img class="img-responsive" src="images/mobileAddBokkmarkletExample.png" />
-				</li>
-			</ol>
+			<div id="LinkRow" class="full_row row"></div>
 		</div>
-		
-		<div id="LinkRow" class="full_row row"></div>
 		
 		<script>
 			(function(){
