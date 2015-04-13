@@ -74,7 +74,8 @@ var Stats = function () {
 	fpsDiv.appendChild( fpsText );
 	
 	fpsDiv.style.height = fpsText.offsetHeight + height + padding;
-
+	console.log(fpsDiv.style.height);
+	
 	var fpsGraph = document.createElement( 'div' );
 	fpsGraph.id = 'fpsGraph';
 	fpsGraph.style.backgroundColor = '#0ff';

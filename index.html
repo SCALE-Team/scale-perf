@@ -13,25 +13,26 @@
 			}
 			
 			h1 {
-				margin:			30px auto;
+				margin-top:		30px;
+				margin-bottom:	30px;
 			}
 			
 			#Main {
 				background:		#fff;
 				border-radius:	5px;
 				padding:		5px;
-				margin:			0px auto;
 				box-shadow:		0px 0px 5px #000;
 			}
 
+			#LinkRow {
+				text-align:	right;
+			}
 			
 			@media (min-width: 980px) {
-				h1 {
+				.full_row {
 					width:			980px;
-				}
-				
-				#Main {
-					width:			980px;
+					margin-left:	auto;
+					margin-right:	auto;
 				}
 			}
 			
@@ -42,9 +43,9 @@
 		</style>
 	</head>
 	<body>
-		<h1>SCALE performance bookmarklet</h1>
+		<h1 class="full_row">SCALE performance bookmarklet</h1>
 		
-		<div id="Main" class="row">
+		<div id="Main" class="row full_row">
 			<h2>Desktop</h2>
 			<div>
 				Drag and drop this intop your link bar: <a id="DesktopLink">Scale-Perf</a>
@@ -69,15 +70,21 @@
 			</ol>
 		</div>
 		
+		<div id="LinkRow" class="full_row row"></div>
+		
 		<script>
 			(function(){
 				var main = document.getElementById("Main");
 				
-				function scriptLoadFunction(){
+				function scriptLoadFunction(scriptPath){
 					var isLocal = ((self.location+"").split("http://").pop().split("/")[0] == "localhost");
-					var scriptPath = (isLocal ?
-						"http://localhost/perf-bookmarklet.js"
-						: "https://scale-team.github.io/scale-perf/perf-bookmarklet.js");
+					
+					if(scriptPath == null)
+					{
+						scriptPath = (isLocal ?
+							"http://localhost/perf-bookmarklet.js"
+							: "https://scale-team.github.io/scale-perf/perf-bookmarklet.js");
+					}
 					
 					var body = document.getElementsByTagName("body")[0];
 					
@@ -100,6 +107,48 @@
 				linkElem.href = 'javascript:' + scriptLoadFunction + '; scriptLoadFunction();';
 				linkElem.href = linkElem.href.replace(new RegExp("\n", 'g'), "");
 				document.getElementById("MobileLink").href = "#" + linkElem.href;
+				
+				(function() {
+					/*Get GET-parameters*/ {
+						var _GET = {};
+						var parts = location.href.split("?");
+						
+						if(parts.length > 1)
+						{
+							parts = parts.pop().split("&");
+							
+							for(var f in parts)
+							{
+								var p = parts[f].split("=");
+								
+								_GET[p[0]] = (p.length > 1 ? p[1] : true);
+							}
+						}
+					}
+					
+					// If developer set, modify bookmarklet URL
+					if(_GET["developer"] != null)
+					{
+						linkElem.href = 'javascript:var isDevelopmentMode=true; ' + scriptLoadFunction + '; scriptLoadFunction("https://scale-team.github.io/scale-perf-dev/perf-bookmarklet.js");';
+						linkElem.href = linkElem.href.replace(new RegExp("\n", 'g'), "");
+						linkElem.innerHTML += " DEV";
+					}
+					
+					var linkRow = document.getElementById("LinkRow");
+					var devLink = document.createElement("a");
+					linkRow.appendChild(devLink);
+					
+					if(_GET["developer"] == null)
+					{
+						devLink.href = "index.html?developer";
+						devLink.innerHTML = "Developer";
+					}
+					else
+					{
+						devLink.href = "index.html";
+						devLink.innerHTML = "Normal";
+					}
+				})();
 			})();
 			
 			function changeToStep(nr){
