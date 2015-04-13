@@ -10,7 +10,6 @@ var Stats = function () {
 	// performance of this is really bad
 	//var bars = Math.max(screen.availWidth, screen.availHeight); // height cause of mobile screens that can be turned
 	
-	console.log(bars);
 	var startTime = Date.now(), prevTime = startTime;
 	var ms = 0, msMin = Infinity, msMax = 0;
 	var fps = 0, fpsMin = Infinity, fpsMax = 0;
@@ -73,8 +72,7 @@ var Stats = function () {
 	fpsText.innerHTML = 'FPS';
 	fpsDiv.appendChild( fpsText );
 	
-	fpsDiv.style.height = fpsText.offsetHeight + height + padding;
-	console.log(fpsDiv.style.height);
+	fpsDiv.style.height = (fpsText.offsetHeight + height + padding) + "px";
 	
 	var fpsGraph = document.createElement( 'div' );
 	fpsGraph.id = 'fpsGraph';
@@ -151,7 +149,7 @@ var Stats = function () {
 	msText.innerHTML = 'MS';
 	msDiv.appendChild( msText );
 	
-	msDiv.style.height = fpsText.offsetHeight + height + padding;
+	msDiv.style.height = (fpsText.offsetHeight + height + padding) + "px";
 
 	var msGraph = document.createElement( 'div' );
 	msGraph.id = 'msGraph';
