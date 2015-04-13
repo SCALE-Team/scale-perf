@@ -8,7 +8,7 @@ function Waterfall(conf) {
 	
 	conf = conf||{};
 	
-	// Remmeber configs
+	// Remember configs
 	this.getPageLoadTime = conf.getPageLoadTime;
 	
 	// look for erros
@@ -17,6 +17,9 @@ function Waterfall(conf) {
 		alert("Waterfall.js: config.getPageLoadTime must be set in constructor!");
 		return;
 	}
+	
+	// do preparations
+	this.convertBarColorsToMap();
 	
 	// add all CSS styles
 	this.addStyles();
@@ -41,18 +44,94 @@ Waterfall.prototype = {
 			
 			this.cssElem.parentNode.removeChild(this.cssElem);
 		},
-		
 	
-	barColors: {
-		blocked:	"rgb(204, 204, 204)",
-		thirdParty:	"rgb(  0,   0,   0)",
-		redirect:	"rgb(255, 221,   0)",
-		appCache:	"rgb(161, 103,  38)",
-		dns:		"rgb( 48, 150, 158)",
-		tcp:		"rgb(255, 157,  66)",
-		ssl:		"rgb(213, 102, 223)",
-		request:	"rgb( 64, 255,  64)",
-		response:	"rgb( 52, 150, 255)"
+	barColors: [
+		{
+			text:	"blocked",
+			color:	"rgb(204, 204, 204)",
+			showInLegend:	false
+		},
+		{
+			text:	"thirdParty",
+			isDark:	true,
+			color:	"rgb(  0,   0,   0)",
+			showInLegend:	false
+		},
+		{
+			text:	"redirect",
+			color:	"rgb(255, 221,   0)",
+			showInLegend:	false
+		},
+		{
+			text:	"appCache",
+			isDark:	true,
+			color:	"rgb(161, 103,  38)",
+			showInLegend:	false
+		},
+		{
+			text:	"dns",
+			isDark:	true,
+			color:	"rgb( 48, 150, 158)",
+			showInLegend:	false
+		},
+		{
+			text:	"tcp",
+			color:	"rgb(255, 157,  66)",
+			showInLegend:	false
+		},
+		{
+			text:	"ssl",
+			isDark:	true,
+			color:	"rgb(213, 102, 223)",
+			showInLegend:	false
+		},
+		{
+			text:	"request",
+			color:	"rgb( 64, 255,  64)",
+			showInLegend:	false
+		},
+		{
+			text:	"response",
+			isDark:	true,
+			color:	"rgb( 52, 150, 255)",
+			showInLegend:	false
+		}
+	],
+	
+	barColorsMap: {},
+	
+	convertBarColorsToMap: function() {
+		for(var f in this.barColors)
+		{
+			var barColor = this.barColors[f];
+			
+			this.barColorsMap[barColor.text] = barColor;
+		}
+	},
+	
+	buildLegend: function() {
+		var id = "WaterfallLegend";
+		
+		var existingLegend = document.getElementById(id);
+		if(existingLegend != null) existingLegend.parentNode.removeChild(existingLegend);
+		
+		var legend = document.createElement("div");
+		legend.id = id;
+		this.toolContainer.appendChild(legend);
+		
+		for(var f in this.barColors)
+		{
+			var barColor = this.barColors[f];
+			
+			if(!barColor.showInLegend) continue;
+			
+			var captionElem = document.createElement("div");
+			captionElem.innerHTML = barColor.text;
+			captionElem.style.background = barColor.color;
+			legend.appendChild(captionElem);
+			
+			if(barColor.isDark) captionElem.className = "dark";
+		}
 	},
 	
 	addStyles: function() {
@@ -81,7 +160,10 @@ Waterfall.prototype = {
 		style += "}";
 		
 		style += "#" + this.containerId + " #ChartContainer { position: relative; }";
-		style += "#" + this.containerId + " .chartSvg { position: absolute; top: 0px; left: 200px; right: 5px; }";
+		style += "#" + this.containerId + " .chart_svg { position: absolute; top: 0px; left: 200px; right: 5px; }";
+		
+		//style += "#" + this.containerId + " .svg_labels { z-index: 10; position: absolute; top: 0px; left: 0px; overflow: visible; }";
+		//style += "#" + this.containerId + " .svg_labels text { background:red; }";
 		
 		style += "#" + this.containerId + " .button-group { display: inline-block; }";
 		style += "#" + this.containerId + " .button-group button { border-radius: 0px 0px 0px 0px; border-right: none; }";
@@ -90,6 +172,9 @@ Waterfall.prototype = {
 		style += "#" + this.containerId + " .button-group button[disabled] { background-color: #ccc !important; }";
 		style += "#" + this.containerId + " .button-group :first-child { border-radius: 5px 0px 0px 5px; }";
 		style += "#" + this.containerId + " .button-group :last-child { border-radius: 0px 5px 5px 0px; border-right: 1px solid #ccc; }";
+		
+		style += "#" + this.containerId + " #WaterfallLegend > div { display: inline-block; padding: 3px; border-radius: 3px; margin: 10px 3px 0px; }";
+		style += "#" + this.containerId + " #WaterfallLegend > div.dark { color: #fff; }";
 
 		this.cssElem.innerHTML = style;
 		head.appendChild(this.cssElem);
@@ -351,7 +436,6 @@ Waterfall.prototype = {
 
 		// draw resource entries
 		for(var n = 0; n < entriesToShow.length; n++) {
-
 			var entry = entriesToShow[n]; 
 
 			var rowLabel = this.svg.createSVGGroup("translate(0," + (n + 1) * (rowHeight + rowPadding) + ")");
@@ -361,16 +445,16 @@ Waterfall.prototype = {
 			var rowChart = this.svg.createSVGGroup("translate(0," + (n + 1) * (rowHeight + rowPadding) + ")");
 			rowChart.appendChild(this.drawBar(entry, 0, rowHeight, maxTime));
 			svgChart.appendChild(rowChart);
-
-			// console.log(JSON.stringify(entry) + "\n" );
 		}
 		
 		var div = document.createElement("div");
-		div.className = "chartSvg";
+		div.className = "chart_svg";
 		div.appendChild(svgChart);
 		
 		this.chartContainer.appendChild(svgLabels);
 		this.chartContainer.appendChild(div);
+		
+		this.buildLegend();
 	},
 	
 	// Calculates the percentage relation of part to max
@@ -392,36 +476,44 @@ Waterfall.prototype = {
 		var bar = this.svg.createSVGGroup();
 		
 		//function createSVGRect(x, y, width, height, style)
-		bar.appendChild(this.svg.createSVGRect(this.toPercentage(entry.start, maxTime), 0, this.toPercentage(entry.duration, maxTime), rowHeight, "fill:" + this.barColors.blocked));
+		bar.appendChild(this.svg.createSVGRect(this.toPercentage(entry.start, maxTime), 0, this.toPercentage(entry.duration, maxTime), rowHeight, "fill:" + this.barColorsMap.blocked.color));
+		this.barColorsMap.blocked.showInLegend = true;
 		
-		//bar.appendChild(this.svg.createSVGRect("10%", 10, "40%", rowHeight, "fill:" + this.barColors.blocked));
+		//bar.appendChild(this.svg.createSVGRect("10%", 10, "40%", rowHeight, "fill:" + this.barColorsMap.blocked.color));
 		
 		if(entry.redirectDuration > 0) {
-			bar.appendChild(this.svg.createSVGRect(this.toPercentage(entry.redirectStart, maxTime), 0, this.toPercentage(entry.redirectDuration, maxTime), rowHeight, "fill:" + this.barColors.redirect));
+			bar.appendChild(this.svg.createSVGRect(this.toPercentage(entry.redirectStart, maxTime), 0, this.toPercentage(entry.redirectDuration, maxTime), rowHeight, "fill:" + this.barColorsMap.redirect.color));
+			this.barColorsMap.redirect.showInLegend = true;
 		}
 
 		if(entry.appCacheDuration > 0) {
-			bar.appendChild(this.svg.createSVGRect(this.toPercentage(entry.appCacheStart, maxTime), 0, this.toPercentage(entry.appCacheDuration, maxTime) , rowHeight, "fill:" + this.barColors.appCache));
+			bar.appendChild(this.svg.createSVGRect(this.toPercentage(entry.appCacheStart, maxTime), 0, this.toPercentage(entry.appCacheDuration, maxTime) , rowHeight, "fill:" + this.barColorsMap.appCache.color));
+			this.barColorsMap.appCache.showInLegend = true;
 		}
 
 		if(entry.dnsDuration > 0) {
-			bar.appendChild(this.svg.createSVGRect(this.toPercentage(entry.dnsStart, maxTime) , 0, this.toPercentage(entry.dnsDuration, maxTime), rowHeight, "fill:" + this.barColors.dns));
+			bar.appendChild(this.svg.createSVGRect(this.toPercentage(entry.dnsStart, maxTime) , 0, this.toPercentage(entry.dnsDuration, maxTime), rowHeight, "fill:" + this.barColorsMap.dns.color));
+			this.barColorsMap.dns.showInLegend = true;
 		}
 
 		if(entry.tcpDuration > 0) {
-			bar.appendChild(this.svg.createSVGRect(this.toPercentage(entry.tcpStart, maxTime) , 0, this.toPercentage(entry.tcpDuration, maxTime), rowHeight, "fill:" + this.barColors.tcp));
+			bar.appendChild(this.svg.createSVGRect(this.toPercentage(entry.tcpStart, maxTime) , 0, this.toPercentage(entry.tcpDuration, maxTime), rowHeight, "fill:" + this.barColorsMap.tcp.color));
+			this.barColorsMap.tcp.showInLegend = true;
 		}
 
 		if(entry.sslDuration > 0) {
-			bar.appendChild(this.svg.createSVGRect(this.toPercentage(entry.sslStart, maxTime) , 0, this.toPercentage(entry.sslDuration, maxTime), rowHeight, "fill:" + this.barColors.ssl));
+			bar.appendChild(this.svg.createSVGRect(this.toPercentage(entry.sslStart, maxTime) , 0, this.toPercentage(entry.sslDuration, maxTime), rowHeight, "fill:" + this.barColorsMap.ssl.color));
+			this.barColorsMap.ssl.showInLegend = true;
 		}
 
 		if(entry.requestDuration > 0) {
-			bar.appendChild(this.svg.createSVGRect(this.toPercentage(entry.requestStart, maxTime) , 0, this.toPercentage(entry.requestDuration, maxTime), rowHeight, "fill:" + this.barColors.request));
+			bar.appendChild(this.svg.createSVGRect(this.toPercentage(entry.requestStart, maxTime) , 0, this.toPercentage(entry.requestDuration, maxTime), rowHeight, "fill:" + this.barColorsMap.request.color));
+			this.barColorsMap.request.showInLegend = true;
 		}
 
 		if(entry.responseDuration > 0) {
-			bar.appendChild(this.svg.createSVGRect(this.toPercentage(entry.responseStart, maxTime) , 0, this.toPercentage(entry.responseDuration, maxTime), rowHeight, "fill:" + this.barColors.response));
+			bar.appendChild(this.svg.createSVGRect(this.toPercentage(entry.responseStart, maxTime) , 0, this.toPercentage(entry.responseDuration, maxTime), rowHeight, "fill:" + this.barColorsMap.response.color));
+			this.barColorsMap.response.showInLegend = true;
 		}
 
 		return bar;
