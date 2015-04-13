@@ -489,7 +489,7 @@ ScalePerformanceBarClass.prototype = {
 		
 		isDev: function() {
 			// Flag if this script is executes locally or not
-			return isDevelopmentMode;
+			return (typeof(isDevelopmentMode) == "undefined" ? false : isDevelopmentMode);
 		},
 		
 		/*
