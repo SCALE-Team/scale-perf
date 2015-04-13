@@ -321,7 +321,10 @@ Waterfall.prototype = {
 				y2 = height;
 
 			for(var n = 0; n < numberOfLines; n++) {
-				svgChart.appendChild(this.svg.createSVGText(x1, 0, 0, rowHeight, "font: 10px sans-serif;", "middle", n));
+				// If first number move a little bit to right to let teh first number not be hidden
+				var textX1 = (n==0 ? x1 + 3 : x1);
+				
+				svgChart.appendChild(this.svg.createSVGText(textX1, 0, 0, rowHeight, "font: 10px sans-serif;", "middle", n));
 				svgChart.appendChild(this.svg.createSVGLine(x1, y1, x1, y2, "stroke: #ccc;"));
 				x1 += interval;
 			} 
