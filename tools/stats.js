@@ -5,8 +5,12 @@
 var Stats = function () {
 	var height = 70;
 	var padding = 3;
-	var bars = Math.max(screen.availWidth, screen.availHeight); // height cause of mobile screens that can be turned
+	var bars = window.innerWidth;
 	
+	// performance of this is really bad
+	//var bars = Math.max(screen.availWidth, screen.availHeight); // height cause of mobile screens that can be turned
+	
+	console.log(bars);
 	var startTime = Date.now(), prevTime = startTime;
 	var ms = 0, msMin = Infinity, msMax = 0;
 	var fps = 0, fpsMin = Infinity, fpsMax = 0;
