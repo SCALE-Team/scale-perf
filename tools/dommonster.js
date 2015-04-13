@@ -15,8 +15,12 @@ var DomMonster = function() {
 				this.styleElem.innerHTML += "#jr_results { position: absolute !important; }";
 				this.styleElem.innerHTML += "#jr_results_tips { overflow: visible !important; max-height: none !important; }";
 				this.styleElem.innerHTML += "#jr_stats { float: none !important; width: 100% !important; }";
-				this.styleElem.innerHTML += "#jr_stats > div { display: inline-block !important; width: 210px !important; }";
-				this.styleElem.innerHTML += "#jr_stats > div > div:first-child { width: 20px !important; height: 20px !important; margin-right: 5px !important; }";
+				this.styleElem.innerHTML += "#jr_stats > div { display: inline-block !important; }";
+				this.styleElem.innerHTML += "#jr_stats > div > div:first-child { width: auto !important; height: auto !important; padding: 5px !important; margin-right: 5px !important; }";
+				
+				this.styleElem.innerHTML += "#jr_stats div.low { background-color: #80E41F; }";
+				this.styleElem.innerHTML += "#jr_stats div.mid { background-color: #E8871D; color: #fff !important; }";
+				this.styleElem.innerHTML += "#jr_stats div.high { background-color: #A02523; color: #fff !important; }";
 				
 				this.styleElem.innerHTML += ".dommonster_dashed_red { border: 1px dashed #f00 }";
 				this.styleElem.innerHTML += ".dommonster_dashed_blue { border: 1px dashed #00f }";
@@ -548,12 +552,10 @@ var DomMonster = function() {
     };
     JR.statsHTML = '';
     JR.stats = function(value, stat, type) {
-        var color = {
-            low: '80E41F',
-            mid: 'E8871D',
-            high: 'A02523'
-        };
-        JR.statsHTML += '<div style="' + JR.reset + 'margin:0;margin-left:5px;padding:0;margin-bottom:4px;height:auto"><div style="' + JR.reset + ';float:left;width:13px;height:13px;margin-right:2px;background:#' + color[type || 'low'] + '"> </div>' + '<strong>' + value + '</strong> ' + stat + '</div>'
+        JR.statsHTML += '<div style="' + JR.reset + 'margin:0;margin-left:5px;padding:0;margin-bottom:4px;height:auto">';
+			JR.statsHTML += '<div style="' + JR.reset + ';float:left;width:13px;height:13px;margin-right:2px;" class="' + (type || 'low') + '">';
+			JR.statsHTML += '<strong>' + value + '</strong> ' + stat + '</div>';
+		JR.statsHTML += '</div>';
     };
     JR.globals = function() {
         function ignore(name) {
