@@ -166,10 +166,10 @@ Waterfall.prototype = {
 		//style += "#" + this.containerId + " .svg_labels text { background:red; }";
 		
 		style += "#" + this.containerId + " .button-group { display: inline-block; }";
-		style += "#" + this.containerId + " .button-group button { border-radius: 0px 0px 0px 0px; border-right: none; }";
+		style += "#" + this.containerId + " .button-group button { border-radius: 0px 0px 0px 0px; border-right: none; cursor: pointer; }";
 		style += "#" + this.containerId + " .button-group button:hover { background-color: #eee; }";
 		style += "#" + this.containerId + " .button-group button:active { background-color: #ccc; }";
-		style += "#" + this.containerId + " .button-group button[disabled] { background-color: #ccc !important; }";
+		style += "#" + this.containerId + " .button-group button[disabled] { background-color: #ccc !important; cursor: default; }";
 		style += "#" + this.containerId + " .button-group :first-child { border-radius: 5px 0px 0px 5px; }";
 		style += "#" + this.containerId + " .button-group :last-child { border-radius: 0px 5px 5px 0px; border-right: 1px solid #ccc; }";
 		
