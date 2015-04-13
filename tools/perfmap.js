@@ -247,3 +247,79 @@ function onload() {
 		}
 	}
 }
+
+/*
+//
+<img id="Test" style="height:10%;" src="https://www.gravatar.com/avatar/2c4978284d313f9b617beb9abed1e873?s=24&d=identicon&r=PG" />
+
+function getRealImageSize(imgSrc, callback) {
+	var elem = document.createElement("img");
+	elem.src = imgSrc;
+	elem.style.position = "absolute";
+	elem.style.top = -999999;
+	elem.onerror = function(e) {
+		console.log(e);
+		callback({
+			success:	false,
+			error:		"Couldn't load the image '" + imgSrc + "'",
+			data: {
+				width:		0,
+				height:		0
+			}
+		});
+	};
+	elem.onload = function(e) {
+		var resp = {
+			success:	true,
+			data: {
+				width:		e.target.offsetWidth,
+				height:		e.target.offsetHeight
+			}
+		};
+		
+		document.body.removeChild(elem);
+		
+		callback(resp);
+	};
+	
+	document.body.appendChild(elem);
+}
+
+function getImageSize(imgElem, callback) {
+	var imgSize = {};
+	imgSize.width = imgElem.offsetWidth;
+	imgSize.height = imgElem.offsetHeight;
+	
+	var realSize = getRealImageSize(elem.src, function(resp) {
+		if(!resp.success)
+		{
+			callback(resp);
+			return;
+		}
+		
+		var relativeWidth = 0;
+		if(imgSize.width != 0) relativeWidth = imgSize.width / resp.data.width;
+		
+		var relativeHeight = 0;
+		if(imgSize.height != 0) relativeHeight = imgSize.height /resp.data.height;
+		
+		var relativeMax = Math.max(relativeWidth, relativeHeight);
+		
+		callback({
+			success:	true,
+			data: {
+				size:				imgSize,
+				realSize:			resp.data,
+				ratioToRealSize:	relativeMax
+			}
+		});
+	});
+}
+
+var elem = document.getElementById("Test");
+var size = getImageSize(elem, function(resp) {
+	console.log(resp.data);
+	console.log("realSize", resp.data.realSize);
+	console.log("size", resp.data.size);
+});
+*/
