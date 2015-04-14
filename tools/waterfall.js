@@ -398,7 +398,7 @@ Waterfall.prototype = {
 		var entriesToShow = this.filterEntries(entries);
 		
 		// Find the latest time
-		var maxTime = 0;
+		var maxTime = this.getDomContentLoadedTime();
 		for(var n = 0; n < entriesToShow.length; n++)
 		{
 			maxTime = Math.max(maxTime, entriesToShow[n].start + entriesToShow[n].duration);
@@ -457,7 +457,7 @@ Waterfall.prototype = {
 				else if(maxTime < 100000) var text = Math.round(n * intervalSize / 1000) + "s";
 				else var text = Math.round(n * intervalSize / 10000) * 10 + "s";
 				
-				svgChart.appendChild(this.svg.createSVGText(x1_percentage + "%", 0, 0, rowHeight, "font: 10px sans-serif;", anchor, text));
+				svgChart.appendChild(this.svg.createSVGText(x1_percentage + "%", 0, 0, rowHeight - 10, "font: 10px sans-serif;", anchor, text));
 				svgChart.appendChild(this.svg.createSVGLine(x1_percentage + "%", y1, x1_percentage + "%", y2, "stroke: #ccc;"));
 				x1_percentage += interval;
 			}
@@ -470,9 +470,15 @@ Waterfall.prototype = {
 				
 				var x = this.toPercentage(event.time, maxTime);
 				
-				var line = this.svg.createSVGLine(x, y1, x, y2, "stroke: red;");
+				var r = event.time / maxTime;
+				if(r < 0.25) var anchor = "start";
+				else if(r > 0.75) var anchor = "end";
+				else var anchor = "middle";
 				
-				//svgChart.appendChild(this.svg.createSVGText(textX1, 0, 0, rowHeight, "font: 10px sans-serif;", "middle", n));
+				var line = this.svg.createSVGLine(x, y1, x, y2, "stroke: red;");
+				var text = this.svg.createSVGText(x, 0, 0, rowHeight, "font: 10px sans-serif;", anchor, event.name);
+				
+				svgChart.appendChild(text);
 				svgChart.appendChild(line);
 			}
 			
@@ -701,6 +707,18 @@ Waterfall.prototype = {
 				time:	(timing.domContentLoadedEventEnd - timing.navigationStart)
 			}
 		];
+	},
+	
+	getDomContentLoadedTime: function() {
+		var events = this.getMainPageEvents();
+		
+		for(var f in events)
+		{
+			if(events[f].name == "domContentLoaded")
+			{
+				return events[f].time;
+			}
+		}
 	},
 
 	/**
