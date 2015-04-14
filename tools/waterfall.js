@@ -157,6 +157,8 @@ Waterfall.prototype = {
 			style += "#" + this.containerId + " .filterContainer > div { position: relative !important; width:100% !important; top: 0px !important; right: 0px !important; left: 0px !important; display: block !important; text-align: left !important; }";
 			style += "#" + this.containerId + " .filterContainer > div:last-child > :first-child { position: absolute; left: 0px; top: 0px; right: 240px; }";
 			style += "#" + this.containerId + " .filterContainer > div:last-child > :last-child { position: absolute; right: 0px; top: 0px; width: 240px; text-align: right; }";
+			
+			style += "#" + this.containerId + " .chart_svg .hideMobile { display: none; }";
 		style += "}";
 		
 		style += "#" + this.containerId + " #ChartContainer { position: relative; }";
@@ -177,7 +179,7 @@ Waterfall.prototype = {
 		
 		style += "#" + this.containerId + " #WaterfallLegend > div { display: inline-block; padding: 3px; border-radius: 3px; margin: 10px 3px 0px; }";
 		style += "#" + this.containerId + " #WaterfallLegend > div.dark { color: #fff; }";
-
+		
 		this.cssElem.innerHTML = style;
 		head.appendChild(this.cssElem);
 	},
@@ -398,10 +400,16 @@ Waterfall.prototype = {
 		var entriesToShow = this.filterEntries(entries);
 		
 		// Find the latest time
-		var maxTime = this.getDomContentLoadedTime();
+		var maxTime = 0;
 		for(var n = 0; n < entriesToShow.length; n++)
 		{
 			maxTime = Math.max(maxTime, entriesToShow[n].start + entriesToShow[n].duration);
+		}
+		
+		var mainEvents = this.getMainPageEvents();
+		for(var f in mainEvents)
+		{
+			maxTime = Math.max(maxTime, mainEvents[f].time);
 		}
 		
 		//calculate size of chart
@@ -420,53 +428,46 @@ Waterfall.prototype = {
 		
 		// draw axis
 			// Size of one interval in ms
-			var numberOfLines = 8;
+			var numberOfLines = 10;
 			var intervalSize = maxTime / (numberOfLines - 1);
 			
-			var securityBreak = 30;
-			do
-			{
-				// %-space between the seconds on the x-axis
-				var interval = (100 * intervalSize) / maxTime; // original: 1 / (maxTime / intervalSize) * 100
-				
-				// number of seconds-lines to be shown
-				//var numberOfLines = Math.ceil(maxTime / intervalSize);
-				
-				if(numberOfLines > 10) intervalSize = Math.round(intervalSize * 1.2);
-				else if(numberOfLines < 7) intervalSize = Math.round(intervalSize / 1.2);
-				else break;
-				
-				if(securityBreak-- < 0) break;
-			}
-			while(true);
+			// %-space between the seconds on the x-axis
+			var interval = (100 * intervalSize) / maxTime; // original: 1 / (maxTime / intervalSize) * 100
 			
 			// coordinates for the seconds-lines
 			var x1_percentage = 0,
 				y1 = rowHeight + rowPadding,
 				y2 = height;
 
-			for(var n = 0; n < numberOfLines; n++) {
+			for(var i = 0; i < numberOfLines; i++) {
 				// If first number move a little bit to right to let teh first number not be hidden
 				var anchor = "middle";
 				
-				if(n == 0) anchor = "start";
-				else if(n == (numberOfLines - 1)) anchor = "end";
+				if(i == 0) anchor = "start";
+				else if(i == (numberOfLines - 1)) anchor = "end";
 				
-				if(maxTime < 1000) var text = Math.round(n * intervalSize) + "ms";
-				else if(maxTime < 10000) var text = (Math.round(n * intervalSize / 100) / 10.0) + "s";
-				else if(maxTime < 100000) var text = Math.round(n * intervalSize / 1000) + "s";
-				else var text = Math.round(n * intervalSize / 10000) * 10 + "s";
+				if(maxTime < 1000) var text = Math.round(i * intervalSize) + "ms";
+				else if(maxTime < 10000) var text = (Math.round(i * intervalSize / 100) / 10.0) + "s";
+				else if(maxTime < 100000) var text = Math.round(i * intervalSize / 1000) + "s";
+				else var text = Math.round(i * intervalSize / 10000) * 10 + "s";
 				
-				svgChart.appendChild(this.svg.createSVGText(x1_percentage + "%", 0, 0, rowHeight - 10, "font: 10px sans-serif;", anchor, text));
-				svgChart.appendChild(this.svg.createSVGLine(x1_percentage + "%", y1, x1_percentage + "%", y2, "stroke: #ccc;"));
+				var text = this.svg.createSVGText(x1_percentage + "%", 0, 0, rowHeight - 10, "font: 10px sans-serif;", anchor, text);
+				var line = this.svg.createSVGLine(x1_percentage + "%", y1, x1_percentage + "%", y2, "stroke: #ccc;");
+				
+				// hide odd lines on small screens
+				var hideMobileFlag = (i%2 == 1 ? " hideMobile" : "");
+				text.setAttribute("class", hideMobileFlag);
+				line.setAttribute("class", hideMobileFlag);
+				
+				svgChart.appendChild(text);
+				svgChart.appendChild(line);
 				x1_percentage += interval;
 			}
 			
 		// draw main page events
-			var events = this.getMainPageEvents();
-			for(var f in events)
+			for(var f in mainEvents)
 			{
-				var event = events[f];
+				var event = mainEvents[f];
 				
 				var x = this.toPercentage(event.time, maxTime);
 				
@@ -676,7 +677,7 @@ Waterfall.prototype = {
 	 */
 	createEntryFromNavigationTiming: function() {
 		var timing = window.performance.timing;
-		
+		console.log(timing);
 		return {
 			url:				document.URL,
 			start:				0,
@@ -705,6 +706,10 @@ Waterfall.prototype = {
 			{
 				name:	"domContentLoaded",
 				time:	(timing.domContentLoadedEventEnd - timing.navigationStart)
+			},
+			{
+				name:	"domComplete",
+				time:	(timing.domComplete - timing.navigationStart)
 			}
 		];
 	},
