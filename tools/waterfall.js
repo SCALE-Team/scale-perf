@@ -409,6 +409,8 @@ Waterfall.prototype = {
 		var mainEvents = this.getMainPageEvents();
 		for(var f in mainEvents)
 		{
+			if(mainEvents[f].time > this.chartContainer.data.timeSpanUntil) continue;
+			
 			maxTime = Math.max(maxTime, mainEvents[f].time);
 		}
 		
@@ -468,6 +470,9 @@ Waterfall.prototype = {
 			for(var f in mainEvents)
 			{
 				var event = mainEvents[f];
+				
+				if(event.time > this.chartContainer.data.timeSpanUntil) continue;
+				if(event.time < this.chartContainer.data.timeSpanFrom) continue;
 				
 				var x = this.toPercentage(event.time, maxTime);
 				
