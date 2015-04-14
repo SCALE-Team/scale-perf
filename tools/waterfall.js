@@ -160,6 +160,8 @@ Waterfall.prototype = {
 		style += "}";
 		
 		style += "#" + this.containerId + " #ChartContainer { position: relative; }";
+		style += "#" + this.containerId + " #ChartContainer rect { fill: transparent; stroke-width: 1px; }";
+		style += "#" + this.containerId + " #ChartContainer rect:hover { stroke: #000; }";
 		style += "#" + this.containerId + " .chart_svg { position: absolute; top: 0px; left: 200px; right: 5px; }";
 		
 		//style += "#" + this.containerId + " .svg_labels { z-index: 10; position: absolute; top: 0px; left: 0px; overflow: visible; }";
@@ -392,10 +394,13 @@ Waterfall.prototype = {
 		// The width of the labels
 		var barOffset = 200;
 		
+		// Get the entries to show
 		var entriesToShow = this.filterEntries(entries);
 		
+		// Find the latest time
 		var maxTime = 0;
-		for(var n = 0; n < entriesToShow.length; n++) {
+		for(var n = 0; n < entriesToShow.length; n++)
+		{
 			maxTime = Math.max(maxTime, entriesToShow[n].start + entriesToShow[n].duration);
 		}
 		
@@ -414,11 +419,29 @@ Waterfall.prototype = {
 		var svgChart = this.svg.createSVG("100%", height);
 		
 		// draw axis
-			// %-space between the seconds on the x-axis
-			var interval = 100000 / maxTime; // original: 1 / (maxTime / 1000) * 100
+			// Size of one interval in ms
+			var numberOfLines = 8;
+			var intervalSize = maxTime / (numberOfLines - 1);
 			
-			// number of seconds-lines to be shown
-			var numberOfLines = Math.ceil(maxTime / 1000);
+			var securityBreak = 30;
+			do
+			{
+				// %-space between the seconds on the x-axis
+				var interval = (100 * intervalSize) / maxTime; // original: 1 / (maxTime / intervalSize) * 100
+				
+				// number of seconds-lines to be shown
+				//var numberOfLines = Math.ceil(maxTime / intervalSize);
+				
+				if(numberOfLines > 10) intervalSize = Math.round(intervalSize * 1.2);
+				else if(numberOfLines < 7) intervalSize = Math.round(intervalSize / 1.2);
+				else break;
+				
+				console.log("intervalSize", intervalSize);
+				console.log("numberOfLines", numberOfLines);
+				
+				if(securityBreak-- < 0) break;
+			}
+			while(true);
 			
 			// coordinates for the seconds-lines
 			var x1_percentage = 0,
@@ -427,13 +450,33 @@ Waterfall.prototype = {
 
 			for(var n = 0; n < numberOfLines; n++) {
 				// If first number move a little bit to right to let teh first number not be hidden
-				var textX1 = (n==0 ? x1_percentage + 3 : x1_percentage + "%");
+				var anchor = "middle";
 				
-				svgChart.appendChild(this.svg.createSVGText(textX1, 0, 0, rowHeight, "font: 10px sans-serif;", "middle", n));
+				if(n == 0) anchor = "start";
+				else if(n == (numberOfLines - 1)) anchor = "end";
+				
+				if(maxTime >= 1000) var text = (Math.round(n * intervalSize / 100) / 10.0) + "s";
+				else var text = Math.round(n * intervalSize) + "ms";
+				
+				svgChart.appendChild(this.svg.createSVGText(x1_percentage + "%", 0, 0, rowHeight, "font: 10px sans-serif;", anchor, text));
 				svgChart.appendChild(this.svg.createSVGLine(x1_percentage + "%", y1, x1_percentage + "%", y2, "stroke: #ccc;"));
 				x1_percentage += interval;
-			} 
-
+			}
+			
+		// draw main page events
+			var events = this.getMainPageEvents();
+			for(var f in events)
+			{
+				var event = events[f];
+				
+				var x = this.toPercentage(event.time, maxTime);
+				
+				var line = this.svg.createSVGLine(x, y1, x, y2, "stroke: red;");
+				
+				//svgChart.appendChild(this.svg.createSVGText(textX1, 0, 0, rowHeight, "font: 10px sans-serif;", "middle", n));
+				svgChart.appendChild(line);
+			}
+			
 		// draw resource entries
 		for(var n = 0; n < entriesToShow.length; n++) {
 			var entry = entriesToShow[n]; 
@@ -441,9 +484,13 @@ Waterfall.prototype = {
 			var dy = 13;
 			
 			/* Label of the row */ {
+				var background = this.svg.createSVGRect(0, 0, 300, rowHeight);
+				
 				var rowLabel = this.svg.createSVGGroup("translate(0," + (n + 1) * (rowHeight + rowPadding) + ")");
 				rowLabel.appendChild(this.svg.createSVGText(5, 0, 0, dy, "font: 10px sans-serif;", "start", this.shortenURL(entry.url), entry.url));
+				rowLabel.appendChild(background);
 				svgLabels.appendChild(rowLabel);
+				
 			}
 
 			/* The chart */ {
@@ -452,7 +499,7 @@ Waterfall.prototype = {
 				svgChart.appendChild(rowChart);
 			}
 			
-			/* The chart */ {
+			/* The time */ {
 				var latestTime = (entry.start + entry.duration);
 				
 				// Check if the distance to the right border is big enough to fit the text
@@ -467,7 +514,6 @@ Waterfall.prototype = {
 					var dx = "-5px";
 					var anchor = "end";
 				}
-				console.log(distToRightBorder);
 				
 				var positionX = this.toPercentage(latestTime, maxTime);
 				
@@ -645,6 +691,17 @@ Waterfall.prototype = {
 			responseStart:		timing.responseStart - timing.navigationStart,
 			responseDuration:	timing.responseEnd - timing.responseStart
 		}
+	},
+	
+	getMainPageEvents: function() {
+		var timing = window.performance.timing;
+		
+		return [
+			{
+				name:	"domContentLoaded",
+				time:	(timing.domContentLoadedEventEnd - timing.navigationStart)
+			}
+		];
 	},
 
 	/**
