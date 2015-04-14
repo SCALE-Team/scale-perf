@@ -712,10 +712,12 @@ Waterfall.prototype = {
 				name:	"domContentLoaded",
 				time:	(timing.domContentLoadedEventEnd - timing.navigationStart)
 			},
+			/*
 			{
 				name:	"domComplete",
 				time:	(timing.domComplete - timing.navigationStart)
 			}
+			//*/
 		];
 	},
 	
