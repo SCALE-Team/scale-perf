@@ -437,6 +437,8 @@ Waterfall.prototype = {
 		// draw resource entries
 		for(var n = 0; n < entriesToShow.length; n++) {
 			var entry = entriesToShow[n]; 
+			
+			var dy = 8;
 
 			var rowLabel = this.svg.createSVGGroup("translate(0," + (n + 1) * (rowHeight + rowPadding) + ")");
 			rowLabel.appendChild(this.svg.createSVGText(5, 0, 0, rowHeight, "font: 10px sans-serif;", "start", this.shortenURL(entry.url), entry.url));
@@ -444,6 +446,14 @@ Waterfall.prototype = {
 
 			var rowChart = this.svg.createSVGGroup("translate(0," + (n + 1) * (rowHeight + rowPadding) + ")");
 			rowChart.appendChild(this.drawBar(entry, 0, rowHeight, maxTime));
+			
+			var lastTime = (entry.start + entry.duration);
+			var dx = lastTime - maxTime;
+			dx = ((dx < -25) ? 0 : -25) + "px";
+			
+			var positionX = this.toPercentage(lastTime, maxTime);
+			
+			rowChart.appendChild(this.svg.createSVGText(positionX, 0, dx, dy, "font: 10px sans-serif;", "start", Math.round(entry.duration) + "ms", ""));
 			svgChart.appendChild(rowChart);
 		}
 		
