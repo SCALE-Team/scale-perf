@@ -236,7 +236,7 @@ Waterfall.prototype = {
 			// Has to be appended with small delay. Element has to exist on screen
 			window.setTimeout(function(){
 				var timeSpanUntilInput = document.getElementById("timeSpanUntilInput");
-				timeSpanUntilInput.value = superClass.getPageLoadTime(entries);
+				timeSpanUntilInput.value = superClass.chartContainer.data.timeSpanUntil;
 				
 				var timeSpanFromInput = document.getElementById("timeSpanFromInput");
 				timeSpanFromInput.value = 0;
@@ -376,7 +376,7 @@ Waterfall.prototype = {
 			allowed:		[],
 			nowAllowed:		[],
 			searchText:		"",
-			timeSpan:		superClass.getPageLoadTime(entries)
+			timeSpanUntil:	superClass.getPageLoadTime(entries)
 		};
 		superClass.toolContainer.appendChild(superClass.chartContainer);
 		
@@ -436,9 +436,6 @@ Waterfall.prototype = {
 				else if(numberOfLines < 7) intervalSize = Math.round(intervalSize / 1.2);
 				else break;
 				
-				console.log("intervalSize", intervalSize);
-				console.log("numberOfLines", numberOfLines);
-				
 				if(securityBreak-- < 0) break;
 			}
 			while(true);
@@ -455,8 +452,10 @@ Waterfall.prototype = {
 				if(n == 0) anchor = "start";
 				else if(n == (numberOfLines - 1)) anchor = "end";
 				
-				if(maxTime >= 1000) var text = (Math.round(n * intervalSize / 100) / 10.0) + "s";
-				else var text = Math.round(n * intervalSize) + "ms";
+				if(maxTime < 1000) var text = Math.round(n * intervalSize) + "ms";
+				else if(maxTime < 10000) var text = (Math.round(n * intervalSize / 100) / 10.0) + "s";
+				else if(maxTime < 100000) var text = Math.round(n * intervalSize / 1000) + "s";
+				else var text = Math.round(n * intervalSize / 10000) * 10 + "s";
 				
 				svgChart.appendChild(this.svg.createSVGText(x1_percentage + "%", 0, 0, rowHeight, "font: 10px sans-serif;", anchor, text));
 				svgChart.appendChild(this.svg.createSVGLine(x1_percentage + "%", y1, x1_percentage + "%", y2, "stroke: #ccc;"));
