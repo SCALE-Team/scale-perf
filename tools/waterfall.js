@@ -417,7 +417,6 @@ Waterfall.prototype = {
 		//calculate size of chart
 		// - max time
 		// - number of entries
-		var width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
 		var height = (entriesToShow.length + 1) * (rowHeight + rowPadding); // +1 for axis
 		
 		this.toolContainer.style.width = "100%";
@@ -428,7 +427,9 @@ Waterfall.prototype = {
 		var svgLabels = this.svg.createSVG(barOffset, height);
 		var svgChart = this.svg.createSVG("100%", height);
 		
-		// draw axis
+		// draw x-axis
+		if(maxTime != 0)
+		{
 			// Size of one interval in ms
 			var numberOfLines = 10;
 			var intervalSize = maxTime / (numberOfLines - 1);
@@ -441,7 +442,8 @@ Waterfall.prototype = {
 				y1 = rowHeight + rowPadding,
 				y2 = height;
 
-			for(var i = 0; i < numberOfLines; i++) {
+			for(var i = 0; i < numberOfLines; i++)
+			{
 				// If first number move a little bit to right to let teh first number not be hidden
 				var anchor = "middle";
 				
@@ -465,6 +467,7 @@ Waterfall.prototype = {
 				svgChart.appendChild(line);
 				x1_percentage += interval;
 			}
+		}
 			
 		// draw main page events
 			for(var f in mainEvents)
@@ -560,9 +563,11 @@ Waterfall.prototype = {
 	drawBar: function(entry, barOffset, rowHeight, maxTime) {
 		var xmlns = this.svg.xmlns;
 		
-		var buildTitle = function(text) {
+		var buildDurationTitle = function(duration) {
+			duration = Math.round(duration * 10) / 10.0;
+			
 			var title = document.createElementNS(xmlns, "title");
-			title.innerHTML = text;
+			title.innerHTML = duration + "ms";
 			
 			return title;
 		}
@@ -570,14 +575,14 @@ Waterfall.prototype = {
 		var bar = this.svg.createSVGGroup();
 		
 		var rect = this.svg.createSVGRect(this.toPercentage(entry.start, maxTime), 0, this.toPercentage(entry.duration, maxTime), rowHeight, "fill:" + this.barColorsMap.blocked.color);
-		rect.appendChild(buildTitle(entry.duration + "ms"));
+		rect.appendChild(buildDurationTitle(entry.duration));
 			bar.appendChild(rect);
 			
 		this.barColorsMap.blocked.showInLegend = true;
 		
 		if(entry.redirectDuration > 0) {
 			var rect = this.svg.createSVGRect(this.toPercentage(entry.redirectStart, maxTime), 0, this.toPercentage(entry.redirectDuration, maxTime), rowHeight, "fill:" + this.barColorsMap.redirect.color);
-			rect.appendChild(buildTitle(entry.redirectDuration + "ms"));
+			rect.appendChild(buildDurationTitle(entry.redirectDuration));
 			bar.appendChild(rect);
 			
 			this.barColorsMap.redirect.showInLegend = true;
@@ -585,7 +590,7 @@ Waterfall.prototype = {
 
 		if(entry.appCacheDuration > 0) {
 			var rect = this.svg.createSVGRect(this.toPercentage(entry.appCacheStart, maxTime), 0, this.toPercentage(entry.appCacheDuration, maxTime) , rowHeight, "fill:" + this.barColorsMap.appCache.color);
-			rect.appendChild(buildTitle(entry.appCacheDuration + "ms"));
+			rect.appendChild(buildDurationTitle(entry.appCacheDuration));
 			bar.appendChild(rect);
 			
 			this.barColorsMap.appCache.showInLegend = true;
@@ -594,14 +599,14 @@ Waterfall.prototype = {
 		if(entry.dnsDuration > 0) {
 			var rect = this.svg.createSVGRect(this.toPercentage(entry.dnsStart, maxTime) , 0, this.toPercentage(entry.dnsDuration, maxTime), rowHeight, "fill:" + this.barColorsMap.dns.color);
 			bar.appendChild(rect);
-			rect.appendChild(buildTitle(entry.dnsDuration + "ms"));
+			rect.appendChild(buildDurationTitle(entry.dnsDuration));
 			
 			this.barColorsMap.dns.showInLegend = true;
 		}
 
 		if(entry.tcpDuration > 0) {
 			var rect = this.svg.createSVGRect(this.toPercentage(entry.tcpStart, maxTime) , 0, this.toPercentage(entry.tcpDuration, maxTime), rowHeight, "fill:" + this.barColorsMap.tcp.color);
-			rect.appendChild(buildTitle(entry.tcpDuration + "ms"));
+			rect.appendChild(buildDurationTitle(entry.tcpDuration));
 			bar.appendChild(rect);
 			
 			this.barColorsMap.tcp.showInLegend = true;
@@ -609,7 +614,7 @@ Waterfall.prototype = {
 
 		if(entry.sslDuration > 0) {
 			var rect = this.svg.createSVGRect(this.toPercentage(entry.sslStart, maxTime) , 0, this.toPercentage(entry.sslDuration, maxTime), rowHeight, "fill:" + this.barColorsMap.ssl.color);
-			rect.appendChild(buildTitle(entry.sslDuration + "ms"));
+			rect.appendChild(buildDurationTitle(entry.sslDuration));
 			bar.appendChild(rect);
 			
 			this.barColorsMap.ssl.showInLegend = true;
@@ -617,7 +622,7 @@ Waterfall.prototype = {
 
 		if(entry.requestDuration > 0) {
 			var rect = this.svg.createSVGRect(this.toPercentage(entry.requestStart, maxTime) , 0, this.toPercentage(entry.requestDuration, maxTime), rowHeight, "fill:" + this.barColorsMap.request.color);
-			rect.appendChild(buildTitle(entry.requestDuration + "ms"));
+			rect.appendChild(buildDurationTitle(entry.requestDuration));
 			bar.appendChild(rect);
 			
 			this.barColorsMap.request.showInLegend = true;
@@ -625,7 +630,7 @@ Waterfall.prototype = {
 
 		if(entry.responseDuration > 0) {
 			var rect = this.svg.createSVGRect(this.toPercentage(entry.responseStart, maxTime) , 0, this.toPercentage(entry.responseDuration, maxTime), rowHeight, "fill:" + this.barColorsMap.response.color);
-			rect.appendChild(buildTitle(entry.responseDuration + "ms"));
+			rect.appendChild(buildDurationTitle(entry.responseDuration));
 			bar.appendChild(rect);
 			
 			this.barColorsMap.response.showInLegend = true;
@@ -711,7 +716,7 @@ Waterfall.prototype = {
 	 */
 	createEntryFromNavigationTiming: function() {
 		var timing = window.performance.timing;
-		console.log(timing);
+		
 		return {
 			url:				document.URL,
 			start:				0,
