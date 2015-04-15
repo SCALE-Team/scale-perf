@@ -558,47 +558,76 @@ Waterfall.prototype = {
 	 * @param {double} the latest point of time of all bars
 	 */
 	drawBar: function(entry, barOffset, rowHeight, maxTime) {
-		//var bar = this.svg.createSVGGroup("translate(" + barOffset + ", 0)");
+		var xmlns = this.svg.xmlns;
+		
+		var buildTitle = function(text) {
+			var title = document.createElementNS(xmlns, "title");
+			title.innerHTML = text;
+			
+			return title;
+		}
+		
 		var bar = this.svg.createSVGGroup();
 		
-		//function createSVGRect(x, y, width, height, style)
-		bar.appendChild(this.svg.createSVGRect(this.toPercentage(entry.start, maxTime), 0, this.toPercentage(entry.duration, maxTime), rowHeight, "fill:" + this.barColorsMap.blocked.color));
+		var rect = this.svg.createSVGRect(this.toPercentage(entry.start, maxTime), 0, this.toPercentage(entry.duration, maxTime), rowHeight, "fill:" + this.barColorsMap.blocked.color);
+		rect.appendChild(buildTitle(entry.duration + "ms"));
+			bar.appendChild(rect);
+			
 		this.barColorsMap.blocked.showInLegend = true;
 		
-		//bar.appendChild(this.svg.createSVGRect("10%", 10, "40%", rowHeight, "fill:" + this.barColorsMap.blocked.color));
-		
 		if(entry.redirectDuration > 0) {
-			bar.appendChild(this.svg.createSVGRect(this.toPercentage(entry.redirectStart, maxTime), 0, this.toPercentage(entry.redirectDuration, maxTime), rowHeight, "fill:" + this.barColorsMap.redirect.color));
+			var rect = this.svg.createSVGRect(this.toPercentage(entry.redirectStart, maxTime), 0, this.toPercentage(entry.redirectDuration, maxTime), rowHeight, "fill:" + this.barColorsMap.redirect.color);
+			rect.appendChild(buildTitle(entry.redirectDuration + "ms"));
+			bar.appendChild(rect);
+			
 			this.barColorsMap.redirect.showInLegend = true;
 		}
 
 		if(entry.appCacheDuration > 0) {
-			bar.appendChild(this.svg.createSVGRect(this.toPercentage(entry.appCacheStart, maxTime), 0, this.toPercentage(entry.appCacheDuration, maxTime) , rowHeight, "fill:" + this.barColorsMap.appCache.color));
+			var rect = this.svg.createSVGRect(this.toPercentage(entry.appCacheStart, maxTime), 0, this.toPercentage(entry.appCacheDuration, maxTime) , rowHeight, "fill:" + this.barColorsMap.appCache.color);
+			rect.appendChild(buildTitle(entry.appCacheDuration + "ms"));
+			bar.appendChild(rect);
+			
 			this.barColorsMap.appCache.showInLegend = true;
 		}
 
 		if(entry.dnsDuration > 0) {
-			bar.appendChild(this.svg.createSVGRect(this.toPercentage(entry.dnsStart, maxTime) , 0, this.toPercentage(entry.dnsDuration, maxTime), rowHeight, "fill:" + this.barColorsMap.dns.color));
+			var rect = this.svg.createSVGRect(this.toPercentage(entry.dnsStart, maxTime) , 0, this.toPercentage(entry.dnsDuration, maxTime), rowHeight, "fill:" + this.barColorsMap.dns.color);
+			bar.appendChild(rect);
+			rect.appendChild(buildTitle(entry.dnsDuration + "ms"));
+			
 			this.barColorsMap.dns.showInLegend = true;
 		}
 
 		if(entry.tcpDuration > 0) {
-			bar.appendChild(this.svg.createSVGRect(this.toPercentage(entry.tcpStart, maxTime) , 0, this.toPercentage(entry.tcpDuration, maxTime), rowHeight, "fill:" + this.barColorsMap.tcp.color));
+			var rect = this.svg.createSVGRect(this.toPercentage(entry.tcpStart, maxTime) , 0, this.toPercentage(entry.tcpDuration, maxTime), rowHeight, "fill:" + this.barColorsMap.tcp.color);
+			rect.appendChild(buildTitle(entry.tcpDuration + "ms"));
+			bar.appendChild(rect);
+			
 			this.barColorsMap.tcp.showInLegend = true;
 		}
 
 		if(entry.sslDuration > 0) {
-			bar.appendChild(this.svg.createSVGRect(this.toPercentage(entry.sslStart, maxTime) , 0, this.toPercentage(entry.sslDuration, maxTime), rowHeight, "fill:" + this.barColorsMap.ssl.color));
+			var rect = this.svg.createSVGRect(this.toPercentage(entry.sslStart, maxTime) , 0, this.toPercentage(entry.sslDuration, maxTime), rowHeight, "fill:" + this.barColorsMap.ssl.color);
+			rect.appendChild(buildTitle(entry.sslDuration + "ms"));
+			bar.appendChild(rect);
+			
 			this.barColorsMap.ssl.showInLegend = true;
 		}
 
 		if(entry.requestDuration > 0) {
-			bar.appendChild(this.svg.createSVGRect(this.toPercentage(entry.requestStart, maxTime) , 0, this.toPercentage(entry.requestDuration, maxTime), rowHeight, "fill:" + this.barColorsMap.request.color));
+			var rect = this.svg.createSVGRect(this.toPercentage(entry.requestStart, maxTime) , 0, this.toPercentage(entry.requestDuration, maxTime), rowHeight, "fill:" + this.barColorsMap.request.color);
+			rect.appendChild(buildTitle(entry.requestDuration + "ms"));
+			bar.appendChild(rect);
+			
 			this.barColorsMap.request.showInLegend = true;
 		}
 
 		if(entry.responseDuration > 0) {
-			bar.appendChild(this.svg.createSVGRect(this.toPercentage(entry.responseStart, maxTime) , 0, this.toPercentage(entry.responseDuration, maxTime), rowHeight, "fill:" + this.barColorsMap.response.color));
+			var rect = this.svg.createSVGRect(this.toPercentage(entry.responseStart, maxTime) , 0, this.toPercentage(entry.responseDuration, maxTime), rowHeight, "fill:" + this.barColorsMap.response.color);
+			rect.appendChild(buildTitle(entry.responseDuration + "ms"));
+			bar.appendChild(rect);
+			
 			this.barColorsMap.response.showInLegend = true;
 		}
 
