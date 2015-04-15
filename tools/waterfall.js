@@ -503,16 +503,20 @@ Waterfall.prototype = {
 					var lineEnd = this.svg.createSVGLine(endX, y1, endX, y2, "stroke-width: 2px; stroke: " + event.line + ";");
 					var textEnd = this.svg.createSVGText(endX, 0, 0, rowHeight, "font: 10px sans-serif;", anchor, "");
 					
-					var rectX = this.toPercentage(event.timeEnd - event.timeStart, timeSpan);
+					var duration = event.timeEnd - event.timeStart;
+					var rectX = this.toPercentage(duration, timeSpan);
 					var rectY2 = y2 - y1;
 					var rectEnd = this.svg.createSVGRect(startX, y1, rectX, rectY2, "fill: " + event.fill + ";");
+					rectEnd.appendChild(this.buildDurationTitle(duration));
+					
+					svgChart.appendChild(rectEnd);
+					svgChart.appendChild(lineEnd);
+					svgChart.appendChild(textEnd);
 				}
 				
-				svgChart.appendChild(rectEnd);
+				// Do it after the time end line, else the rect will overlap half of the line
 				svgChart.appendChild(lineStart);
 				svgChart.appendChild(textStart);
-				svgChart.appendChild(lineEnd);
-				svgChart.appendChild(textEnd);
 			}
 			
 		// draw resource entries
@@ -587,6 +591,15 @@ Waterfall.prototype = {
 		return p + "%";
 	},
 	
+	buildDurationTitle: function(duration) {
+		duration = Math.round(duration * 10) / 10.0;
+		
+		var title = document.createElementNS(this.svg.xmlns, "title");
+		title.innerHTML = duration + "ms";
+		
+		return title;
+	},
+	
 	/**
 	 * Draw bar for resource 
 	 * @param {object} entry Details of URL, and timings for individual resource
@@ -595,23 +608,12 @@ Waterfall.prototype = {
 	 * @param {double} the latest point of time of all bars
 	 */
 	drawBar: function(entry, barOffset, rowHeight, minTime, maxTime) {
-		var xmlns = this.svg.xmlns;
-		
-		var buildDurationTitle = function(duration) {
-			duration = Math.round(duration * 10) / 10.0;
-			
-			var title = document.createElementNS(xmlns, "title");
-			title.innerHTML = duration + "ms";
-			
-			return title;
-		}
-		
 		var bar = this.svg.createSVGGroup();
 		var span = maxTime - minTime;
 		
 		var start = entry.start - minTime;
 		var rect = this.svg.createSVGRect(this.toPercentage(start, span), 0, this.toPercentage(entry.duration, span), rowHeight, "fill:" + this.barColorsMap.blocked.color);
-		rect.appendChild(buildDurationTitle(entry.duration));
+		rect.appendChild(this.buildDurationTitle(entry.duration));
 		bar.appendChild(rect);
 			
 		this.barColorsMap.blocked.showInLegend = true;
@@ -619,7 +621,7 @@ Waterfall.prototype = {
 		if(entry.redirectDuration > 0) {
 			var redirectStart = entry.redirectStart - minTime;
 			var rect = this.svg.createSVGRect(this.toPercentage(redirectStart, span), 0, this.toPercentage(entry.redirectDuration, span), rowHeight, "fill:" + this.barColorsMap.redirect.color);
-			rect.appendChild(buildDurationTitle(entry.redirectDuration));
+			rect.appendChild(this.buildDurationTitle(entry.redirectDuration));
 			bar.appendChild(rect);
 			
 			this.barColorsMap.redirect.showInLegend = true;
@@ -628,7 +630,7 @@ Waterfall.prototype = {
 		if(entry.appCacheDuration > 0) {
 			var appCacheStart = entry.appCacheStart - minTime;
 			var rect = this.svg.createSVGRect(this.toPercentage(appCacheStart, span), 0, this.toPercentage(entry.appCacheDuration, span) , rowHeight, "fill:" + this.barColorsMap.appCache.color);
-			rect.appendChild(buildDurationTitle(entry.appCacheDuration));
+			rect.appendChild(this.buildDurationTitle(entry.appCacheDuration));
 			bar.appendChild(rect);
 			
 			this.barColorsMap.appCache.showInLegend = true;
@@ -638,7 +640,7 @@ Waterfall.prototype = {
 			var dnsStart = entry.dnsStart - minTime;
 			var rect = this.svg.createSVGRect(this.toPercentage(dnsStart, span) , 0, this.toPercentage(entry.dnsDuration, span), rowHeight, "fill:" + this.barColorsMap.dns.color);
 			bar.appendChild(rect);
-			rect.appendChild(buildDurationTitle(entry.dnsDuration));
+			rect.appendChild(this.buildDurationTitle(entry.dnsDuration));
 			
 			this.barColorsMap.dns.showInLegend = true;
 		}
@@ -646,7 +648,7 @@ Waterfall.prototype = {
 		if(entry.tcpDuration > 0) {
 			var tcpStart = entry.tcpStart - minTime;
 			var rect = this.svg.createSVGRect(this.toPercentage(tcpStart, span) , 0, this.toPercentage(entry.tcpDuration, span), rowHeight, "fill:" + this.barColorsMap.tcp.color);
-			rect.appendChild(buildDurationTitle(entry.tcpDuration));
+			rect.appendChild(this.buildDurationTitle(entry.tcpDuration));
 			bar.appendChild(rect);
 			
 			this.barColorsMap.tcp.showInLegend = true;
@@ -655,7 +657,7 @@ Waterfall.prototype = {
 		if(entry.sslDuration > 0) {
 			var sslStart = entry.sslStart - minTime;
 			var rect = this.svg.createSVGRect(this.toPercentage(sslStart, span) , 0, this.toPercentage(entry.sslDuration, span), rowHeight, "fill:" + this.barColorsMap.ssl.color);
-			rect.appendChild(buildDurationTitle(entry.sslDuration));
+			rect.appendChild(this.buildDurationTitle(entry.sslDuration));
 			bar.appendChild(rect);
 			
 			this.barColorsMap.ssl.showInLegend = true;
@@ -664,7 +666,7 @@ Waterfall.prototype = {
 		if(entry.requestDuration > 0) {
 			var requestStart = entry.requestStart - minTime;
 			var rect = this.svg.createSVGRect(this.toPercentage(requestStart, span) , 0, this.toPercentage(entry.requestDuration, span), rowHeight, "fill:" + this.barColorsMap.request.color);
-			rect.appendChild(buildDurationTitle(entry.requestDuration));
+			rect.appendChild(this.buildDurationTitle(entry.requestDuration));
 			bar.appendChild(rect);
 			
 			this.barColorsMap.request.showInLegend = true;
@@ -673,7 +675,7 @@ Waterfall.prototype = {
 		if(entry.responseDuration > 0) {
 			var responseStart = entry.responseStart - minTime;
 			var rect = this.svg.createSVGRect(this.toPercentage(responseStart, span) , 0, this.toPercentage(entry.responseDuration, span), rowHeight, "fill:" + this.barColorsMap.response.color);
-			rect.appendChild(buildDurationTitle(entry.responseDuration));
+			rect.appendChild(this.buildDurationTitle(entry.responseDuration));
 			bar.appendChild(rect);
 			
 			this.barColorsMap.response.showInLegend = true;
@@ -799,20 +801,21 @@ Waterfall.prototype = {
 				name:			"DOM Content loaded",
 				timeStart:		(timing.domContentLoadedEventStart - timing.navigationStart),
 				timeEnd:		(timing.domContentLoadedEventEnd - timing.navigationStart),
-				fill:			"#D888DF",
-				line:			"#c141cd"
+				line:			"#c141cd",
+				fill:			"#D888DF"
 			},
 			{
 				name:			"On load",
 				timeStart:		(timing.loadEventStart - timing.navigationStart),
 				timeEnd:		(timing.loadEventEnd - timing.navigationStart),
-				fill:			"#C0C0FF",
-				line:			"#0000FF"
+				line:			"#0000FF",
+				fill:			"#C0C0FF"
 			},
 			/*
 			{
-				name:	"domComplete",
-				time:	(timing.domComplete - timing.navigationStart)
+				name:			"DOM interactive",
+				time:			(timing.domInteractive - timing.navigationStart),
+				line:			"#FF6A00"
 			}
 			//*/
 		];
