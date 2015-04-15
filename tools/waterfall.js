@@ -401,7 +401,7 @@ Waterfall.prototype = {
 			var entriesToShow = this.filterEntries(entries);
 			
 			// Find the latest time
-			var maxTime = 0;
+			var maxTime = 0, minTime = 0;
 			for(var n = 0; n < entriesToShow.length; n++)
 			{
 				maxTime = Math.max(maxTime, entriesToShow[n].start + entriesToShow[n].duration);
@@ -434,7 +434,7 @@ Waterfall.prototype = {
 		{
 			// Size of one interval in ms
 			var numberOfLines = 10;
-			var intervalSize = maxTime / (numberOfLines - 1);
+			var intervalSize = (maxTime - minTime) / (numberOfLines - 1);
 			
 			// %-space between the seconds on the x-axis
 			var interval = (100 * intervalSize) / maxTime; // original: 1 / (maxTime / intervalSize) * 100
@@ -446,16 +446,18 @@ Waterfall.prototype = {
 
 			for(var i = 0; i < numberOfLines; i++)
 			{
-				// If first number move a little bit to right to let the first number not be hidden
+				// Determine the anchor for the line labels to be always visible
 				var anchor = "middle";
-				
 				if(i == 0) anchor = "start";
 				else if(i == (numberOfLines - 1)) anchor = "end";
 				
-				if(maxTime < 1000) var text = Math.round(i * intervalSize) + "ms";
-				else if(maxTime < 10000) var text = (Math.round(i * intervalSize / 100) / 10.0) + "s";
-				else if(maxTime < 100000) var text = Math.round(i * intervalSize / 1000) + "s";
-				else var text = Math.round(i * intervalSize / 10000) * 10 + "s";
+				// Determine the format of the time depending on the time span
+				var timeMs = i * intervalSize;
+				
+				if(maxTime < 1000) var text = Math.round(timeMs) + "ms";
+				else if(maxTime < 10000) var text = (Math.round(timeMs / 100) / 10.0) + "s";
+				else if(maxTime < 100000) var text = Math.round(timeMs / 1000) + "s";
+				else var text = Math.round(timeMs / 10000) * 10 + "s";
 				
 				var text = this.svg.createSVGText(x1_percentage + "%", 0, 0, rowHeight - 10, "font: 10px sans-serif;", anchor, text);
 				var line = this.svg.createSVGLine(x1_percentage + "%", y1, x1_percentage + "%", y2, "stroke: #ccc;");
