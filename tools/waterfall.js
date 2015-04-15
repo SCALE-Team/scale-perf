@@ -387,45 +387,47 @@ Waterfall.prototype = {
 	
 	// Function to draw all the waterfall bars
 	drawAllBars: function(entries) {
-		// Height of the bars
-		var rowHeight = 20;
-		
-		// space between the bars
-		var rowPadding = 2;
-		
-		// The width of the labels
-		var barOffset = 200;
-		
-		// Get the entries to show
-		var entriesToShow = this.filterEntries(entries);
-		
-		// Find the latest time
-		var maxTime = 0;
-		for(var n = 0; n < entriesToShow.length; n++)
-		{
-			maxTime = Math.max(maxTime, entriesToShow[n].start + entriesToShow[n].duration);
-		}
-		
-		var mainEvents = this.getMainPageEvents();
-		for(var f in mainEvents)
-		{
-			if(mainEvents[f].time > this.chartContainer.data.timeSpanUntil) continue;
+		/* Prepare some attributes */ {
+			// Height of the bars
+			var rowHeight = 20;
 			
-			maxTime = Math.max(maxTime, mainEvents[f].time);
+			// space between the bars
+			var rowPadding = 2;
+			
+			// The width of the labels
+			var barOffset = 200;
+			
+			// Get the entries to show
+			var entriesToShow = this.filterEntries(entries);
+			
+			// Find the latest time
+			var maxTime = 0;
+			for(var n = 0; n < entriesToShow.length; n++)
+			{
+				maxTime = Math.max(maxTime, entriesToShow[n].start + entriesToShow[n].duration);
+			}
+			
+			var mainEvents = this.getMainPageEvents();
+			for(var f in mainEvents)
+			{
+				if(mainEvents[f].time > this.chartContainer.data.timeSpanUntil) continue;
+				
+				maxTime = Math.max(maxTime, mainEvents[f].time);
+			}
+			
+			//calculate size of chart
+			// - max time
+			// - number of entries
+			var height = (entriesToShow.length + 1) * (rowHeight + rowPadding); // +1 for axis
+			
+			this.toolContainer.style.width = "100%";
+			
+			this.chartContainer.style.width = "100%";
+			this.chartContainer.style.height = height;
+			
+			var svgLabels = this.svg.createSVG(barOffset, height);
+			var svgChart = this.svg.createSVG("100%", height);
 		}
-		
-		//calculate size of chart
-		// - max time
-		// - number of entries
-		var height = (entriesToShow.length + 1) * (rowHeight + rowPadding); // +1 for axis
-		
-		this.toolContainer.style.width = "100%";
-		
-		this.chartContainer.style.width = "100%";
-		this.chartContainer.style.height = height;
-		
-		var svgLabels = this.svg.createSVG(barOffset, height);
-		var svgChart = this.svg.createSVG("100%", height);
 		
 		// draw x-axis
 		if(maxTime != 0)
@@ -444,7 +446,7 @@ Waterfall.prototype = {
 
 			for(var i = 0; i < numberOfLines; i++)
 			{
-				// If first number move a little bit to right to let teh first number not be hidden
+				// If first number move a little bit to right to let the first number not be hidden
 				var anchor = "middle";
 				
 				if(i == 0) anchor = "start";
@@ -492,7 +494,8 @@ Waterfall.prototype = {
 			}
 			
 		// draw resource entries
-		for(var n = 0; n < entriesToShow.length; n++) {
+		for(var n = 0; n < entriesToShow.length; n++)
+		{
 			var entry = entriesToShow[n]; 
 			
 			var dy = 13;
@@ -536,14 +539,16 @@ Waterfall.prototype = {
 			
 		}
 		
-		var div = document.createElement("div");
-		div.className = "chart_svg";
-		div.appendChild(svgChart);
-		
-		this.chartContainer.appendChild(svgLabels);
-		this.chartContainer.appendChild(div);
-		
-		this.buildLegend();
+		/* Append the chart to page */ {
+			var div = document.createElement("div");
+			div.className = "chart_svg";
+			div.appendChild(svgChart);
+			
+			this.chartContainer.appendChild(svgLabels);
+			this.chartContainer.appendChild(div);
+			
+			this.buildLegend();
+		}
 	},
 	
 	// Calculates the percentage relation of part to max
