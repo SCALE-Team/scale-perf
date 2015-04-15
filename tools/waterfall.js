@@ -110,13 +110,17 @@ Waterfall.prototype = {
 	},
 	
 	buildLegend: function() {
-		var id = "WaterfallLegend";
+		var legendId = "WaterfallLegend";
+		var eventLegendId = "WaterfallEventLegend";
 		
-		var existingLegend = document.getElementById(id);
+		var existingLegend = document.getElementById(legendId);
+		if(existingLegend != null) existingLegend.parentNode.removeChild(existingLegend);
+		existingLegend = document.getElementById(eventLegendId);
 		if(existingLegend != null) existingLegend.parentNode.removeChild(existingLegend);
 		
+		// Resource legend
 		var legend = document.createElement("div");
-		legend.id = id;
+		legend.id = legendId;
 		this.toolContainer.appendChild(legend);
 		
 		for(var f in this.barColors)
@@ -131,6 +135,23 @@ Waterfall.prototype = {
 			legend.appendChild(captionElem);
 			
 			if(barColor.isDark) captionElem.className = "dark";
+		}
+		
+		// Event legend
+		var eventLegend = document.createElement("div");
+		eventLegend.id = eventLegendId;
+		this.toolContainer.appendChild(eventLegend);
+		
+		var mainEvents = this.getMainPageEvents();
+		for(var f in mainEvents)
+		{
+			var event = mainEvents[f];
+			
+			var captionElem = document.createElement("div");
+			captionElem.innerHTML = event.name;
+			captionElem.style.backgroundColor = event.fill;
+			captionElem.style.borderColor = event.line;
+			eventLegend.appendChild(captionElem);
 		}
 	},
 	
@@ -177,7 +198,10 @@ Waterfall.prototype = {
 		style += "#" + this.containerId + " .button-group :first-child { border-radius: 5px 0px 0px 5px; }";
 		style += "#" + this.containerId + " .button-group :last-child { border-radius: 0px 5px 5px 0px; border-right: 1px solid #ccc; }";
 		
-		style += "#" + this.containerId + " #WaterfallLegend > div { display: inline-block; padding: 3px; border-radius: 3px; margin: 10px 3px 0px; }";
+		style += "#" + this.containerId + " #WaterfallLegend, #WaterfallEventLegend { float:left; display: inline-block; }";
+		style += "#" + this.containerId + " #WaterfallEventLegend { float: right; }";
+		style += "#" + this.containerId + " #WaterfallLegend > div, #WaterfallEventLegend > div { display: inline-block; padding: 3px; border-radius: 3px; margin: 10px 3px 0px; }";
+		style += "#" + this.containerId + " #WaterfallEventLegend > div { border-radius:0px; border: 2px solid transparent; border-top: 0px; border-bottom: 0px; margin: 10px 3px 0px; }";
 		style += "#" + this.containerId + " #WaterfallLegend > div.dark { color: #fff; }";
 		
 		this.cssElem.innerHTML = style;
@@ -464,7 +488,7 @@ Waterfall.prototype = {
 				else if(maxTime < 100000) var text = Math.round(timeMs / 1000) + "s";
 				else var text = Math.round(timeMs / 10000) * 10 + "s";
 				
-				var text = this.svg.createSVGText(x1_percentage + "%", 0, 0, rowHeight - 10, "font: 10px sans-serif;", anchor, text);
+				var text = this.svg.createSVGText(x1_percentage + "%", 0, 0, rowHeight - 5, "font: 10px sans-serif;", anchor, text);
 				var line = this.svg.createSVGLine(x1_percentage + "%", y1, x1_percentage + "%", y2, "stroke: #ccc;");
 				
 				// hide odd lines on small screens
@@ -484,24 +508,14 @@ Waterfall.prototype = {
 			{
 				var event = mainEvents[f];
 				
-				//if(event.timeEnd > this.chartContainer.data.timeSpanUntil) continue;
-				//if((event.timeStart) < this.chartContainer.data.timeSpanFrom) continue;
-				
-				var r = event.timeEnd / timeSpan;
-				if(r < 0.25) var anchor = "start";
-				else if(r > 0.75) var anchor = "end";
-				else var anchor = "middle";
-				
 				// time or timeStart line
 				var startX = this.toPercentage((event.timeStart||event.time) - minTime, timeSpan);
 				var lineStart = this.svg.createSVGLine(startX, y1, startX, y2, "stroke-width: 2px; stroke: " + event.line + ";");
-				var textStart = this.svg.createSVGText(startX, 0, 0, rowHeight, "font: 10px sans-serif;", anchor, event.name);
 				
 				if(event.timeEnd != null)
 				{
 					var endX = this.toPercentage(event.timeEnd - minTime, timeSpan);
 					var lineEnd = this.svg.createSVGLine(endX, y1, endX, y2, "stroke-width: 2px; stroke: " + event.line + ";");
-					var textEnd = this.svg.createSVGText(endX, 0, 0, rowHeight, "font: 10px sans-serif;", anchor, "");
 					
 					var duration = event.timeEnd - event.timeStart;
 					var rectX = this.toPercentage(duration, timeSpan);
@@ -511,12 +525,10 @@ Waterfall.prototype = {
 					
 					svgChart.appendChild(rectEnd);
 					svgChart.appendChild(lineEnd);
-					svgChart.appendChild(textEnd);
 				}
 				
 				// Do it after the time end line, else the rect will overlap half of the line
 				svgChart.appendChild(lineStart);
-				svgChart.appendChild(textStart);
 			}
 			
 		// draw resource entries
@@ -704,7 +716,6 @@ Waterfall.prototype = {
 			var url = entry.url.toLowerCase().split("?")[0].toLowerCase();
 			var file = url.split("/").pop();
 			var ending = file.split(".").pop();
-			//var startTime = entry.start;
 			
 			if(allowedInitiatorType != null && allowedInitiatorType.length > 0 && allowedInitiatorType.indexOf(entry.initiatorType) == -1)
 			{
@@ -714,16 +725,7 @@ Waterfall.prototype = {
 			if(notAllowed != null && notAllowed.length > 0 && notAllowed.indexOf(ending) != -1) continue;
 			if(notAllowedInitiatorType != null && notAllowedInitiatorType.length > 0 && notAllowedInitiatorType.indexOf(entry.initiatorType) != -1) continue;
 			
-			//if(timeSpanUntil > 0 && startTime > timeSpanUntil) continue;
-			//if(timeSpanFrom > 0 && startTime < timeSpanFrom) continue;
 			if(searchText.length > 0 && url.indexOf(searchText) == -1) continue;
-			/*
-			else
-			{
-				entry.url = url.replace(searchText, "<b>" + searchText + "</b>");
-				console.log(url);
-			}
-			//*/
 			
 			filteredEntries.push(entry);
 		}
