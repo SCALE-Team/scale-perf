@@ -495,11 +495,11 @@ Waterfall.prototype = {
 			var dy = 13;
 			
 			/* Label of the row */ {
-				var background = this.svg.createSVGRect(0, 0, 300, rowHeight);
+				//var background = this.svg.createSVGRect(0, 0, 300, rowHeight);
+				//rowLabel.appendChild(background);
 				
 				var rowLabel = this.svg.createSVGGroup("translate(0," + (n + 1) * (rowHeight + rowPadding) + ")");
 				rowLabel.appendChild(this.svg.createSVGText(5, 0, 0, dy, "font: 10px sans-serif;", "start", this.shortenURL(entry.url), entry.url));
-				rowLabel.appendChild(background);
 				svgLabels.appendChild(rowLabel);
 				
 			}
