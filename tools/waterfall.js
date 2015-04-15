@@ -331,6 +331,8 @@ Waterfall.prototype = {
 					
 					superClass.chartContainer.data.allowed = (btn.data!=null ? btn.data.allowed : null);
 					superClass.chartContainer.data.notAllowed = (btn.data!=null ? btn.data.notAllowed : null);
+					superClass.chartContainer.data.allowedInitiatorType = (btn.data!=null ? btn.data.allowedInitiatorType : null);
+					superClass.chartContainer.data.notAllowedInitiatorType = (btn.data!=null ? btn.data.notAllowedInitiatorType : null);
 					
 					superClass.drawAllBars(entries);
 				};
@@ -346,25 +348,37 @@ Waterfall.prototype = {
 				
 				var jsBtn = document.createElement("button");
 				jsBtn.innerHTML = "JS";
-				jsBtn.data = { allowed: [ "js" ] };
+				jsBtn.data = {
+					allowed:				[ "js" ],
+					allowedInitiatorType:	[ "script" ]
+				};
 				jsBtn.onclick = filterByType;
 				buttonGroup.appendChild(jsBtn);
 				
 				var cssBtn = document.createElement("button");
 				cssBtn.innerHTML = "CSS";
-				cssBtn.data = { allowed: [ "css" ] };
+				cssBtn.data = {
+					allowed: 				[ "css" ],
+					allowedInitiatorType:	[ "link" ]
+				};
 				cssBtn.onclick = filterByType;
 				buttonGroup.appendChild(cssBtn);
 				
 				var imgBtn = document.createElement("button");
 				imgBtn.innerHTML = "Images";
-				imgBtn.data = { allowed: [ "png", "jpg", "jpeg", "gif", "bmp", "svg", "tif" ] };
+				imgBtn.data = {
+					allowed:				[ "png", "jpg", "jpeg", "gif", "bmp", "svg", "tif" ],
+					allowedInitiatorType:	[ "img", "css" ]
+				};
 				imgBtn.onclick = filterByType;
 				buttonGroup.appendChild(imgBtn);
 				
 				var elseBtn = document.createElement("button");
 				elseBtn.innerHTML = "Else";
-				elseBtn.data = { notAllowed: jsBtn.data.allowed.concat(cssBtn.data.allowed).concat(imgBtn.data.allowed) };
+				elseBtn.data = {
+					notAllowed:					jsBtn.data.allowed.concat(cssBtn.data.allowed).concat(imgBtn.data.allowed),
+					notAllowedInitiatorType:	jsBtn.data.allowedInitiatorType.concat(cssBtn.data.allowedInitiatorType).concat(imgBtn.data.allowedInitiatorType)
+				};
 				elseBtn.onclick = filterByType;
 				buttonGroup.appendChild(elseBtn);
 				
@@ -671,6 +685,8 @@ Waterfall.prototype = {
 		//this.chartContainer = document.getElementById("ChartContainer");
 		this.chartContainer.innerHTML = "";
 		
+		var notAllowedInitiatorType = this.chartContainer.data.notAllowedInitiatorType;
+		var allowedInitiatorType = this.chartContainer.data.allowedInitiatorType;
 		var allowed = this.chartContainer.data.allowed;
 		var notAllowed = this.chartContainer.data.notAllowed;
 		var searchText = this.chartContainer.data.searchText;
@@ -681,25 +697,32 @@ Waterfall.prototype = {
 		var filteredEntries = [];
 		for(var f in entries)
 		{
-			var url = entries[f].url.toLowerCase().split("?")[0].toLowerCase();
+			var entry = entries[f];
+			var url = entry.url.toLowerCase().split("?")[0].toLowerCase();
 			var file = url.split("/").pop();
 			var ending = file.split(".").pop();
-			//var startTime = entries[f].start;
+			//var startTime = entry.start;
 			
-			if(allowed != null && allowed.length > 0 && allowed.indexOf(ending) == -1) continue;
+			if(allowedInitiatorType != null && allowedInitiatorType.length > 0 && allowedInitiatorType.indexOf(entry.initiatorType) == -1)
+			{
+				if(allowed != null && allowed.length > 0 && allowed.indexOf(ending) == -1) continue;
+			}
+			
 			if(notAllowed != null && notAllowed.length > 0 && notAllowed.indexOf(ending) != -1) continue;
+			if(notAllowedInitiatorType != null && notAllowedInitiatorType.length > 0 && notAllowedInitiatorType.indexOf(entry.initiatorType) != -1) continue;
+			
 			//if(timeSpanUntil > 0 && startTime > timeSpanUntil) continue;
 			//if(timeSpanFrom > 0 && startTime < timeSpanFrom) continue;
 			if(searchText.length > 0 && url.indexOf(searchText) == -1) continue;
 			/*
 			else
 			{
-				entries[f].url = url.replace(searchText, "<b>" + searchText + "</b>");
+				entry.url = url.replace(searchText, "<b>" + searchText + "</b>");
 				console.log(url);
 			}
 			//*/
 			
-			filteredEntries.push(entries[f]);
+			filteredEntries.push(entry);
 		}
 		
 		return filteredEntries;
@@ -747,6 +770,7 @@ Waterfall.prototype = {
 		
 		return {
 			url:				document.URL,
+			initiatorType:		"",
 			start:				0,
 			duration:			timing.responseEnd - timing.navigationStart,
 			redirectStart:		timing.redirectStart === 0 ? 0 : timing.redirectStart - timing.navigationStart,
@@ -805,8 +829,10 @@ Waterfall.prototype = {
 		// AppCache: start = fetchStart, end = domainLookupStart, connectStart or requestStart
 		// TCP: start = connectStart, end = secureConnectionStart or connectEnd
 		// SSL: secureConnectionStart can be undefined
+		
 		return {
 			url:				resource.name,
+			initiatorType:		resource.initiatorType,
 			start:				resource.startTime,
 			duration:			resource.duration,
 			redirectStart:		resource.redirectStart,
@@ -824,7 +850,7 @@ Waterfall.prototype = {
 			responseStart:		resource.responseStart,
 			// ??? - Chromium returns zero for responseEnd for 3rd party URLs, bug?
 			responseDuration:	resource.responseStart == 0 ? 0 : resource.responseEnd - resource.responseStart
-		}
+		};
 	},
 	
 	/**
