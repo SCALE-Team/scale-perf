@@ -793,14 +793,21 @@ Waterfall.prototype = {
 	
 	getMainPageEvents: function() {
 		var timing = window.performance.timing;
-		
+		console.log(timing);
 		return [
 			{
-				name:			"domContentLoaded",
+				name:			"DOM Content loaded",
 				timeStart:		(timing.domContentLoadedEventStart - timing.navigationStart),
 				timeEnd:		(timing.domContentLoadedEventEnd - timing.navigationStart),
 				fill:			"#D888DF",
 				line:			"#c141cd"
+			},
+			{
+				name:			"On load",
+				timeStart:		(timing.loadEventStart - timing.navigationStart),
+				timeEnd:		(timing.loadEventEnd - timing.navigationStart),
+				fill:			"#C0C0FF",
+				line:			"#0000FF"
 			},
 			/*
 			{
