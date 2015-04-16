@@ -573,11 +573,12 @@ ScalePerformanceBarClass.prototype = {
 			{
 				var resource = resources[f];
 				
-				if((resource.start - pageLoadTime) >= 2000) break;
+				var fin = resource.start + resource.duration;
 				
-				pageLoadTime = resource.start + resource.duration;
+				if((fin - pageLoadTime) >= 2000) break;
+				
+				pageLoadTime = Math.max(pageLoadTime, fin);
 			}
-			
 			return Math.round(pageLoadTime);
 		},
 		
