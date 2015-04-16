@@ -240,8 +240,6 @@
 		
 		<script>
 			(function(){
-				var main = document.getElementById("Main");
-				
 				function scriptLoadFunction(scriptPath){
 					var isLocal = ((self.location+"").split("http://").pop().split("/")[0] == "localhost");
 					
@@ -269,10 +267,10 @@
 					body.appendChild(loadingElem).appendChild(jselem);
 				};
 				
-				var linkElem = document.getElementById("DesktopLink");
+				var linkElem = document.querySelector("#DesktopLink");
 				linkElem.href = 'javascript:' + scriptLoadFunction + '; scriptLoadFunction();';
 				linkElem.href = linkElem.href.replace(new RegExp("\n", 'g'), "");
-				document.getElementById("MobileLink").href = "#" + linkElem.href;
+				document.querySelector("#MobileLink").href = "#" + linkElem.href;
 				
 				(function() {
 					/*Get GET-parameters*/ {
@@ -320,7 +318,7 @@
 						var style = document.getElementsByTagName("style")[0];
 						style.innerHTML += "#PerfBar { display: none !important; }";
 						
-						var dragLink = document.getElementById("DragLink");
+						var dragLink = document.querySelector("#DragLink");
 						dragLink.onclick = function() {
 							$("#HowToAddModal").modal();
 						};
@@ -333,7 +331,7 @@
 			})();
 			
 			function changeToStep(nr){
-				document.getElementById("MobileInstruction").className = "s" + nr;
+				document.querySelector("#MobileInstruction").className = "s" + nr;
 			}
 		</script>
 	</body>

@@ -72,7 +72,7 @@ ScalePerformanceBarClass.prototype = {
 			href:		"https://scale-team.github.io/scale-perf/tools/stats.js",
 			devHref:	"https://scale-team.github.io/scale-perf-dev/tools/stats.js",
 			localHref:	"/tools/stats.js",
-			helpText:	"Shows you how fast your webpage is rendered. It has the same meaning like in games. If your webpage gets below 30 FPS it is definitely too complex to be rendered fast enough.",
+			helpText:	"Shows you how fast your webpage is rendered. It has the same meaning like in games. If your webpage gets below 30 FPS it is definitely too complex to be rendered fast enough.<br />Play with it! E.g. scroll down your webpage, reload things and watch the impact at your rendering performance. The efefct will be more visible when you simulate a slow network connection. You can set this in the Chrome developer tools (<a href='http://www.elijahmanor.com/enhanced-chrome-emulation-tools/'>have a look here</a>).",
 			onload: function(superClass) {
 				superClass.tools.activeTool = new Stats();
 			}
@@ -142,6 +142,7 @@ ScalePerformanceBarClass.prototype = {
 		style += "#ScalePageContent { transition: top ease-out 0.5s, opacity ease-out 0.5s; -webkit-transition: top ease-out 0.5s, opacity ease-out 0.5s; }";
 		
 		style += "#ScalePopUp { z-index: 1000002; position: fixed; top: 10px; bottom: 10px; left: 50%; margin-left: -200px; 0px auto; width: 400px; background: #fff; box-shadow: 2px 2px 10px rgba(0,0,0,0.7); }";
+		style += "#ScalePopUp.is_short { height: 300px; }";
 		style += "#ScalePopUp .content { position: absolute; top: 0px; left: 0px; right: 0px; bottom: 50px; overflow: auto; padding: 15px; }";
 		style += "#ScalePopUp .button-row { position: absolute; bottom: 0px; left: 0px; right: 0px; height: 50px; }";
 		style += "#ScalePopUp .button-row a { position: absolute; top: 0px; right: 0px; bottom: 0px; left: 0px; color: #555; font-size: 16px; background: rgba(0,0,0,0.1); padding: 14px; text-align: center; }";
@@ -647,10 +648,14 @@ ScalePerformanceBarClass.prototype = {
 			
 			if(typeof(content) == "string")
 			{
+				popup.elem.className = "is_short";
+				
 				popup.contentElem.innerHTML = content;
 			}
 			else if(typeof(content) == "object")
 			{
+				popup.contentElem.className = "";
+				
 				for(var f in content)
 				{
 					popup.contentElem.appendChild(content[f]);
