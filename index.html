@@ -17,10 +17,6 @@
 				margin:		10px 0px;
 				font-size:	18px;
 			}
-
-			#LinkRow {
-				text-align:	right;
-			}
 			
 			#MobileInstruction > li { list-style-type: none; }
 			#MobileInstruction:not(.s1) > li.s1 { display: none; }
@@ -39,13 +35,6 @@
 				background-image:	-o-linear-gradient(top,#646464 0,#2D2D2D 100%);
 				background-image:	linear-gradient(to bottom,#646464 0,#2D2D2D 100%);
 				background-repeat:	repeat-x;
-			}
-			
-			.masthead .version {
-				margin-top:		15px;
-				margin-bottom:	30px;
-				font-size:		14px;
-				color:			rgba(255,255,255,0.6);
 			}
 			
 			.promo_text {
@@ -84,12 +73,36 @@
 				border-color:	#fff;
 			}
 			
-			a.border_it_inverse:hover {
+			a.border_it_inverse:hover, .border_it_click:hover {
 				background-color:	#fff;
 				color:				#555;
 			}
+			
+			.masthead_link {
+				position:	relative;
+				width:		190px;
+				margin:		0px auto;
+			}
+			
+			.masthead_link > a {
+				display:	block;
+				position:	absolute;
+				top:		0px;
+				left:		0px;
+				color:		transparent;
+				width:		100%;
+				height:		100%;
+				font-size:	0px;
+			}
+			
+			.masthead .explain {
+				margin-top:		15px;
+				font-size:		14px;
+				color:			rgba(255,255,255,0.4);
+			}
 		</style>
 	</head>
+	
 	<!--<body onload="for(var i=0;i<1000;i++) console.log(123)">-->
 	<body>
 		<div class="container">
@@ -111,9 +124,15 @@
 				</div>
 				
 				<div class="row col-md-10 col-md-offset-1 col-xs-12 col-xs-offset-0">
-					<a id="DesktopLink" href="getting-started#download" class="border_it border_it_inverse">SCALE Perf</a>
+					<div id="DragLink" class="border_it border_it_inverse border_it_click masthead_link">
+						<a id="DesktopLink">
+							SCALE Perf
+						</a>
+						
+						<b>Drag</b> me into your link bar
+					</div>
 					
-					<div class="version">Drag and drop this link into your link bar</div>
+					<div class="explain">After that go to a webpage and click the bookmarklet</div>
 				</div>
 			</div>
 		</div>
@@ -181,6 +200,28 @@
 			</div>
 		</div>
 		
+		<div id="HowToModal" class="modal fade">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title">No Bro, you didn't click me! Did you?</h4>
+					</div>
+					<div class="modal-body">
+						<p>You have to drag the button and drop it into your link bar!</p>
+						
+						<img class="img-responsive" src="images/explain.jpg" />
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-primary" data-dismiss="modal">Ok, got it!</button>
+					</div>
+				</div><!-- /.modal-content -->
+			</div><!-- /.modal-dialog -->
+		</div><!-- /.modal -->
+		
+		<script src="js/jquery.min.js" type="text/javascript"></script>
+		<script src="js/bootstrap.min.js" type="text/javascript"></script>
+		
 		<script>
 			(function(){
 				var main = document.getElementById("Main");
@@ -242,6 +283,17 @@
 						linkElem.href = linkElem.href.replace(new RegExp("\n", 'g'), "");
 						linkElem.innerHTML += " DEV";
 					}
+					
+					if(_GET["developer"] == null)
+					{
+						var style = document.getElementsByTagName("style")[0];
+						style.innerHTML += "#PerfBar { display: none !important; }";
+						
+						var dragLink = document.getElementById("DragLink");
+						dragLink.onclick = function() {
+							$("#HowToModal").modal("show");
+						};
+					}
 				})();
 			})();
 			
@@ -249,7 +301,7 @@
 				document.getElementById("MobileInstruction").className = "s" + nr;
 			}
 			
-			var count = 3;
+			var count = 10;
 			function dev() {
 				if(--count == 0) self.location.href = "index.html?developer";
 			}
