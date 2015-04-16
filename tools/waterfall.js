@@ -521,7 +521,7 @@ Waterfall.prototype = {
 					var rectX = this.toPercentage(duration, timeSpan);
 					var rectY2 = y2 - y1;
 					var rectEnd = this.svg.createSVGRect(startX, y1, rectX, rectY2, "fill: " + event.fill + ";");
-					rectEnd.appendChild(this.buildDurationTitle(duration));
+					rectEnd.appendChild(this.buildDurationTitle(duration, event.name));
 					
 					svgChart.appendChild(rectEnd);
 					svgChart.appendChild(lineEnd);
@@ -603,11 +603,13 @@ Waterfall.prototype = {
 		return p + "%";
 	},
 	
-	buildDurationTitle: function(duration) {
+	buildDurationTitle: function(duration, label) {
 		duration = Math.round(duration * 10) / 10.0;
 		
 		var title = document.createElementNS(this.svg.xmlns, "title");
 		title.innerHTML = duration + "ms";
+		
+		if(label != null) title.innerHTML = label + ": " + title.innerHTML;
 		
 		return title;
 	},
@@ -633,7 +635,7 @@ Waterfall.prototype = {
 		if(entry.redirectDuration > 0) {
 			var redirectStart = entry.redirectStart - minTime;
 			var rect = this.svg.createSVGRect(this.toPercentage(redirectStart, span), 0, this.toPercentage(entry.redirectDuration, span), rowHeight, "fill:" + this.barColorsMap.redirect.color);
-			rect.appendChild(this.buildDurationTitle(entry.redirectDuration));
+			rect.appendChild(this.buildDurationTitle(entry.redirectDuration, "redirect"));
 			bar.appendChild(rect);
 			
 			this.barColorsMap.redirect.showInLegend = true;
@@ -642,7 +644,7 @@ Waterfall.prototype = {
 		if(entry.appCacheDuration > 0) {
 			var appCacheStart = entry.appCacheStart - minTime;
 			var rect = this.svg.createSVGRect(this.toPercentage(appCacheStart, span), 0, this.toPercentage(entry.appCacheDuration, span) , rowHeight, "fill:" + this.barColorsMap.appCache.color);
-			rect.appendChild(this.buildDurationTitle(entry.appCacheDuration));
+			rect.appendChild(this.buildDurationTitle(entry.appCacheDuration, "cache"));
 			bar.appendChild(rect);
 			
 			this.barColorsMap.appCache.showInLegend = true;
@@ -652,7 +654,7 @@ Waterfall.prototype = {
 			var dnsStart = entry.dnsStart - minTime;
 			var rect = this.svg.createSVGRect(this.toPercentage(dnsStart, span) , 0, this.toPercentage(entry.dnsDuration, span), rowHeight, "fill:" + this.barColorsMap.dns.color);
 			bar.appendChild(rect);
-			rect.appendChild(this.buildDurationTitle(entry.dnsDuration));
+			rect.appendChild(this.buildDurationTitle(entry.dnsDuration, "dns"));
 			
 			this.barColorsMap.dns.showInLegend = true;
 		}
@@ -660,7 +662,7 @@ Waterfall.prototype = {
 		if(entry.tcpDuration > 0) {
 			var tcpStart = entry.tcpStart - minTime;
 			var rect = this.svg.createSVGRect(this.toPercentage(tcpStart, span) , 0, this.toPercentage(entry.tcpDuration, span), rowHeight, "fill:" + this.barColorsMap.tcp.color);
-			rect.appendChild(this.buildDurationTitle(entry.tcpDuration));
+			rect.appendChild(this.buildDurationTitle(entry.tcpDuration, "tcp"));
 			bar.appendChild(rect);
 			
 			this.barColorsMap.tcp.showInLegend = true;
@@ -669,7 +671,7 @@ Waterfall.prototype = {
 		if(entry.sslDuration > 0) {
 			var sslStart = entry.sslStart - minTime;
 			var rect = this.svg.createSVGRect(this.toPercentage(sslStart, span) , 0, this.toPercentage(entry.sslDuration, span), rowHeight, "fill:" + this.barColorsMap.ssl.color);
-			rect.appendChild(this.buildDurationTitle(entry.sslDuration));
+			rect.appendChild(this.buildDurationTitle(entry.sslDuration, "ssl"));
 			bar.appendChild(rect);
 			
 			this.barColorsMap.ssl.showInLegend = true;
@@ -678,7 +680,7 @@ Waterfall.prototype = {
 		if(entry.requestDuration > 0) {
 			var requestStart = entry.requestStart - minTime;
 			var rect = this.svg.createSVGRect(this.toPercentage(requestStart, span) , 0, this.toPercentage(entry.requestDuration, span), rowHeight, "fill:" + this.barColorsMap.request.color);
-			rect.appendChild(this.buildDurationTitle(entry.requestDuration));
+			rect.appendChild(this.buildDurationTitle(entry.requestDuration, "request"));
 			bar.appendChild(rect);
 			
 			this.barColorsMap.request.showInLegend = true;
@@ -687,7 +689,7 @@ Waterfall.prototype = {
 		if(entry.responseDuration > 0) {
 			var responseStart = entry.responseStart - minTime;
 			var rect = this.svg.createSVGRect(this.toPercentage(responseStart, span) , 0, this.toPercentage(entry.responseDuration, span), rowHeight, "fill:" + this.barColorsMap.response.color);
-			rect.appendChild(this.buildDurationTitle(entry.responseDuration));
+			rect.appendChild(this.buildDurationTitle(entry.responseDuration, "response"));
 			bar.appendChild(rect);
 			
 			this.barColorsMap.response.showInLegend = true;
