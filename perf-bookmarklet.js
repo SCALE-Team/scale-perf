@@ -492,21 +492,6 @@ ScalePerformanceBarClass.prototype = {
 			return (typeof(isDevelopmentMode) == "undefined" ? false : isDevelopmentMode);
 		},
 		
-		/*
-		avoidPageOverlapWithBar: function() {
-			var superClass = this.superClass;
-			
-			var body = document.getElementsByTagName("body")[0];
-			
-			var h1 = (superClass.menu.bar != null ? superClass.menu.bar.offsetHeight : 0);
-			var h2 = (superClass.tools.bar != null ? superClass.tools.bar.offsetHeight : 0);
-			superClass.menu.barHeight = Math.max(h1, h2);
-			
-			// move the page to the right place
-			superClass.pageContent.style.top = (superClass.menu.barHeight) + "px";
-		},
-		//*/
-		
 		animate: function(elem, height, endPosition) {
 			endPosition = endPosition||0;
 			

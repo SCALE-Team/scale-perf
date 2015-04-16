@@ -437,7 +437,6 @@ Waterfall.prototype = {
 			
 			// Get the entries to show
 			var entriesToShow = this.filterEntries(entries);
-			//var entriesToShow = entries;
 			
 			// Find the latest time
 			var minTime = this.chartContainer.data.timeSpanFrom || 0;

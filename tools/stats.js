@@ -83,7 +83,6 @@ var Stats = function () {
 	fpsGraph.style.left = fpsGraph.style.right = '3px';
 	fpsGraph.style.overflow = 'hidden';
 	fpsGraph.style["white-space"] = 'nowrap';
-	//fpsGraph.style.width = bars + "px";
 	fpsGraph.style.height = height + "px";
 	fpsDiv.appendChild( fpsGraph );
 
@@ -283,16 +282,14 @@ var Stats = function () {
 		},
 
 		update: function () {
-
 			startTime = this.end();
-
 		}
 
 	}
 
 };
 
-if ( typeof module === 'object' ) {
+if(typeof module === 'object') {
 
 	module.exports = Stats;
 
