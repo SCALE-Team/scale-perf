@@ -52,6 +52,12 @@
 				margin:		0px auto;
 				font-size:	50px;
 				padding:	25px;
+				cursor:		default;
+			}
+			
+			.logo span {
+				display:	block;
+				font-size:	0px;
 			}
 			
 			.border_it {
@@ -113,8 +119,9 @@
 		
 		<div class="masthead">
 			<div class="container">
-				<div class="logo border_it border_it_inverse" onclick="dev()">
+				<div class="logo border_it border_it_inverse">
 					SCALE
+					<span>DEVELOPER</span>
 				</div>
 				
 				<div class="row col-md-10 col-xs-12 col-md-offset-1 col-xs-offset-0">
@@ -282,10 +289,25 @@
 						linkElem.href = 'javascript:var isDevelopmentMode=true; ' + scriptLoadFunction + '; scriptLoadFunction("https://scale-team.github.io/scale-perf-dev/perf-bookmarklet.js");';
 						linkElem.href = linkElem.href.replace(new RegExp("\n", 'g'), "");
 						linkElem.innerHTML += " DEV";
+						
+						var logoSub = $(".logo span");
+						
+						logoSub
+							.text("</" + logoSub.text() + ">")
+							.css("font-size", 10);
 					}
 					
 					if(_GET["developer"] == null)
 					{
+						var count = 0;
+						$(".logo").click(function() {
+							function dev() {
+								if(++count == 5) self.location.href = "index.html?developer";
+								else $(".logo span").css("font-size", count*2);
+							}
+							dev();
+						});
+						
 						var style = document.getElementsByTagName("style")[0];
 						style.innerHTML += "#PerfBar { display: none !important; }";
 						
@@ -299,11 +321,6 @@
 			
 			function changeToStep(nr){
 				document.getElementById("MobileInstruction").className = "s" + nr;
-			}
-			
-			var count = 10;
-			function dev() {
-				if(--count == 0) self.location.href = "index.html?developer";
 			}
 		</script>
 	</body>
