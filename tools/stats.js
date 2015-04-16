@@ -5,7 +5,7 @@
 var Stats = function () {
 	var height = 70;
 	var padding = 3;
-	var width = 300;
+	var width = 200;
 	//var bars = window.innerWidth;
 	var bars = width;
 	
