@@ -799,7 +799,7 @@ Waterfall.prototype = {
 	
 	getMainPageEvents: function() {
 		var timing = window.performance.timing;
-		console.log(timing);
+		
 		return [
 			{
 				name:			"DOM Content loaded",
