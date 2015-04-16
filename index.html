@@ -9,51 +9,159 @@
 		
 		<style>
 			body {
-				background:		#ddd;
+				background:		#fff;
+				color:			#555;
 			}
 			
 			h1 {
-				margin-top:		30px;
-				margin-bottom:	30px;
-			}
-			
-			#Main {
-				background:		#fff;
-				border-radius:	5px;
-				padding:		5px;
-				box-shadow:		0px 0px 5px #000;
+				margin:		10px 0px;
+				font-size:	18px;
 			}
 
 			#LinkRow {
 				text-align:	right;
 			}
 			
-			@media (min-width: 980px) {
-				.full_row {
-					width:			980px;
-					margin-left:	auto;
-					margin-right:	auto;
-				}
-			}
-			
 			#MobileInstruction > li { list-style-type: none; }
 			#MobileInstruction:not(.s1) > li.s1 { display: none; }
 			#MobileInstruction:not(.s2) > li.s2 { display: none; }
 			#MobileInstruction:not(.s3) > li.s3 { display: none; }
+			
+			.masthead {
+				position:			relative;
+				padding:			30px 0;
+				color:				#fff;
+				text-align:			center;
+				text-shadow:		0 1px 0 rgba(0,0,0,.1);
+				background-color:	#646464;
+				background-image:	-webkit-gradient(linear,left top,left bottom,from(#2D2D2D),to(#000));
+				background-image:	-webkit-linear-gradient(top,#646464 0,#2D2D2D 100%);
+				background-image:	-o-linear-gradient(top,#646464 0,#2D2D2D 100%);
+				background-image:	linear-gradient(to bottom,#646464 0,#2D2D2D 100%);
+				background-repeat:	repeat-x;
+			}
+			
+			.masthead .version {
+				margin-top:		15px;
+				margin-bottom:	30px;
+				font-size:		14px;
+				color:			rgba(255,255,255,0.6);
+			}
+			
+			.promo_text {
+				margin:	40px 0px;
+			}
+			
+			.main {
+				margin-top:	30px;
+				text-align:	center;
+			}
+			
+			.logo {
+				width:		220px;
+				text-align:	center;
+				margin:		0px auto;
+				font-size:	50px;
+				padding:	25px;
+			}
+			
+			.border_it {
+				color:				#555;
+				border:				1px solid #555;
+				border-radius:		5px;
+				padding:			10px;
+				
+			}
+			
+			a.border_it:hover {
+				color:				#fff;
+				background-color:	#555;
+				text-decoration:	none;
+			}
+			
+			.border_it_inverse {
+				color:			#fff;
+				border-color:	#fff;
+			}
+			
+			a.border_it_inverse:hover {
+				background-color:	#fff;
+				color:				#555;
+			}
 		</style>
 	</head>
 	<!--<body onload="for(var i=0;i<1000;i++) console.log(123)">-->
 	<body>
 		<div class="container">
-			<h1 class="full_row">SCALE performance bookmarklet</h1>
-			
-			<div id="Main" class="row full_row">
-				<h2>Desktop</h2>
-				<div>
-					Drag and drop this intop your link bar: <a id="DesktopLink">Scale-Perf</a>
+			<div class="row col-md-10 col-md-offset-1 col-xs-12 col-xs-offset-0">
+				<h1>SCALE performance bookmarklet</h1>
+			</div>
+		</div>
+		
+		<div class="masthead">
+			<div class="container">
+				<div class="logo border_it border_it_inverse" onclick="dev()">
+					SCALE
 				</div>
 				
-				<h2>Mobile</h2>
+				<div class="row col-md-10 col-xs-12 col-md-offset-1 col-xs-offset-0">
+					<div class="promo_text lead">
+						The performance bookmarklet is a perfect tool to measure the performance of your website onpage.
+					</div>
+				</div>
+				
+				<div class="row col-md-10 col-md-offset-1 col-xs-12 col-xs-offset-0">
+					<a id="DesktopLink" href="getting-started#download" class="border_it border_it_inverse">SCALE Perf</a>
+					
+					<div class="version">Drag and drop this link into your link bar</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="container">
+			<div class="row col-md-10 col-md-offset-1 col-xs-12 col-xs-offset-0 main">
+				<h3>This is open source. It's hosted, documented and maintained on GitHub.</h3>
+				
+				<br />
+				
+				<a href="https://github.com/SCALE-Team/scale-perf/" class="border_it">
+					View on GitHub
+				</a>
+				
+				<br />
+				<br />
+				<br />
+				
+				<h3>How to use it on your smartphone?</h3>
+				<!--
+				<div class="list-group">
+					<a id="MobileLink" onclick="changeToStep(2);" class="list-group-item active">
+						<h4 class="list-group-item-heading">Click this link</h4>
+						<p class="list-group-item-text">
+							<button class="btn btn-primary">
+								click me
+							</button>
+						</p>
+					</a>
+					<a class="list-group-item">
+						<h4 class="list-group-item-heading">Bookmark this page</h4>
+						<p class="list-group-item-text">
+							<button class="btn" onclick="changeToStep(3)">ok, did it!</button>
+						</p>
+					</a>
+					<a class="list-group-item">
+						<h4 class="list-group-item-heading">Edit the bookmark</h4>
+						<p class="list-group-item-text">
+							Edit the bookmark URL and remove everything up to and including the hash ("#")
+							so that the bookmark URL starts with "javascript:"
+							<br />
+							Example:
+							<br />
+							<img class="img-responsive" src="images/mobileAddBokkmarkletExample.png" />
+						</p>
+					</a>
+				</div>
+				<!---->
 				
 				<ol id="MobileInstruction" class="s1">
 					<li class="s1">1. Click this link: <a id="MobileLink" onclick="changeToStep(2)">SCALE Perf bookmarklet</a></li>
@@ -71,8 +179,6 @@
 					</li>
 				</ol>
 			</div>
-			
-			<div id="LinkRow" class="full_row row"></div>
 		</div>
 		
 		<script>
@@ -136,26 +242,16 @@
 						linkElem.href = linkElem.href.replace(new RegExp("\n", 'g'), "");
 						linkElem.innerHTML += " DEV";
 					}
-					
-					var linkRow = document.getElementById("LinkRow");
-					var devLink = document.createElement("a");
-					linkRow.appendChild(devLink);
-					
-					if(_GET["developer"] == null)
-					{
-						devLink.href = "index.html?developer";
-						devLink.innerHTML = "Developer";
-					}
-					else
-					{
-						devLink.href = "index.html";
-						devLink.innerHTML = "Normal";
-					}
 				})();
 			})();
 			
 			function changeToStep(nr){
 				document.getElementById("MobileInstruction").className = "s" + nr;
+			}
+			
+			var count = 3;
+			function dev() {
+				if(--count == 0) self.location.href = "index.html?developer";
 			}
 		</script>
 	</body>
