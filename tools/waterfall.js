@@ -118,10 +118,12 @@ Waterfall.prototype = {
 		existingLegend = document.getElementById(eventLegendId);
 		if(existingLegend != null) existingLegend.parentNode.removeChild(existingLegend);
 		
+		this.legendContainer.innerHTML = "";
+		
 		// Resource legend
 		var legend = document.createElement("div");
 		legend.id = legendId;
-		this.toolContainer.appendChild(legend);
+		this.legendContainer.appendChild(legend);
 		
 		for(var f in this.barColors)
 		{
@@ -140,7 +142,7 @@ Waterfall.prototype = {
 		// Event legend
 		var eventLegend = document.createElement("div");
 		eventLegend.id = eventLegendId;
-		this.toolContainer.appendChild(eventLegend);
+		this.legendContainer.appendChild(eventLegend);
 		
 		var mainEvents = this.getMainPageEvents();
 		for(var f in mainEvents)
@@ -153,6 +155,10 @@ Waterfall.prototype = {
 			captionElem.style.borderColor = event.line;
 			eventLegend.appendChild(captionElem);
 		}
+		
+		var clearBoth = document.createElement("div");
+		clearBoth.style.clear = "both";
+		this.legendContainer.appendChild(clearBoth);
 	},
 	
 	addStyles: function() {
@@ -198,6 +204,7 @@ Waterfall.prototype = {
 		style += "#" + this.containerId + " .button-group :first-child { border-radius: 5px 0px 0px 5px; }";
 		style += "#" + this.containerId + " .button-group :last-child { border-radius: 0px 5px 5px 0px; border-right: 1px solid #ccc; }";
 		
+		style += "#" + this.containerId + " #WaterfallLegendContainer { margin-bottom: 10px; }";
 		style += "#" + this.containerId + " #WaterfallLegend, #WaterfallEventLegend { float:left; display: inline-block; }";
 		style += "#" + this.containerId + " #WaterfallEventLegend { float: right; }";
 		style += "#" + this.containerId + " #WaterfallLegend > div, #WaterfallEventLegend > div { display: inline-block; padding: 3px; border-radius: 3px; margin: 10px 3px 0px; }";
@@ -409,6 +416,9 @@ Waterfall.prototype = {
 				rightContainer.appendChild(buttonGroup);
 			}
 		}
+		superClass.legendContainer = document.createElement("div");
+		superClass.legendContainer.id = "WaterfallLegendContainer";
+		superClass.toolContainer.appendChild(superClass.legendContainer);
 		
 		superClass.chartContainer = document.createElement("div");
 		superClass.chartContainer.id = "ChartContainer";
