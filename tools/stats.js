@@ -243,7 +243,7 @@ var Stats = function () {
 			msMin = Math.min( msMin, ms );
 			msMax = Math.max( msMax, ms );
 
-			msText.textContent = ms + ' MS (min ' + msMin + ', max ' + msMax + ')';
+			msText.textContent = ms + ' ms (min ' + msMin + ', max ' + msMax + ')';
 			//var msBarHeight = Math.min( height, height - ( ms / 200 ) * height );
 			var msBarHeight = height - ms;
 			updateGraph( msGraph, msBarHeight );
