@@ -427,7 +427,7 @@ Waterfall.prototype = {
 	drawAllBars: function(entries) {
 		/* Prepare some attributes */ {
 			// Height of the bars
-			var rowHeight = 20;
+			var rowHeight = 15;
 			
 			// space between the bars
 			var rowPadding = 2;
@@ -540,7 +540,7 @@ Waterfall.prototype = {
 			if(entry.start > this.chartContainer.data.timeSpanUntil) isDisplayed = false;
 			else if((entry.start + entry.duration) < this.chartContainer.data.timeSpanFrom) isDisplayed = false;
 			
-			var dy = 13;
+			var dy = 11;
 			
 			/* Label of the row */ {
 				//var background = this.svg.createSVGRect(0, 0, 300, rowHeight);
