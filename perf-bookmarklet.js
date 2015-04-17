@@ -33,6 +33,7 @@ ScalePerformanceBarClass.prototype = {
 			href:					"https://scale-team.github.io/scale-perf/tools/performanceBookmarklet.js",
 			devHref:					"https://scale-team.github.io/scale-perf-dev/tools/performanceBookmarklet.js",
 			localHref:				"/tools/performanceBookmarklet.js",
+			helpText:				"A bookmarklet with several metrics about your page. View the documentation at <a href='https://github.com/micmro/performance-bookmarklet'>Github</a>.",
 			requiresPerformanceApi:	true,
 			onload: function(superClass) {
 				superClass.tools.activeTool = new PerfBookmarklet();
@@ -44,6 +45,7 @@ ScalePerformanceBarClass.prototype = {
 			devHref:				"https://scale-team.github.io/scale-perf-dev/tools/waterfall.js",
 			requiresPerformanceApi:	true,
 			localHref:				"/tools/waterfall.js",
+			helpText:				"Gives you an overview about all resources loaded by the page and their load times. Use the time filters to zoom into the waterfall.<br />The waterfall automatically calculates the 'page load time' and sets it as the maximum time ('until xxx'). It's the time the page needed build up completely, including external resources. Continuous requests to the server should be hidden by doing this.",
 			onload: function(superClass) {
 				superClass.tools.activeTool = new Waterfall({ getPageLoadTime: superClass.helpers.getPageLoadTimeFromResources });
 			}
@@ -53,6 +55,7 @@ ScalePerformanceBarClass.prototype = {
 			href:					"https://scale-team.github.io/scale-perf/tools/perfmap.js",
 			devHref:				"https://scale-team.github.io/scale-perf-dev/tools/perfmap.js",
 			localHref:				"/tools/perfmap.js",
+			helpText:				"This tool shows you The time the pictures were loaded and how long they took to load.",
 			requiresPerformanceApi:	true,
 			onload: function(superClass) {
 				superClass.tools.activeTool = new PerfMap();
@@ -63,6 +66,7 @@ ScalePerformanceBarClass.prototype = {
 			href:		"https://scale-team.github.io/scale-perf/tools/dommonster.js",
 			devHref:	"https://scale-team.github.io/scale-perf-dev/tools/dommonster.js",
 			localHref:	"/tools/dommonster.js",
+			helpText:	"Analyze the DOM tree for tipps.<br />elements: Amount of HTML elements<br />text nodes: Amount of text nodes<br />nodes: Total amount of elements (HTML + text nodes)",
 			onload: function(superClass) {
 				superClass.tools.activeTool = new DomMonster();
 			}
