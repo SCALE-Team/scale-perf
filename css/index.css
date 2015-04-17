@@ -1,0 +1,128 @@
+body {
+	background:		#fff;
+	color:			#555;
+}
+
+a:hover, a:active, a:focus {
+	text-decoration:	none;
+}
+
+header h1 {
+	margin:		10px 0px;
+	font-size:	18px;
+	display:	inline-block;
+}
+
+header a {
+	padding:	10px 10px;
+	color:		#555;
+}
+
+header a:hover {
+	background-color:	rgba(0,0,0,0.05);
+}
+
+header .right {
+	float:		right;
+}
+
+#MobileInstruction > li { list-style-type: none; }
+#MobileInstruction:not(.s1) > li.s1 { display: none; }
+#MobileInstruction:not(.s2) > li.s2 { display: none; }
+#MobileInstruction:not(.s3) > li.s3 { display: none; }
+
+.masthead {
+	position:			relative;
+	padding:			30px 0;
+	color:				#fff;
+	text-align:			center;
+	text-shadow:		0 1px 0 rgba(0,0,0,.1);
+	background-color:	#646464;
+	background-image:	-webkit-gradient(linear,left top,left bottom,from(#2D2D2D),to(#000));
+	background-image:	-webkit-linear-gradient(top,#646464 0,#2D2D2D 100%);
+	background-image:	-o-linear-gradient(top,#646464 0,#2D2D2D 100%);
+	background-image:	linear-gradient(to bottom,#646464 0,#2D2D2D 100%);
+	background-repeat:	repeat-x;
+}
+
+.promo_text {
+	margin:	40px 0px;
+}
+
+.main {
+	margin-top:	30px;
+	text-align:	center;
+}
+
+.logo {
+	width:		220px;
+	text-align:	center;
+	margin:		0px auto;
+	font-size:	50px;
+	padding:	25px;
+	cursor:		default;
+}
+
+.logo span {
+	display:	block;
+	font-size:	0px;
+}
+
+.border_it {
+	color:				#555;
+	border:				1px solid #555;
+	border-radius:		5px;
+	padding:			10px;
+	
+}
+
+a.border_it:hover {
+	color:				#fff;
+	background-color:	#555;
+}
+
+.border_it_inverse {
+	color:			#fff;
+	border-color:	#fff;
+}
+
+a.border_it_inverse:hover, .border_it_click:hover {
+	background-color:	#fff;
+	color:				#555;
+}
+
+.masthead_link {
+	position:	relative;
+	width:		190px;
+	margin:		0px auto;
+}
+
+.masthead_link > a {
+	display:	block;
+	position:	absolute;
+	top:		0px;
+	left:		0px;
+	color:		transparent;
+	width:		100%;
+	height:		100%;
+	font-size:	0px;
+}
+
+.masthead .explain {
+	display:			inline-block;
+	color:				rgba(255,255,255,0.4);
+	margin-top:			10px;
+	font-size:			14px;
+}
+
+.masthead .explain a {
+	background:		rgba(255,255,255,0.4);
+	color:			#000;
+	border-radius:	30px;
+	padding:		0px 5px;
+	cursor:			pointer;
+}
+
+.masthead .explain a:hover {
+	background:	#fff;
+}
