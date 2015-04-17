@@ -15,7 +15,7 @@
 			<div class="row col-md-10 col-md-offset-1 col-xs-12 col-xs-offset-0">
 				<h1>SCALE performance bookmarklet</h1>
 				
-				<a href="javascript:$('#HowToUseModal').modal();" class="right">Add it to your mobile phone</a>
+				<a href="javascript:$('#HowToAddToMobile').modal();" class="right">Add it to your mobile phone</a>
 			</div>
 		</header>
 		
@@ -34,7 +34,7 @@
 				
 				<div class="row col-md-10 col-md-offset-1 col-xs-12 col-xs-offset-0">
 					<div id="DragLink" class="border_it border_it_inverse border_it_click masthead_link">
-						<a id="DesktopLink">
+						<a id="DesktopLink" class="js_desktop_code_to_href">
 							SCALE Perf
 						</a>
 						
@@ -80,14 +80,18 @@
 			</div><!-- /.modal-dialog -->
 		</div><!-- /.modal -->
 		
-		<div id="HowToUseModal" class="modal fade">
+		<div id="HowToAddToMobile" class="modal fade">
 			<div class="modal-dialog">
 				<div class="modal-content">
 					<div class="modal-header">
 						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-						<h4 class="modal-title">How to use it on your smartphone?</h4>
+						<h4 class="modal-title">How to add it to your smartphone</h4>
 					</div>
 					<div class="modal-body">
+						<h2>
+							Follow these instructions
+						</h2>
+						
 						<ol id="MobileInstruction" class="s1">
 							<li class="s1">1. Click this link: <a id="MobileLink" onclick="changeToStep(2)">SCALE Perf bookmarklet</a></li>
 							<li class="s2">
@@ -103,6 +107,12 @@
 								<img class="img-responsive" src="images/mobileAddBokkmarkletExample.png" />
 							</li>
 						</ol>
+						
+						<h2>
+							Or create a new bookmark with following URL
+						</h2>
+						
+						<input class="form-control js_desktop_code_to_value" />
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-primary" data-dismiss="modal">Alright!</button>
@@ -111,7 +121,7 @@
 			</div><!-- /.modal-dialog -->
 		</div><!-- /.modal -->
 		
-		<div id="HowToAddToMobile" class="modal fade">
+		<div id="HowToUseModal" class="modal fade">
 			<div class="modal-dialog">
 				<div class="modal-content">
 					<div class="modal-header">
@@ -135,6 +145,24 @@
 		
 		<script>
 			(function(){
+				function setJsLinks(content) {
+					content = content.replace(new RegExp("\n", 'g'), "");
+					
+					var linkElems = document.querySelectorAll(".js_desktop_code_to_href");
+					for(var f in linkElems)
+					{
+						linkElems[f].href = content;
+					}
+					
+					linkElems = document.querySelectorAll(".js_desktop_code_to_value");
+					for(var f in linkElems)
+					{
+						linkElems[f].value = content;
+					}
+					
+					document.querySelector("#MobileLink").href = "#" + content;
+				};
+				
 				function scriptLoadFunction(scriptPath){
 					var isLocal = ((self.location+"").split("http://").pop().split("/")[0] == "localhost");
 					
@@ -162,10 +190,7 @@
 					body.appendChild(loadingElem).appendChild(jselem);
 				};
 				
-				var linkElem = document.querySelector("#DesktopLink");
-				linkElem.href = 'javascript:' + scriptLoadFunction + '; scriptLoadFunction();';
-				linkElem.href = linkElem.href.replace(new RegExp("\n", 'g'), "");
-				document.querySelector("#MobileLink").href = "#" + linkElem.href;
+				setJsLinks('javascript:' + scriptLoadFunction + '; scriptLoadFunction();');
 				
 				(function() {
 					/*Get GET-parameters*/ {
@@ -188,10 +213,11 @@
 					// If developer set, modify bookmarklet URL
 					if(_GET["developer"] != null)
 					{
-						linkElem.href = 'javascript:var isDevelopmentMode=true; ' + scriptLoadFunction + '; scriptLoadFunction("https://scale-team.github.io/scale-perf-dev/perf-bookmarklet.js");';
-						linkElem.href = linkElem.href.replace(new RegExp("\n", 'g'), "");
-						linkElem.innerHTML += " DEV";
+						setJsLinks('javascript:var isDevelopmentMode=true; ' + scriptLoadFunction + '; scriptLoadFunction("https://scale-team.github.io/scale-perf-dev/perf-bookmarklet.js");');
 						
+						document.querySelector("#DesktopLink").innerHTML += " DEV";
+						
+						// Show visually, thatm this is the developer mode
 						var logoSub = $(".logo span");
 						
 						logoSub
