@@ -141,7 +141,7 @@ ScalePerformanceBarClass.prototype = {
 		style += "#PerfBar, #ToolsActiveBar { transition: top ease-out 0.5s, opacity ease-out 0.5s; -webkit-transition: top ease-out 0.5s, opacity ease-out 0.5s; }";
 		style += "#ScalePageContent { transition: top ease-out 0.5s, opacity ease-out 0.5s; -webkit-transition: top ease-out 0.5s, opacity ease-out 0.5s; }";
 		
-		style += "#ScalePopUp { z-index: 1000002; position: fixed; top: 10px; bottom: 10px; left: 50%; margin-left: -200px; 0px auto; width: 400px; background: #fff; box-shadow: 2px 2px 10px rgba(0,0,0,0.7); }";
+		style += "#ScalePopUp { z-index: 1000002; position: fixed; top: 10px; bottom: 10px; left: 50%; margin-left: -200px; 0px auto; width: 400px; height: auto; min-height: auto; background: #fff; box-shadow: 2px 2px 10px rgba(0,0,0,0.7); }";
 		style += "#ScalePopUp.is_short { height: 300px; }";
 		style += "#ScalePopUp .content { position: absolute; top: 0px; left: 0px; right: 0px; bottom: 50px; overflow: auto; padding: 15px; }";
 		style += "#ScalePopUp .button-row { position: absolute; bottom: 0px; left: 0px; right: 0px; height: 50px; }";
