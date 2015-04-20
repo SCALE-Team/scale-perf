@@ -121,12 +121,6 @@ ScalePerformanceBarClass.prototype = {
 		},
 		{
 			name:			"Help",
-			symbol:			"??",
-			pullToSymbols:	true,
-			url:			"https://github.com/SCALE-Team/scale-perf/blob/master/README.md#readme"
-		},
-		{
-			name:			"Help",
 			symbol:			"?",
 			pullToSymbols:	true,
 			onclick: function(superClass) {
