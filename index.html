@@ -15,16 +15,18 @@
 			<div class="row col-md-10 col-md-offset-1 col-xs-12 col-xs-offset-0">
 				<h1>SCALE performance bookmarklet</h1>
 				
-				<a href="javascript:$('#HowToAddToMobile').modal();" class="right">Add it to your mobile phone</a>
+				<a onclick="javascript:$('#HowToAddToMobile').modal();" class="right">Add it to your mobile phone</a>
 			</div>
 		</header>
 		
 		<div class="masthead">
 			<div class="container">
-				<div class="logo border_it border_it_inverse">
+				<!---->
+				<div class="logo">
 					SCALE
 					<span>DEVELOPER</span>
 				</div>
+				<!---->
 				
 				<div class="row col-md-10 col-xs-12 col-md-offset-1 col-xs-offset-0">
 					<div class="promo_text lead">
@@ -41,18 +43,29 @@
 						<b>Drag</b> me into your link bar
 					</div>
 					
+					<!--
 					<div class="explain">
 						After that go to a webpage and click the bookmarklet
 						<a>?</a>
 					</div>
+					<!---->
 				</div>
 			</div>
 		</div>
 		
 		<div class="container">
 			<div class="row col-md-10 col-md-offset-1 col-xs-12 col-xs-offset-0 main">
+				<h3>This is how you use it</h3>
+				
+				<br />
+				
+				<img src="http://localhost/images/howToUse.jpg" class="img-responsive" />
+				
+				<br />
+				
 				<h3>This is open source. It's hosted, documented and maintained on GitHub.</h3>
 				
+				<br />
 				<br />
 				
 				<a href="https://github.com/SCALE-Team/scale-perf/" class="border_it">
@@ -60,6 +73,16 @@
 				</a>
 			</div>
 		</div>
+		
+		<div class="page_separator"></div>
+		
+		<footer class="container">
+			<div class="row col-md-10 col-md-offset-1 col-xs-12 col-xs-offset-0">
+				<span class="pull-right">
+					go to <a href="?developer">developer mode</a> | by Otto SCALE team
+				</span>
+			</div>
+		</footer>
 		
 		<div id="HowToAddModal" class="modal fade">
 			<div class="modal-dialog">
@@ -225,10 +248,12 @@
 						logoSub
 							.text("</" + logoSub.text() + ">")
 							.css("font-size", 10);
+						//*/
 					}
 					
 					if(_GET["developer"] == null)
 					{
+						/*
 						var count = -3;
 						$(".logo").click(function() {
 							function dev() {
@@ -237,9 +262,11 @@
 							}
 							dev();
 						});
+						//*/
 						
-						var style = document.getElementsByTagName("style")[0];
+						var style = document.createElement("style");
 						style.innerHTML += "#PerfBar { display: none !important; }";
+						document.head.appendChild(style);
 						
 						var dragLink = document.querySelector("#DragLink");
 						dragLink.onclick = function() {
