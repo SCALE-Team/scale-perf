@@ -199,7 +199,9 @@
 						
 						if(parts.length > 1)
 						{
-							parts = parts.pop().split("&");
+							parts = parts.pop();
+							parts = parts.split("#")[0];
+							parts = parts.split("&");
 							
 							for(var f in parts)
 							{
@@ -227,7 +229,7 @@
 					
 					if(_GET["developer"] == null)
 					{
-						var count = 0;
+						var count = -3;
 						$(".logo").click(function() {
 							function dev() {
 								if(++count == 5) self.location.href = "index.html?developer";
