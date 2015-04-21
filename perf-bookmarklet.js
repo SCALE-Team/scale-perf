@@ -32,18 +32,14 @@ ScalePerformanceBarClass.prototype = {
 	toolInfos: [
 		{
 			name:					"Performance Bookmarklet",
-			href:					"https://scale-team.github.io/scale-perf/tools/perfBookmarkletByMicmro.js",
-			devHref:				"https://scale-team.github.io/scale-perf-dev/tools/perfBookmarkletByMicmro.js",
-			localHref:				"/tools/perfBookmarkletByMicmro.js",
+			file:					"perfBookmarkletByMicmro.js",
 			requiresPerformanceApi:	true,
 			className:				"PerfBookmarkletByMicmro"
 		},
 		{
 			name:						"Page load waterfall",
-			href:						"https://scale-team.github.io/scale-perf/tools/waterfall.js",
-			devHref:					"https://scale-team.github.io/scale-perf-dev/tools/waterfall.js",
+			file:						"waterfall.js",
 			requiresPerformanceApi:		true,
-			localHref:					"/tools/waterfall.js",
 			className:					"Waterfall",
 			getParamsForConstructor:	function(superClass) {
 				return {
@@ -53,24 +49,18 @@ ScalePerformanceBarClass.prototype = {
 		},
 		{
 			name:					"Picture load times",
-			href:					"https://scale-team.github.io/scale-perf/tools/perfmap.js",
-			devHref:				"https://scale-team.github.io/scale-perf-dev/tools/perfmap.js",
-			localHref:				"/tools/perfmap.js",
+			file:					"perfmap.js",
 			requiresPerformanceApi:	true,
 			className:				"PerfMap"
 		},
 		{
 			name:		"Analyze DOM tree",
-			href:		"https://scale-team.github.io/scale-perf/tools/dommonster.js",
-			devHref:	"https://scale-team.github.io/scale-perf-dev/tools/dommonster.js",
-			localHref:	"/tools/dommonster.js",
+			file:		"dommonster.js",
 			className:	"DomMonster"
 		},
 		{
 			name:		"FPS display",
-			href:		"https://scale-team.github.io/scale-perf/tools/stats.js",
-			devHref:	"https://scale-team.github.io/scale-perf-dev/tools/stats.js",
-			localHref:	"/tools/stats.js",
+			file:		"stats.js",
 			className:	"Stats"
 		},
 		{
@@ -397,7 +387,7 @@ ScalePerformanceBarClass.prototype = {
 				e.target._onToolStartTrigger(superClass);
 			}
 			
-			if(script.href == null && script.localHref == null) return;
+			if(script.file == null) return;
 			
 			menu.hide();
 			tools.show();
@@ -412,17 +402,17 @@ ScalePerformanceBarClass.prototype = {
 				jselem.type = "text/javascript";
 				
 				// Decide whether to load local, dev or public script
-				if(superClass.helpers.isLocal() && script.localHref != null)
+				if(superClass.helpers.isLocal())
 				{
-					jselem.src = script.localHref;
+					jselem.src = "/tools/" + script.file;
 				}
-				else if(superClass.helpers.isDev() && script.devHref != null)
+				else if(superClass.helpers.isDev())
 				{
-					jselem.src = script.devHref;
+					jselem.src = "https://scale-team.github.io/scale-perf-dev/tools/" + script.file;
 				}
 				else
 				{
-					jselem.src = script.href;
+					jselem.src = "https://scale-team.github.io/scale-perf/tools/" + script.file;
 				}
 				
 				jselem.onload = function() {
