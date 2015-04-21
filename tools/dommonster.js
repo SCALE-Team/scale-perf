@@ -18,9 +18,9 @@ var DomMonster = function() {
 				this.styleElem.innerHTML += "#jr_stats > div { display: inline-block !important; }";
 				this.styleElem.innerHTML += "#jr_stats > div > div:first-child { width: auto !important; height: auto !important; padding: 5px !important; margin-right: 5px !important; }";
 				
-				this.styleElem.innerHTML += "#jr_stats div.low { background-color: #80E41F; }";
-				this.styleElem.innerHTML += "#jr_stats div.mid { background-color: #E8871D; color: #fff !important; }";
-				this.styleElem.innerHTML += "#jr_stats div.high { background-color: #A02523; color: #fff !important; }";
+				this.styleElem.innerHTML += "#jr_stats div.low { background-color: #A5C63B; }";
+				this.styleElem.innerHTML += "#jr_stats div.mid { background-color: #FFA800; color: #fff !important; }";
+				this.styleElem.innerHTML += "#jr_stats div.high { background-color: #E74C3C; color: #fff !important; }";
 				
 				this.styleElem.innerHTML += ".dommonster_dashed_red { border: 1px dashed #f00 }";
 				this.styleElem.innerHTML += ".dommonster_dashed_blue { border: 1px dashed #00f }";
