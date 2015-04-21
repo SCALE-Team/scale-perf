@@ -1,10 +1,15 @@
 body {
 	background:		#fff;
-	color:			#555;
+	color:			#2B2B2B;
+}
+
+a {
+	color:	#3498DB;
 }
 
 a:hover, a:active, a:focus {
 	text-decoration:	none;
+	color:				#2980B9;
 }
 
 header h1 {
@@ -20,7 +25,7 @@ header a {
 }
 
 header a:hover {
-	background-color:	rgba(0,0,0,0.05);
+	background-color:	#ECF0F1;
 }
 
 header .right {
@@ -35,7 +40,7 @@ header .right {
 .masthead {
 	position:			relative;
 	padding:			80px 0;
-	color:				#fff;
+	color:				#ECF0F1;
 	text-align:			center;
 	text-shadow:		0 1px 0 rgba(0,0,0,.1);
 	background-color:	#646464;
@@ -79,8 +84,8 @@ footer {
 }
 
 .border_it {
-	color:				#555;
-	border:				1px solid #555;
+	color:				#2B2B2B;
+	border:				1px solid #2B2B2B;
 	border-radius:		5px;
 	padding:			10px;
 	
@@ -88,17 +93,17 @@ footer {
 
 a.border_it:hover {
 	color:				#fff;
-	background-color:	#555;
+	background-color:	#2B2B2B;
 }
 
 .border_it_inverse {
-	color:			#fff;
-	border-color:	#fff;
+	color:			#ECF0F1;
+	border-color:	#ECF0F1;
 }
 
 a.border_it_inverse:hover, .border_it_click:hover {
-	background-color:	#fff;
-	color:				#555;
+	background-color:	#ECF0F1;
+	color:				#2B2B2B;
 }
 
 .masthead_link {
