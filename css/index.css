@@ -3,13 +3,46 @@ body {
 	color:			#2B2B2B;
 }
 
+h1 {
+	color:	#16A085;
+}
+
+h2, h3, h4, h5 {
+	color:	#16A085;
+}
+
 a {
-	color:	#3498DB;
+	color:	#345F41;
 }
 
 a:hover, a:active, a:focus {
 	text-decoration:	none;
-	color:				#2980B9;
+	color:				#2D5036;
+}
+
+.btn-primary {
+	color:				#16A085;
+	background-color:	transparent;
+	border:				1px solid #16A085;
+	border-radius:		5px;
+	padding:			10px;
+}
+
+.btn-primary:hover, .btn-primary:active, .btn-primary:focus {
+	color:				#fff;
+	border-color:		#16A085;
+	background-color:	#16A085;
+	outline:			none !important;
+}
+
+.btn-primary-inverse {
+	color:			#ECF0F1 !important;
+	border-color:	#ECF0F1 !important;
+}
+
+.btn-primary-inverse:hover {
+	background-color:	#ECF0F1 !important;
+	color:				#16A085 !important;
 }
 
 header h1 {
@@ -43,11 +76,11 @@ header .right {
 	color:				#ECF0F1;
 	text-align:			center;
 	text-shadow:		0 1px 0 rgba(0,0,0,.1);
-	background-color:	#646464;
-	background-image:	-webkit-gradient(linear,left top,left bottom,from(#646464),to(#2D2D2D));
-	background-image:	-webkit-linear-gradient(top,#2D2D2D 0,#646464 100%);
-	background-image:	-o-linear-gradient(top,#2D2D2D 0,#646464 100%);
-	background-image:	linear-gradient(to bottom,#2D2D2D 0,#646464 100%);
+	background-color:	#1ABC9C;
+	background-image:	-webkit-gradient(linear,left top,left bottom,from(#1ABC9C),to(#16A085));
+	background-image:	-webkit-linear-gradient(top,#16A085 0,#1ABC9C 100%);
+	background-image:	-o-linear-gradient(top,#16A085 0,#1ABC9C 100%);
+	background-image:	linear-gradient(to bottom,#16A085 0,#1ABC9C 100%);
 	background-repeat:	repeat-x;
 }
 
@@ -83,33 +116,12 @@ footer {
 	font-size:	0px;
 }
 
-.border_it {
-	color:				#2B2B2B;
-	border:				1px solid #2B2B2B;
-	border-radius:		5px;
-	padding:			10px;
-	
-}
-
-a.border_it:hover {
-	color:				#fff;
-	background-color:	#2B2B2B;
-}
-
-.border_it_inverse {
-	color:			#ECF0F1;
-	border-color:	#ECF0F1;
-}
-
-a.border_it_inverse:hover, .border_it_click:hover {
-	background-color:	#ECF0F1;
-	color:				#2B2B2B;
-}
-
 .masthead_link {
 	position:	relative;
-	width:		190px;
+	display:	inline-block;
 	margin:		0px auto;
+	padding:	20px;
+	font-size:	21px;
 }
 
 .masthead_link > a {
@@ -117,7 +129,6 @@ a.border_it_inverse:hover, .border_it_click:hover {
 	position:	absolute;
 	top:		0px;
 	left:		0px;
-	color:		transparent;
 	width:		100%;
 	height:		100%;
 	font-size:	0px;

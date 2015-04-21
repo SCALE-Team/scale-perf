@@ -48,52 +48,48 @@ Waterfall.prototype = {
 	barColors: [
 		{
 			text:	"blocked",
-			color:	"rgb(204, 204, 204)",
+			color:	"#BDC3C7",
 			showInLegend:	false
 		},
 		{
 			text:	"thirdParty",
 			isDark:	true,
-			color:	"rgb(  0,   0,   0)",
+			color:	"#2B2B2B",
 			showInLegend:	false
 		},
 		{
 			text:	"redirect",
-			color:	"rgb(255, 221,   0)",
+			color:	"#E74C3C",
 			showInLegend:	false
 		},
 		{
 			text:	"appCache",
-			isDark:	true,
-			color:	"rgb(161, 103,  38)",
+			color:	"#A38671",
 			showInLegend:	false
 		},
 		{
 			text:	"dns",
-			isDark:	true,
-			color:	"rgb( 48, 150, 158)",
+			color:	"#47C9AF",
 			showInLegend:	false
 		},
 		{
 			text:	"tcp",
-			color:	"rgb(255, 157,  66)",
+			color:	"#EB974E",
 			showInLegend:	false
 		},
 		{
 			text:	"ssl",
-			isDark:	true,
-			color:	"rgb(213, 102, 223)",
+			color:	"#AF7AC4",
 			showInLegend:	false
 		},
 		{
 			text:	"request",
-			color:	"rgb( 64, 255,  64)",
+			color:	"#2ECC71",
 			showInLegend:	false
 		},
 		{
 			text:	"response",
-			isDark:	true,
-			color:	"rgb( 52, 150, 255)",
+			color:	"#5CACE2",
 			showInLegend:	false
 		}
 	],
@@ -166,9 +162,9 @@ Waterfall.prototype = {
 
 		this.cssElem = document.createElement("style");
 		this.cssElem.id = "ScaleWaterfallStyle";
-		var style = "#" + this.containerId + " { background: #fff; border-bottom: 2px solid #000; margin: 5px; position: absolute; visibility: hidden; left: 0px; z-index: 99999; margin: 0px; padding: 5px 0px 10px 0px; }";
-		style += "#" + this.containerId + " input, #" + this.containerId + " button { outline: none; border-radius: 5px; padding: 5px; border: 1px solid #ccc; }";
-		style += "#" + this.containerId + " button { background-color: #ddd; padding: 5px 10px; }";
+		var style = "#" + this.containerId + " { color: #2B2B2B; background: #fff; border-bottom: 2px solid #000; margin: 5px; position: absolute; visibility: hidden; left: 0px; z-index: 99999; margin: 0px; padding: 5px 0px 10px 0px; }";
+		style += "#" + this.containerId + " input, #" + this.containerId + " button { outline: none; border-radius: 5px; padding: 5px; border: 1px solid #BDC3C7; }";
+		style += "#" + this.containerId + " button { background-color: #ECF0F1; padding: 5px 10px; }";
 		style += "#" + this.containerId + " .timeSpanInput { width: 70px; }";
 		
 		style += "#" + this.containerId + " .filterContainer { height: 40px; position: relative; }";
@@ -199,10 +195,10 @@ Waterfall.prototype = {
 		style += "#" + this.containerId + " .button-group { display: inline-block; }";
 		style += "#" + this.containerId + " .button-group button { border-radius: 0px 0px 0px 0px; border-right: none; cursor: pointer; }";
 		style += "#" + this.containerId + " .button-group button:hover { background-color: #eee; }";
-		style += "#" + this.containerId + " .button-group button:active { background-color: #ccc; }";
-		style += "#" + this.containerId + " .button-group button[disabled] { background-color: #ccc !important; cursor: default; }";
+		style += "#" + this.containerId + " .button-group button:active { background-color: #BDC3C7; }";
+		style += "#" + this.containerId + " .button-group button[disabled] { background-color: #BDC3C7 !important; cursor: default; }";
 		style += "#" + this.containerId + " .button-group :first-child { border-radius: 5px 0px 0px 5px; }";
-		style += "#" + this.containerId + " .button-group :last-child { border-radius: 0px 5px 5px 0px; border-right: 1px solid #ccc; }";
+		style += "#" + this.containerId + " .button-group :last-child { border-radius: 0px 5px 5px 0px; border-right: 1px solid #BDC3C7; }";
 		
 		style += "#" + this.containerId + " #WaterfallLegendContainer { margin-bottom: 10px; }";
 		style += "#" + this.containerId + " #WaterfallLegend, #WaterfallEventLegend { float:left; display: inline-block; }";
@@ -758,16 +754,7 @@ Waterfall.prototype = {
 		// Other entries come from Resource Timing API
 		var resources = [];
 		
-		if(window.performance.getEntriesByType !== undefined) {
-			resources = window.performance.getEntriesByType("resource");
-		}
-		else if(window.performance.webkitGetEntriesByType !== undefined) {
-			resources = window.performance.webkitGetEntriesByType("resource");
-		}
-		
-		/* SCALE bookmarklet extension */ {
-			resources = scalePerformanceBar.helpers.removeOwnSourcesFromResources(resources);
-		}
+		resources = scalePerformanceBar.performanceApi.getEntriesByType("resource");
 		
 		for(var n = 0; n < resources.length; n++) {
 			entries.push(this.createEntryFromResourceTiming(resources[n]));
@@ -814,15 +801,15 @@ Waterfall.prototype = {
 				name:			"DOM Content loaded",
 				timeStart:		(timing.domContentLoadedEventStart - timing.navigationStart),
 				timeEnd:		(timing.domContentLoadedEventEnd - timing.navigationStart),
-				line:			"#c141cd",
-				fill:			"#D888DF"
+				line:			"#8E44AD",
+				fill:			"#AF7AC4"
 			},
 			{
 				name:			"On load",
 				timeStart:		(timing.loadEventStart - timing.navigationStart),
 				timeEnd:		(timing.loadEventEnd - timing.navigationStart),
-				line:			"#0000FF",
-				fill:			"#C0C0FF"
+				line:			"#99ABD5",
+				fill:			"#B8C9F1"
 			},
 			/*
 			{

@@ -3,6 +3,7 @@ var ScalePerformanceBarClass = function() {
 	this.menu.superClass = this;
 	this.tools.superClass = this;
 	this.helpers.superClass = this;
+	this.performanceApi.superClass = this;
 	this.popup.superClass = this;
 	
 	// add all CSS styles
@@ -31,12 +32,12 @@ ScalePerformanceBarClass.prototype = {
 	toolInfos: [
 		{
 			name:					"Performance Bookmarklet",
-			href:					"https://scale-team.github.io/scale-perf/tools/performanceBookmarklet.js",
-			devHref:				"https://scale-team.github.io/scale-perf-dev/tools/performanceBookmarklet.js",
-			localHref:				"/tools/performanceBookmarklet.js",
+			href:					"https://scale-team.github.io/scale-perf/tools/perfBookmarkletByMicmro.js",
+			devHref:				"https://scale-team.github.io/scale-perf-dev/tools/perfBookmarkletByMicmro.js",
+			localHref:				"/tools/perfBookmarkletByMicmro.js",
 			requiresPerformanceApi:	true,
 			onload: function(superClass) {
-				superClass.tools.activeTool = new PerfBookmarklet();
+				superClass.tools.activeTool = new PerfBookmarkletByMicmro(superClass);
 			}
 		},
 		{
@@ -90,6 +91,7 @@ ScalePerformanceBarClass.prototype = {
 		{
 			name:			"Close",
 			symbol:			"X",
+			isDanger:		"danger",
 			pullToSymbols:	true,
 			onclick: function(superClass) {
 				superClass.menu.hide();
@@ -148,11 +150,12 @@ ScalePerformanceBarClass.prototype = {
 		this.styleElem = document.createElement("style");
 		this.styleElem.id = "PerfBookmarkletStyle";
 		
-		var style = "#PerfBar, #ToolsActiveBar { font-family: Arial !important; font-size: 14px !important; z-index: 1000000; color: #fff; position: fixed; top: 0px; left: 0px; width: 100%; background-color: #000; box-shadow: 0px 0px 5px #000; }";
+		var style = "#PerfBar, #ToolsActiveBar { font-family: Arial !important; font-size: 14px !important; z-index: 1000000; color: #ECF0F1; position: fixed; top: 0px; left: 0px; width: 100%; background-color: #2B2B2B; box-shadow: 0px 0px 5px #000; }";
 		style += "#PerfBar.hideBar, #ToolsActiveBar.hideBar { top: -40px; }";
 		style += "#PerfBar #Perf-logo { height: 20px; }";
-		style += "#PerfBar a, #ToolsActiveBar a { display: inline-block; cursor: pointer; text-decoration: none !important; color: #fff !important; display: inline-block; padding: 5px; }";
-		style += "#PerfBar a:hover, #ToolsActiveBar a:hover { background-color: red !important; }";
+		style += "#PerfBar a, #ToolsActiveBar a { display: inline-block; cursor: pointer; text-decoration: none !important; color: #ECF0F1 !important; display: inline-block; padding: 5px; }";
+		style += "#PerfBar a:hover, #ToolsActiveBar a:hover { background-color: #16A085 !important; }";
+		style += "#PerfBar a.danger:hover, #ToolsActiveBar a.danger:hover { background-color: #C0392B !important; }";
 		style += "#PerfBar a.disabled { color: #555 !important; cursor: default; }";
 		style += "#PerfBar a.disabled:hover { background-color: transparent !important; }";
 		
@@ -166,11 +169,12 @@ ScalePerformanceBarClass.prototype = {
 		
 		style += "#ScalePopUp { z-index: 1000002; position: fixed; top: 10px; bottom: 10px; left: 25%; width: 50%; height: auto; min-height: auto; background: #fff; box-shadow: 2px 2px 10px rgba(0,0,0,0.7); }";
 		style += "#ScalePopUp h5 { font-weight: bold; }";
+		style += "#ScalePopUp .img-responsive { width: 100%; }";
 		style += "#ScalePopUp.is_short { height: 500px; }";
 		style += "#ScalePopUp .content { position: absolute; top: 0px; left: 0px; right: 0px; bottom: 50px; overflow: auto; padding: 15px; }";
 		style += "#ScalePopUp .button-row { position: absolute; bottom: 0px; left: 0px; right: 0px; height: 50px; }";
-		style += "#ScalePopUp .button-row a { position: absolute; top: 0px; right: 0px; bottom: 0px; left: 0px; color: #555; font-size: 16px; background: rgba(0,0,0,0.1); padding: 14px; text-align: center; }";
-		style += "#ScalePopUp .button-row a:hover { cursor: pointer; background-color: rgba(0,0,0,0.2); }";
+		style += "#ScalePopUp .button-row a { position: absolute; top: 0px; right: 0px; bottom: 0px; left: 0px; color: #555; font-size: 16px; background: #ECF0F1; padding: 14px; text-align: center; }";
+		style += "#ScalePopUp .button-row a:hover { cursor: pointer; background-color: #BDC3C7; }";
 		style += "#ScalePopUpBackground { z-index: 1000001; position: fixed; top: 0px; right: 0px; bottom: 0px; left: 0px; background: rgba(0,0,0,0.5); }";
 		
 		style += "@media (max-width: 768px) {";
@@ -302,6 +306,7 @@ ScalePerformanceBarClass.prototype = {
 			// if performance api required, but api not available, disable
 			var disableTool = (script.requiresPerformanceApi && window.performance == null);
 			link.className += (disableTool ? " disabled" : "");
+			link.className += (script.isDanger ? " danger" : "");
 			if(disableTool) link.title = "This tool was disabled cause your browser doesn't support the Resource Timing API!";
 			
 			// If not disabled, add click handlers
@@ -624,32 +629,25 @@ ScalePerformanceBarClass.prototype = {
 		}
 	},
 	
-	// Contains various functions to support the functionality
-	helpers: {
-		isLocal: function() {
-			// Flag if this script is executes locally or not
-			return ((self.location+"").split("http://").pop().split("/")[0] == "localhost");
+	performanceApi: {
+		getEntriesByType: function(type) {
+			if(window.performance && window.performance.getEntriesByType !== undefined)
+			{
+				var resources = window.performance.getEntriesByType(type);
+			}
+			else if(window.performance && window.performance.webkitGetEntriesByType !== undefined)
+			{
+				var resources = window.performance.webkitGetEntriesByType(type);
+			}
+			else
+			{
+				alert("Oups, looks like this browser does not support the Resource Timing API\ncheck http://caniuse.com/#feat=resource-timing to see the ones supporting it \n\n");
+			}
+			
+			return this.removeOwnSourcesFromResources(resources);
 		},
 		
-		isDev: function() {
-			// Flag if this script is executes locally or not
-			return (typeof(isDevelopmentMode) == "undefined" ? false : isDevelopmentMode);
-		},
-		
-		waitForElementExist: function(elemId, callback) {
-			var interval = window.setInterval(function() {
-				var element = document.getElementById(elemId);
-				
-				if(element != null)
-				{
-					callback(element);
-					
-					window.clearInterval(interval);
-				}
-			}, 10);
-		},
-		
-		filesToHide: [ "perf-bookmarklet.js", "tools/dommonster.js", "tools/perfmap.js", "tools/performanceBookmarklet.js", "tools/stats.js", "tools/waterfall.js" ],
+		filesToHide: [ "perf-bookmarklet.js", "tools/dommonster.js", "tools/perfmap.js", "tools/perfBookmarkletByMicmro.js", "tools/stats.js", "tools/waterfall.js" ],
 		removeOwnSourcesFromResources: function(resources) {
 			var filteredResources = [];
 			
@@ -676,6 +674,32 @@ ScalePerformanceBarClass.prototype = {
 			}
 			
 			return filteredResources;
+		},
+	},
+	
+	// Contains various functions to support the functionality
+	helpers: {
+		isLocal: function() {
+			// Flag if this script is executes locally or not
+			return ((self.location+"").split("http://").pop().split("/")[0] == "localhost");
+		},
+		
+		isDev: function() {
+			// Flag if this script is executes locally or not
+			return (typeof(isDevelopmentMode) == "undefined" ? false : isDevelopmentMode);
+		},
+		
+		waitForElementExist: function(elemId, callback) {
+			var interval = window.setInterval(function() {
+				var element = document.getElementById(elemId);
+				
+				if(element != null)
+				{
+					callback(element);
+					
+					window.clearInterval(interval);
+				}
+			}, 10);
 		},
 		
 		getPageLoadTimeFromResources: function(resources) {

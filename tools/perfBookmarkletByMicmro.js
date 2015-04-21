@@ -1,4 +1,4 @@
-var PerfBookmarklet = function() {
+var PerfBookmarkletByMicmro = function(superClass) {
 	return {
 		/* SCALE performance tool IO functions */
 			containerId:			"perfbook-iframe",
@@ -323,7 +323,8 @@ if(location.protocol === "about:"){
 	return;
 }
 
-//feature check gate
+// (SCALE bookmarklet extension) moved following code to mother perormance bookmarklet
+/*/feature check gate
 if(window.performance && window.performance.getEntriesByType !== undefined) {
 	data.resources = window.performance.getEntriesByType("resource");
 	data.marks = window.performance.getEntriesByType("mark");
@@ -336,11 +337,18 @@ if(window.performance && window.performance.getEntriesByType !== undefined) {
 	alert("Oups, looks like this browser does not support the Resource Timing API\ncheck http://caniuse.com/#feat=resource-timing to see the ones supporting it \n\n");
 	return;
 }
+//*/
 
 /* SCALE bookmarklet extension */ {
+	/*
 	data.resources = scalePerformanceBar.helpers.removeOwnSourcesFromResources(data.resources);
 	data.marks = scalePerformanceBar.helpers.removeOwnSourcesFromResources(data.marks);
 	data.measures = scalePerformanceBar.helpers.removeOwnSourcesFromResources(data.measures);
+	//*/
+	
+	data.resources = scalePerformanceBar.performanceApi.getEntriesByType("resource");
+	data.marks = scalePerformanceBar.performanceApi.getEntriesByType("mark");
+	data.measures = scalePerformanceBar.performanceApi.getEntriesByType("measure");
 }
 
 if(window.performance.timing){
