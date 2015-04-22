@@ -2,14 +2,15 @@ var ScalePerformanceBarClass = function() {
 	// Set the main class reference for sub-namespaces
 	this.menu.superClass = this;
 	this.tools.superClass = this;
-	this.helpers.superClass = this;
-	this.performanceApi.superClass = this;
 	
 	// Create an object for readme
 	this.readme = new BookmarkletReadme();
 	
 	// Create an object of popup
 	this.popup = new BookmarkletPopup();
+	
+	// Create an object of the ScalePerformanceApi
+	this.performanceApi = new ScalePerformanceApi();
 	
 	// add all CSS styles
 	this.addStyles();
@@ -23,24 +24,26 @@ var ScalePerformanceBarClass = function() {
 	// Add the tool-active bar
 	this.tools.addBar();
 	
-	this.menu.addSymbol({
-		name:			"Help",
-		symbol:			"?",
-		onclick: function(superClass) {
-			var content = superClass.readme.getHelpText();
-			
-			scalePerformanceBar.popup.show(content);
-		}
-	});
-	
-	this.menu.addSymbol({
-		name:			"Close",
-		symbol:			"X",
-		isDanger:		"danger",
-		onclick: function(superClass) {
-			superClass.menu.hide();
-		}
-	});
+	/* Add symbols to menu */ {
+		this.menu.addSymbol({
+			name:			"Help",
+			symbol:			"?",
+			onclick: function(superClass) {
+				var content = superClass.readme.getHelpText();
+				
+				scalePerformanceBar.popup.show(content);
+			}
+		});
+		
+		this.menu.addSymbol({
+			name:			"Close",
+			symbol:			"X",
+			isDanger:		"danger",
+			onclick: function(superClass) {
+				superClass.menu.hide();
+			}
+		});
+	}
 	
 	// Show it
 	window.setTimeout(function() {
@@ -49,13 +52,12 @@ var ScalePerformanceBarClass = function() {
 };
 
 ScalePerformanceBarClass.prototype = {
-	styleElem:	null,
-	toolInfos:	[],		// the tool links in the menu
-	symbols:	[],		// Symbols shown on the right of the bar
+	toolConfig:		[],		// the tool links in the menu
+	menuSymbols:	[],		// Symbols shown on the right of the bar
 	
 	// Adds a tool to the bookmarklet
 	addTool: function(script) {
-		this.toolInfos.push(script);
+		this.toolConfig.push(script);
 		
 		this.menu.addMenuLink(script);
 	},
@@ -64,8 +66,8 @@ ScalePerformanceBarClass.prototype = {
 	addStyles: function() {
 		var head = document.head || document.getElementsByTagName('head')[0];
 		
-		this.styleElem = document.createElement("style");
-		this.styleElem.id = "PerfBookmarkletStyle";
+		var styleElem = document.createElement("style");
+		styleElem.id = "PerfBookmarkletStyle";
 		
 		var style = "#PerfBar, #ToolsActiveBar { font-family: Arial !important; font-size: 14px !important; z-index: 1000000; color: #ECF0F1; position: fixed; top: 0px; left: 0px; width: 100%; background-color: #2B2B2B; box-shadow: 0px 0px 5px #000; }";
 		style += "#PerfBar a, #ToolsActiveBar a { display: inline-block; cursor: pointer; text-decoration: none !important; color: #ECF0F1 !important; display: inline-block; padding: 5px; }";
@@ -114,8 +116,8 @@ ScalePerformanceBarClass.prototype = {
 		style += "#PerfBar, #ToolsActiveBar { transition: top ease-out 0.5s, opacity ease-out 0.5s; -webkit-transition: top ease-out 0.5s, opacity ease-out 0.5s; }";
 		style += "#ScalePageContent { transition: top ease-out 0.5s, opacity ease-out 0.5s; -webkit-transition: top ease-out 0.5s, opacity ease-out 0.5s; }";
 		
-		this.styleElem.innerHTML = style;
-		head.appendChild(this.styleElem);
+		styleElem.innerHTML = style;
+		head.appendChild(styleElem);
 	},
 	
 	// Takes all page contents, and puts them into a wrapper
@@ -145,7 +147,7 @@ ScalePerformanceBarClass.prototype = {
 		bar:			null,
 		toolsMenu:		null,
 		symbolsBlock:	null,
-		logoSrc:	"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAC4AAAAUCAIAAAB9OpirAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAOvgAADr4B6kKxwAAAABh0RVh0U29mdHdhcmUAcGFpbnQubmV0IDQuMC41ZYUyZQAABZBJREFUSEu1lmlIVmsQx19NLXMrC9JMMyXrQyrYYrmkoJKZiGgoYmoLUZAG0UJaBJFLiPsKimJqZZoVWRiFhaRWFBW0mKmRbZKaSi6gpvZ733mv662493Lnw2HOPHNm+c/yHIWjo+OlS5fu3LkTHBysUCiWLl2akZFx7949nosWLULi5+dXUlJib28Pr6+vn5ycvGHDBvh58+bFxMRUVFTcvHnz+PHjSJycnDw8PGA0NDR4ziBNTU019yt69uzZhQsX9u7dGxERoa2tffv27devX586derixYu2trZ8T1jj4+OZmZkom5iYfP/+fefOnfDGxsafPn0iB5SDgoKQ7Nu378SJEzC/8mpnZyfp/T29fPny7t27K1euhF+/fv3AwICDg4McQWD2/Pnz2NjYlpaWBQsWGBkZffnyJTQ0lKOFCxc2NzefPn16xYoV8+fPR0KIhw8fhpmKCjykp6cHct++fVu7dq0I5XQa4RhgyPvQoUPUor29fdmyZXPnzgUhTuPi4q5fv47k69evpK6jowMTFhZG3osXLyaNz58/19fXS1327Nlz9OhRmNmerK2t37x5gxdfX19ef1es6OjoDx8+uLm5DQ4Oenp6ipBuqKur6+rqamhoGB4ePnfunIGBAagEBARwChLv3r3bvXu3KEOgIqHgSYWFMiBDQ8M5c+bAXLly5eTJk6tXr9bS0hLJTEIjNzf3yZMn5eXlgHH16tWenh68VlVVAWlHR8fmzZuXLFkCT+2cnZ07OzsBg24NCQl5+/YtfFFR0ZEjRzA1gcrUpDGbnp6+devWhw8fqkUqmo2cIjAwMCcnB0/UnldCpvvy8vIoB41CLURNV1cXTxYWFrt27aJ1kpKSXF1dgUf48PBwdEBIYoIiIyPNzMzo0xcvXty6dYtRAGz0ExISaG2Zx98R/UFbzIhXhbSGubm5jY0N/X/t2jXcq8+mEwU6duwYjKWlZXd3Nz309OnTHTt2kAYJP378mF4ZHR0dGxuDAXjk03xNBZM5oiIUSyaCxhQ5RBVGRkYYAaxAZM/wM1OgKIQOociCYfeQPRUkGo6ob1tb26tXr1g8uIcAGCNlZWUoT4uGZiRRb29v5kU8VVZWEjWtIF1JZLQOcpbhgQMHZNNAOOMUW5IPygcPHmTftLa2rlq1CgkrkWd+fj59Jg0wQaCFBRoRfhKOxMREpIIbxGfCQIBBTiTEKUtP9NkuoM3YL1++nNepodAi7GsC4lWEoEJkhYWFwk/o0wz9/f1nz55FMjlQLi4ufX19OL5///62bdvoCXqTQaWurH8wIyD4qKgolFlWPLOyspCkpqaKdbEF7BNtO0G4/PjxY1paGu4lOIho+JB+Yrh4VYcC+FSdtYFv9rpSpCIAxBn9cePGDS8vL4pdU1MjgKPGVuSUqol1efr7+z948IByFBcXE31BQcHly5e3b9+OGrgqjaq8SvQsGJJn9AhLHQqrWlUKZR/wip4Q2BC1HLFwpXxsvJSUFCYTHoblqzTxF/FqZWWFDxpFnmvWrGHo3N3d0Y+Pj1frKRTMeVNTE3aIg1d5Kgssc0H5JTpJESSGhoa48LgN+JJ7e//+/ahBEiK34KSVP5EkzJ3FDjt//jxgEwcTzqokZxSUdnDPfVZdXY0qiUqfkxAA/Pjxg0KwuVXWlETJ6RJTU1MfHx82kFo6hbA4gxBKbnQkjc+1yrI5c+YMG48JxWljYyMGVV+riHJKCd6/f19bWzuxPyA6AIt0n9j9dzT7W0rJVUrD4QKc1FJqXFpaiujRo0dcMaoAxsEJAJigqaiIRZ4k+k8j4xOBB5Jrn35iI4i7yU5iA9ITXIcsOq7D3t7eTZs2qc/+H5Kw+EOSCmRnZ4t8kpidjRs3rlu3juDQ/i9F+SPJlGzZskUJiULxE1p1CAKyNoOoAAAAAElFTkSuQmCC",
+		logoSrc:		"data:image/png;base64,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",
 		
 		addBar: function() {
 			var superClass = this.superClass;
@@ -184,14 +186,14 @@ ScalePerformanceBarClass.prototype = {
 			
 			/* Add contents */ {
 				// Add all tool links
-				for(var i in superClass.toolInfos)
+				for(var i in superClass.toolConfig)
 				{
-					this.addMenuLink(superClass.toolInfos[i]);
+					this.addMenuLink(superClass.toolConfig[i]);
 				}
 				
-				for(var i in superClass.symbols)
+				for(var i in superClass.menuSymbols)
 				{
-					this.addSymbol(superClass.symbols[i]);
+					this.addSymbol(superClass.menuSymbols[i]);
 				}
 			}
 		},
@@ -330,18 +332,12 @@ ScalePerformanceBarClass.prototype = {
 				// Call the constructor
 				if(script.className != null)
 				{
-					var params;
+					var params = {
+						performanceApi:	superClass.performanceApi
+					};
 					
-					if(typeof(script.getParamsForConstructor) == "function")
-					{
-						params = script.getParamsForConstructor(superClass);
-					}
-					else if(script.getParamsForConstructor != null)
-					{
-						params = script.getParamsForConstructor;
-					}	
-					
-					tools.activeTool = new window[script.className](params);
+					var toolClass = window[script.className];
+					tools.activeTool = new toolClass(params);
 				}
 				
 				// Call the onload function set in the tools JS-script
@@ -479,56 +475,9 @@ ScalePerformanceBarClass.prototype = {
 		}
 	},
 	
-	// An interface to offer pre filtered results from the perfomance API
-	performanceApi: {
-		getEntriesByType: function(type) {
-			if(window.performance && window.performance.getEntriesByType !== undefined)
-			{
-				var resources = window.performance.getEntriesByType(type);
-			}
-			else if(window.performance && window.performance.webkitGetEntriesByType !== undefined)
-			{
-				var resources = window.performance.webkitGetEntriesByType(type);
-			}
-			else
-			{
-				alert("Oups, looks like this browser does not support the Resource Timing API\ncheck http://caniuse.com/#feat=resource-timing to see the ones supporting it \n\n");
-			}
-			
-			return this.removeOwnSourcesFromResources(resources);
-		},
-		
-		filesToHide: [ "perf-bookmarklet.js", "tools/dommonster.js", "tools/perfmap.js", "tools/perfBookmarkletByMicmro.js", "tools/stats.js", "tools/waterfall.js" ],
-		removeOwnSourcesFromResources: function(resources) {
-			var filteredResources = [];
-			
-			for(var f in resources)
-			{
-				var r = resources[f];
-				var url = r.url || r.name;
-				
-				var hideThis = false;
-				for(var g in this.filesToHide)
-				{
-					var hideMe = this.filesToHide[g];
-					
-					if(url.length >= hideMe.length && hideMe == url.substr(url.length - hideMe.length))
-					{
-						hideThis = true;
-						break;
-					}
-				}
-				
-				if(hideThis) continue;
-				
-				filteredResources.push(r);
-			}
-			
-			return filteredResources;
-		},
-	},
-	
-	// Contains various functions to support the functionality
+	/* Contains various functions to support the functionality
+	All these functions work independent from the class itself. No connections to it!
+	*/
 	helpers: {
 		isLocal: function() {
 			// Flag if this script is executes locally or not
@@ -551,21 +500,6 @@ ScalePerformanceBarClass.prototype = {
 					window.clearInterval(interval);
 				}
 			}, 10);
-		},
-		
-		getPageLoadTimeFromResources: function(resources) {
-			var pageLoadTime = 0;
-			for(var f in resources)
-			{
-				var resource = resources[f];
-				
-				var fin = resource.start + resource.duration;
-				
-				if((fin - pageLoadTime) >= 2000) break;
-				
-				pageLoadTime = Math.max(pageLoadTime, fin);
-			}
-			return Math.round(pageLoadTime);
 		},
 		
 		removeClass: function(elemClassName, classToRemove) {
@@ -783,6 +717,79 @@ ScalePerformanceBarClass.prototype = {
 	};
 }
 
+/* ScalePerformanceApi */ {
+	// An interface to offer pre filtered results from the perfomance API
+	function ScalePerformanceApi() {
+		this.getEntriesByType = function(type) {
+			if(window.performance && window.performance.getEntriesByType !== undefined)
+			{
+				var resources = window.performance.getEntriesByType(type);
+			}
+			else if(window.performance && window.performance.webkitGetEntriesByType !== undefined)
+			{
+				var resources = window.performance.webkitGetEntriesByType(type);
+			}
+			else
+			{
+				alert("Oups, looks like this browser does not support the Resource Timing API\ncheck http://caniuse.com/#feat=resource-timing to see the ones supporting it \n\n");
+			}
+			
+			return this.removeOwnSourcesFromResources(resources);
+		}
+		
+		var filesToHide = [ "perf-bookmarklet.js", "tools/dommonster.js", "tools/perfmap.js", "tools/perfBookmarkletByMicmro.js", "tools/stats.js", "tools/waterfall.js" ];
+		
+		this.hideFile = function(file) {
+			filesToHide.push(file);
+		};
+		
+		this.removeOwnSourcesFromResources = function(resources) {
+			var filteredResources = [];
+			
+			for(var f in resources)
+			{
+				var r = resources[f];
+				var url = r.url || r.name;
+				
+				var hideThis = false;
+				for(var g in filesToHide)
+				{
+					var hideMe = filesToHide[g];
+					
+					if(url.length >= hideMe.length && hideMe == url.substr(url.length - hideMe.length))
+					{
+						hideThis = true;
+						break;
+					}
+				}
+				
+				if(hideThis) continue;
+				
+				filteredResources.push(r);
+			}
+			
+			return filteredResources;
+		};
+		
+		this.getPageLoadTime = function() {
+			var resources = this.getEntriesByType("resource");
+			
+			var pageLoadTime = 0;
+			for(var f in resources)
+			{
+				var resource = resources[f];
+				
+				var fin = resource.startTime + resource.duration;
+				
+				if((fin - pageLoadTime) >= 2000) break;
+				
+				pageLoadTime = Math.max(pageLoadTime, fin);
+			}
+			return Math.round(pageLoadTime);
+		};
+	}
+}
+
 // If PerfBar not yet already exists, create it
 if(scalePerformanceBar != null)
 {
@@ -811,7 +818,7 @@ else
 			// A function that will return the parameters that will be given to the constructor of the tool
 			getParamsForConstructor:	function(superClass) {
 				return {
-					getPageLoadTime:	superClass.helpers.getPageLoadTimeFromResources
+					getPageLoadTime:	superClass.performanceApi.getPageLoadTimeFromResources
 				};
 			}
 		}
@@ -829,12 +836,7 @@ else
 			name:						"Page load waterfall",
 			file:						"waterfall.js",
 			requiresPerformanceApi:		true,
-			className:					"Waterfall",
-			getParamsForConstructor:	function(superClass) {
-				return {
-					getPageLoadTime:	superClass.helpers.getPageLoadTimeFromResources
-				};
-			}
+			className:					"Waterfall"
 		});
 		
 		scalePerformanceBar.addTool({

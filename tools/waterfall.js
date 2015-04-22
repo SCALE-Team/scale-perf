@@ -9,12 +9,12 @@ function Waterfall(conf) {
 	conf = conf||{};
 	
 	// Remember configs
-	this.getPageLoadTime = conf.getPageLoadTime;
+	this.bookmarklet = conf;
 	
 	// look for erros
-	if(typeof(this.getPageLoadTime) != "function")
+	if(typeof(this.bookmarklet.performanceApi) != "object")
 	{
-		alert("Waterfall.js: config.getPageLoadTime must be set in constructor!");
+		alert("Waterfall.js: config.bookmarklet.performanceApi is required!");
 		return;
 	}
 	
@@ -422,7 +422,7 @@ Waterfall.prototype = {
 			allowed:		[],
 			nowAllowed:		[],
 			searchText:		"",
-			timeSpanUntil:	superClass.getPageLoadTime(entries)
+			timeSpanUntil:	superClass.bookmarklet.performanceApi.getPageLoadTime()
 		};
 		superClass.toolContainer.appendChild(superClass.chartContainer);
 		
@@ -754,7 +754,7 @@ Waterfall.prototype = {
 		// Other entries come from Resource Timing API
 		var resources = [];
 		
-		resources = scalePerformanceBar.performanceApi.getEntriesByType("resource");
+		resources = this.bookmarklet.performanceApi.getEntriesByType("resource");
 		
 		for(var n = 0; n < resources.length; n++) {
 			entries.push(this.createEntryFromResourceTiming(resources[n]));
