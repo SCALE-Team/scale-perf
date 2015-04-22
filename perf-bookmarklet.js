@@ -98,10 +98,12 @@ ScalePerformanceBarClass.prototype = {
 			style += "#PerfBar .perf-symbols .fullName { display: block !important; }";
 			style += "#PerfBar .perfSymbolsSeparator { display: block; }";
 			
+			// Remove all animations from the mobile view
 			style += "#ScalePageContent, #PerfBar, #ToolsActiveBar, .scaleToolContainer { transition: none !important; } ";
 		style += "}";
-		style += "#PerfToolTitle { font-weight: bold; }";
 		style += "#ToolsActiveBar .perfToolBackButton { font-weight: bold; }";
+		style += "#ToolsActiveBar .perf_back_symbol { position: absolute; top: 50%;  margin-top: -11px; }";
+		style += "#ToolsActiveBar .perf_tool_title { font-weight: bold; margin-left: 10px; }";
 		
 		style += "#ScalePageContent { position: absolute; left: 0px; top: 0px; width: 100%; }";
 		
@@ -388,16 +390,21 @@ ScalePerformanceBarClass.prototype = {
 				var toolBarActiveBackButton = document.createElement("a");
 				toolBarActiveBackButton.className = "perfToolBackButton";
 				toolBarActiveBackButton.href = "javascript:;";
-				toolBarActiveBackButton.innerHTML = "< ";
 				toolBarActiveBackButton.onclick = function() {
 					// Trigger close of tool-active bar
 					close.onclick(true);
 				};
 				tools.bar.appendChild(toolBarActiveBackButton);
 				
+				// Add back symbol
+				var backSymbol = document.createElement("span");
+				backSymbol.className = "perf_back_symbol";
+				backSymbol.innerHTML = "&#9001; ";
+				toolBarActiveBackButton.appendChild(backSymbol);
+				
 				// Add title bar
 				superClass.toolBarActiveTitle = document.createElement("span");
-				superClass.toolBarActiveTitle.id = "PerfToolTitle";
+				superClass.toolBarActiveTitle.className = "perf_tool_title";
 				superClass.toolBarActiveTitle.innerHTML = "Nice tool";
 				toolBarActiveBackButton.appendChild(superClass.toolBarActiveTitle);
 				
