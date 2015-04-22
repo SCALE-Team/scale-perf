@@ -67,46 +67,49 @@ ScalePerformanceBarClass.prototype = {
 		this.styleElem.id = "PerfBookmarkletStyle";
 		
 		var style = "#PerfBar, #ToolsActiveBar { font-family: Arial !important; font-size: 14px !important; z-index: 1000000; color: #ECF0F1; position: fixed; top: 0px; left: 0px; width: 100%; background-color: #2B2B2B; box-shadow: 0px 0px 5px #000; }";
-		style += "#PerfBar.hideBar, #ToolsActiveBar.hideBar { top: -40px; }";
-		style += "#PerfBar #Perf-logo { height: 20px; }";
 		style += "#PerfBar a, #ToolsActiveBar a { display: inline-block; cursor: pointer; text-decoration: none !important; color: #ECF0F1 !important; display: inline-block; padding: 5px; }";
 		style += "#PerfBar a:hover, #ToolsActiveBar a:hover { background-color: #16A085 !important; }";
 		style += "#PerfBar a.danger:hover, #ToolsActiveBar a.danger:hover { background-color: #C0392B !important; }";
 		style += "#PerfBar a.disabled { color: #555 !important; cursor: default; }";
 		style += "#PerfBar a.disabled:hover { background-color: transparent !important; }";
 		
-		style += "#PerfBar .perf-symbols, #ToolsActiveBar .perf-symbols { position: absolute; top: 0px; right: 0px; }";
-		style += "#PerfBar .perf-symbols > *, #ToolsActiveBar .perf-symbols > * { vertical-align: middle !important; }";
-		style += "#PerfBar .perf-symbols > a, #ToolsActiveBar .perf-symbols > a { width: 30px; text-align: center; }";
-		style += "#PerfBar .perf-symbols .fullName { display: none;  }";
+		style += "#PerfBar.hide_bar, #ToolsActiveBar.hide_bar { top: -40px; }";
+		style += "#PerfBar .perf_logo { height: 20px; }";
 		
-		style += "#PerfBar .perfSeparator { cursor: default; }";
-		style += "#PerfBar .perfSeparator:first-child { display: none; }";
-		style += "#PerfBar .perfSymbolsSeparator { display: none; }";
+		style += "#PerfBar .perf_symbols, #ToolsActiveBar .perf_symbols { position: absolute; top: 0px; right: 0px; }";
+		style += "#PerfBar .perf_symbols > *, #ToolsActiveBar .perf_symbols > * { vertical-align: middle !important; }";
+		style += "#PerfBar .perf_symbols > a, #ToolsActiveBar .perf_symbols > a { width: 30px; text-align: center; }";
+		style += "#PerfBar .perf_symbols .fullName { display: none;  }";
 		
-		style += "@media (max-width: 768px) {";
-			style += "#PerfBar { height: auto !important; }";
-			style += "#PerfBar.hideBar, #ToolsActiveBar.hideBar { top: -300px; }";
-			style += "#PerfBar #Perf-logo { display: none; }";
-			style += "#PerfBar { padding: 0px; }";
-			style += "#PerfBar a { width:	100%; }";
-			style += "#PerfBar .perfSeparator { display: none; }";
-			
-			style += "#PerfBar .perf-symbols { display: block; width: 100% !important; text-align: left !important; position: static !important; }";
-			style += "#PerfBar .perf-symbols > * { display: block; width: 100% !important; text-align: left !important; position: static !important; }";
-			style += "#PerfBar .perf-symbols .symbol { display: none; }";
-			style += "#PerfBar .perf-symbols .fullName { display: block !important; }";
-			style += "#PerfBar .perfSymbolsSeparator { display: block; }";
-			
-			// Remove all animations from the mobile view
-			style += "#ScalePageContent, #PerfBar, #ToolsActiveBar, .scaleToolContainer { transition: none !important; } ";
-		style += "}";
-		style += "#ToolsActiveBar .perfToolBackButton { font-weight: bold; }";
+		style += "#PerfBar .perf_separator { cursor: default; }";
+		style += "#PerfBar .perf_separator:first-child { display: none; }";
+		style += "#PerfBar .perf_symbols_separator { display: none; }";
+		
+		style += "#ToolsActiveBar .perf_back_button { font-weight: bold; }";
 		style += "#ToolsActiveBar .perf_back_symbol { position: absolute; top: 50%;  margin-top: -11px; }";
 		style += "#ToolsActiveBar .perf_tool_title { font-weight: bold; margin-left: 10px; }";
 		
 		style += "#ScalePageContent { position: absolute; left: 0px; top: 0px; width: 100%; }";
 		
+		style += "@media (max-width: 768px) {";
+			style += "#PerfBar { height: auto !important; }";
+			style += "#PerfBar.hide_bar, #ToolsActiveBar.hide_bar { top: -300px; }";
+			style += "#PerfBar .perf_logo { display: none; }";
+			style += "#PerfBar { padding: 0px; }";
+			style += "#PerfBar a { width:	100%; }";
+			style += "#PerfBar .perf_separator { display: none; }";
+			
+			style += "#PerfBar .perf_symbols { display: block; width: 100% !important; text-align: left !important; position: static !important; }";
+			style += "#PerfBar .perf_symbols > * { display: block; width: 100% !important; text-align: left !important; position: static !important; }";
+			style += "#PerfBar .perf_symbols .symbol { display: none; }";
+			style += "#PerfBar .perf_symbols .fullName { display: block !important; }";
+			style += "#PerfBar .perf_symbols_separator { display: block; }";
+			
+			// Remove all animations from the mobile view
+			style += "#ScalePageContent, #PerfBar, #ToolsActiveBar, .scale_tool_container { transition: none !important; } ";
+		style += "}";
+		
+		// Animations
 		style += "#PerfBar, #ToolsActiveBar { transition: top ease-out 0.5s, opacity ease-out 0.5s; -webkit-transition: top ease-out 0.5s, opacity ease-out 0.5s; }";
 		style += "#ScalePageContent { transition: top ease-out 0.5s, opacity ease-out 0.5s; -webkit-transition: top ease-out 0.5s, opacity ease-out 0.5s; }";
 		
@@ -152,7 +155,7 @@ ScalePerformanceBarClass.prototype = {
 			// Create container for the bar
 			menu.bar = document.createElement("div");
 			menu.bar.id = "PerfBar";
-			menu.bar.className = "hideBar";
+			menu.bar.className = "hide_bar";
 			menu.bar.superClass = superClass;
 			body.appendChild(menu.bar);
 			
@@ -163,17 +166,17 @@ ScalePerformanceBarClass.prototype = {
 				
 				// Separator between tools and symbols in mobile view
 				var separatorElem = document.createElement("hr");
-				separatorElem.className = "perfSymbolsSeparator";
+				separatorElem.className = "perf_symbols_separator";
 				menu.bar.appendChild(separatorElem);
 				
 				// Container for symbols
 				menu.symbolsBlock = document.createElement("div");
-				menu.symbolsBlock.className = "perf-symbols";
+				menu.symbolsBlock.className = "perf_symbols";
 				menu.bar.appendChild(menu.symbolsBlock);
 				
 				// Add logo
 				var logo = document.createElement("img");
-				logo.id = "Perf-logo";
+				logo.className = "perf_logo";
 				logo.src = menu.logoSrc;
 				menu.symbolsBlock.appendChild(logo);
 			}
@@ -199,7 +202,7 @@ ScalePerformanceBarClass.prototype = {
 		addMenuLink: function(script) {
 			// Add a separator to the last element
 			var separatorElem = document.createElement("span");
-			separatorElem.className = "perfSeparator";
+			separatorElem.className = "perf_separator";
 			separatorElem.innerHTML = "&middot;";
 			this.toolsMenu.appendChild(separatorElem);
 			
@@ -264,14 +267,14 @@ ScalePerformanceBarClass.prototype = {
 		
 		// Show the menu bar
 		show: function() {
-			this.bar.className = this.superClass.helpers.removeClass(this.bar.className, "hideBar");
+			this.bar.className = this.superClass.helpers.removeClass(this.bar.className, "hide_bar");
 			
 			this.superClass.pageContent.style.top = this.bar.offsetHeight + "px";
 		},
 		
 		// Hide the menu bar
 		hide: function() {
-			this.bar.className = this.superClass.helpers.addClass("hideBar");
+			this.bar.className = this.superClass.helpers.addClass("hide_bar");
 			
 			this.superClass.pageContent.style.top = "0px";
 		},
@@ -343,7 +346,7 @@ ScalePerformanceBarClass.prototype = {
 				
 				// Wait for the tool container to exist and afterwards move the page content down
 				superClass.helpers.waitForElementExist(tools.activeTool.containerId, function(containerElem) {
-					containerElem.className += " scaleToolContainer";
+					containerElem.className += " scale_tool_container";
 					containerElem.style.top = -containerElem.offsetHeight + "px";
 					containerElem.style.visibility = "visible";
 					containerElem.style.transition = containerElem.style['-webkit-transition'] = "top ease-out 0.5s, opacity ease-out 0.5s";
@@ -378,17 +381,17 @@ ScalePerformanceBarClass.prototype = {
 			/* Tool Active Bar */ {
 				tools.bar = document.createElement("div");
 				tools.bar.id = "ToolsActiveBar";
-				tools.bar.className = "hideBar";
+				tools.bar.className = "hide_bar";
 				tools.bar.superClass = superClass;
 				body.appendChild(tools.bar);
 				
 				var symbolsBlock = document.createElement("div");
-				symbolsBlock.className = "perf-symbols";
+				symbolsBlock.className = "perf_symbols";
 				tools.bar.appendChild(symbolsBlock);
 				
 				// Add back button
 				var toolBarActiveBackButton = document.createElement("a");
-				toolBarActiveBackButton.className = "perfToolBackButton";
+				toolBarActiveBackButton.className = "perf_back_button";
 				toolBarActiveBackButton.href = "javascript:;";
 				toolBarActiveBackButton.onclick = function() {
 					// Trigger close of tool-active bar
@@ -410,7 +413,7 @@ ScalePerformanceBarClass.prototype = {
 				
 				// Add symbols
 				var symbolsBlock = document.createElement("div");
-				symbolsBlock.className = "perf-symbols";
+				symbolsBlock.className = "perf_symbols";
 				tools.bar.appendChild(symbolsBlock);
 				
 					// Add help button
@@ -462,14 +465,14 @@ ScalePerformanceBarClass.prototype = {
 		
 		// Show the tools bar
 		show: function() {
-			this.bar.className = this.superClass.helpers.removeClass(this.bar.className, "hideBar");
+			this.bar.className = this.superClass.helpers.removeClass(this.bar.className, "hide_bar");
 			
 			this.superClass.pageContent.style.top = this.superClass.tools.bar.offsetHeight + "px";
 		},
 		
 		// Hide the tools bar
 		hide: function() {
-			this.bar.className = this.superClass.helpers.addClass("hideBar");
+			this.bar.className = this.superClass.helpers.addClass("hide_bar");
 		}
 	},
 	
