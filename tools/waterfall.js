@@ -35,16 +35,6 @@ Waterfall.prototype = {
 	chartContainer:		null,
 	toolContainer:		null,
 	
-	/* SCALE performance tool IO functions */
-		containerId: 			"PerfWaterfallDiv",
-		shouldMovePageContent:	true,
-		onclose: function() {
-			var waterfall = document.getElementById(this.containerId);
-			if(waterfall != null) waterfall.parentNode.removeChild(waterfall);
-			
-			this.cssElem.parentNode.removeChild(this.cssElem);
-		},
-	
 	barColors: [
 		{
 			text:	"blocked",
@@ -158,11 +148,10 @@ Waterfall.prototype = {
 	},
 	
 	addStyles: function() {
-		var head = document.head || document.getElementsByTagName('head')[0];
-
-		this.cssElem = document.createElement("style");
-		this.cssElem.id = "ScaleWaterfallStyle";
-		var style = "#" + this.containerId + " { color: #2B2B2B; background: #fff; border-bottom: 2px solid #000; margin: 5px; position: absolute; visibility: hidden; left: 0px; z-index: 99999; margin: 0px; padding: 5px 0px 10px 0px; }";
+		var cssElem = document.createElement("style");
+		cssElem.id = "ScaleWaterfallStyle";
+		
+		var style = "#" + this.containerId + " { color: #2B2B2B; background: #fff; border-bottom: 2px solid #000; margin: 0px; padding: 5px 0px 10px 0px; }";
 		style += "#" + this.containerId + " input, #" + this.containerId + " button { outline: none; border-radius: 5px; padding: 5px; border: 1px solid #BDC3C7; }";
 		style += "#" + this.containerId + " button { background-color: #ECF0F1; padding: 5px 10px; }";
 		style += "#" + this.containerId + " .timeSpanInput { width: 70px; }";
@@ -207,8 +196,8 @@ Waterfall.prototype = {
 		style += "#" + this.containerId + " #WaterfallEventLegend > div { border-radius:0px; border: 2px solid transparent; border-top: 0px; border-bottom: 0px; margin: 10px 3px 0px; }";
 		style += "#" + this.containerId + " #WaterfallLegend > div.dark { color: #fff; }";
 		
-		this.cssElem.innerHTML = style;
-		head.appendChild(this.cssElem);
+		cssElem.innerHTML = style;
+		this.bookmarklet.container.appendChild(cssElem);
 	},
 	
 	/**
@@ -226,7 +215,7 @@ Waterfall.prototype = {
 			superClass.toolContainer.id = superClass.containerId;
 		}
 		
-		document.body.appendChild(superClass.toolContainer);
+		superClass.bookmarklet.container.appendChild(superClass.toolContainer);
 		
 		/* Filters */ {
 			var filterContainer = document.createElement("div");

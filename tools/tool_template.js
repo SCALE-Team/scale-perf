@@ -1,14 +1,14 @@
-var ToolTemplate = function() {
+var ToolTemplate = function(conf) {
+	// This is the container you can put your tool contents to
+	this.container = conf.container;
+	
+	// If you want to sue the performance API of the browser, please use this instead
+	this.performanceApi = conf.performanceApi;
+	
 	/* Here in the constructor you initialize your whole class
 	and append your tools elements to the display */
 	
 	return {
-		// The id of the element that contains all tool elements
-		containerId:			"jr_results",
-		
-		// Determines whether the website should be moved down to offer a space for the tool
-		shouldMovePageContent:	true,
-		
 		// will be executed after the tool got loaded
 		onload: function() {},
 		

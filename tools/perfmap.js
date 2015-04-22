@@ -1,34 +1,15 @@
-var PerfMap = function() {
+var PerfMap = function(conf) {
+	perfmap(conf);
+	
+	var perfmapElem = document.getElementById("perfmap");
+	
+	var styleElem = document.createElement("style");
+	styleElem.id = "PerfMapStyle";
+	styleElem.innerHTML = "#perfmap { position: fixed; z-index: 10000 !important; top: auto !important; bottom: 0px; overflow: hidden; }";
+	document.body.appendChild(styleElem);
+	
 	return {
 		/* SCALE performance tool IO functions */
-			containerId:			"perfmap",
-			shouldMovePageContent:	false,
-			onload: function() {
-				onload();
-				
-				this.perfmapElem = document.getElementById("perfmap");
-				
-				this.styleElem = document.createElement("style");
-				this.styleElem.id = "PerfMapStyle";
-				this.styleElem.innerHTML = "#perfmap { z-index: 10000 !important; top: auto !important; bottom: 0px; overflow: hidden; }";
-				
-				var body = document.getElementsByTagName("body")[0];
-				body.appendChild(this.styleElem);
-				
-				/*
-				window.setTimeout(function(){
-					var elems = document.getElementsByClassName("perfmap");
-					var scalePageContent = document.getElementById("perfmap");
-					var top = scalePageContent.offsetTop;
-					for(var i=0; i<elems.length; i++)
-					{
-						console.log(i, elems[i].style.top);
-						elems[i].style.top = elems[i].offsetTop + top;
-						console.log(i, elems[i].style.top);
-					}
-				}, 1000);
-				//*/
-			},
 			onclose: function() {
 				var elems = document.getElementsByClassName("perfmap");
 				while(elems.length > 0)
@@ -36,16 +17,16 @@ var PerfMap = function() {
 					elems[0].parentNode.removeChild(elems[0]);
 				}
 				
-				this.perfmapElem.parentNode.removeChild(this.perfmapElem);
+				perfmapElem.parentNode.removeChild(perfmapElem);
 			}
 	};
 };
 
-function onload() {
+function perfmap(scaleBookmarklet) {
 	var gZeroLeft = 0;
 	var gZeroTop = 0;
 	var gWinWidth = window.innerWidth || document.documentElement.clientWidth;
-
+	
 	function findImages() {
 		var aElems = document.getElementsByTagName('*');
 		var re = /url\(("?http.*"?)\)/ig;
@@ -217,7 +198,7 @@ function onload() {
 	if(hasFirstPaint == 1){
 		legend += "<div style='position:absolute; z-index:3; left:" + firstPaintLeft + "%; padding-top:5px; border-left:2px solid white;padding-left:5px;height:100%;color:#fff;'>First Paint " + parseInt(firstPaint) + "ms</div></div>";
 	}
-	perfmap.style.cssText = "position: fixed; width:100%; bottom:0; left:0; z-index:5000; height: 25px; color:#fff; font-family:\"Helvetica Neue\",sans-serif; font-size:14px; font-weight:800; line-height:14px;";
+	perfmap.style.cssText = "width:100%; bottom:0; left:0; z-index:5000; height: 25px; color:#fff; font-family:\"Helvetica Neue\",sans-serif; font-size:14px; font-weight:800; line-height:14px;";
 	perfmap.innerHTML = legend;
 	document.body.appendChild(perfmap);
 
@@ -247,79 +228,3 @@ function onload() {
 		}
 	}
 }
-
-/*
-//
-<img id="Test" style="height:10%;" src="https://www.gravatar.com/avatar/2c4978284d313f9b617beb9abed1e873?s=24&d=identicon&r=PG" />
-
-function getRealImageSize(imgSrc, callback) {
-	var elem = document.createElement("img");
-	elem.src = imgSrc;
-	elem.style.position = "absolute";
-	elem.style.top = -999999;
-	elem.onerror = function(e) {
-		console.log(e);
-		callback({
-			success:	false,
-			error:		"Couldn't load the image '" + imgSrc + "'",
-			data: {
-				width:		0,
-				height:		0
-			}
-		});
-	};
-	elem.onload = function(e) {
-		var resp = {
-			success:	true,
-			data: {
-				width:		e.target.offsetWidth,
-				height:		e.target.offsetHeight
-			}
-		};
-		
-		document.body.removeChild(elem);
-		
-		callback(resp);
-	};
-	
-	document.body.appendChild(elem);
-}
-
-function getImageSize(imgElem, callback) {
-	var imgSize = {};
-	imgSize.width = imgElem.offsetWidth;
-	imgSize.height = imgElem.offsetHeight;
-	
-	var realSize = getRealImageSize(elem.src, function(resp) {
-		if(!resp.success)
-		{
-			callback(resp);
-			return;
-		}
-		
-		var relativeWidth = 0;
-		if(imgSize.width != 0) relativeWidth = imgSize.width / resp.data.width;
-		
-		var relativeHeight = 0;
-		if(imgSize.height != 0) relativeHeight = imgSize.height /resp.data.height;
-		
-		var relativeMax = Math.max(relativeWidth, relativeHeight);
-		
-		callback({
-			success:	true,
-			data: {
-				size:				imgSize,
-				realSize:			resp.data,
-				ratioToRealSize:	relativeMax
-			}
-		});
-	});
-}
-
-var elem = document.getElementById("Test");
-var size = getImageSize(elem, function(resp) {
-	console.log(resp.data);
-	console.log("realSize", resp.data.realSize);
-	console.log("size", resp.data.size);
-});
-*/

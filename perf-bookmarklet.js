@@ -99,6 +99,8 @@ ScalePerformanceBarClass.prototype = {
 		
 		style += "#ScalePageContent { position: absolute; left: 0px; top: 0px; width: 100%; }";
 		
+		style += "#BookmarkletToolContainer { z-index: 99999; position: absolute; top: 30px; right: 0px; left: 0px; visibility: hidden; }";
+		
 		style += "@media (max-width: 768px) {";
 			style += "#PerfBar { height: auto !important; }";
 			style += "#PerfBar.hide_bar, #ToolsActiveBar.hide_bar { top: -300px; }";
@@ -114,12 +116,11 @@ ScalePerformanceBarClass.prototype = {
 			style += "#PerfBar .perf_symbols_separator { display: block; }";
 			
 			// Remove all animations from the mobile view
-			style += "#ScalePageContent, #PerfBar, #ToolsActiveBar, .scale_tool_container { transition: none !important; } ";
+			style += "#ScalePageContent, #PerfBar, #ToolsActiveBar, #BookmarkletToolContainer { transition: none !important; } ";
 		style += "}";
 		
 		// Animations
-		style += "#PerfBar, #ToolsActiveBar { transition: top ease-out 0.5s, opacity ease-out 0.5s; -webkit-transition: top ease-out 0.5s, opacity ease-out 0.5s; }";
-		style += "#ScalePageContent { transition: top ease-out 0.5s, opacity ease-out 0.5s; -webkit-transition: top ease-out 0.5s, opacity ease-out 0.5s; }";
+		style += "#PerfBar, #ToolsActiveBar, #ScalePageContent, #BookmarkletToolContainer { transition: top ease-out 0.5s, opacity ease-out 0.5s; -webkit-transition: top ease-out 0.5s, opacity ease-out 0.5s; }";
 		
 		styleElem.innerHTML = style;
 		head.appendChild(styleElem);
@@ -293,6 +294,11 @@ ScalePerformanceBarClass.prototype = {
 			// Set the tools-bar title
 			superClass.toolBarActiveTitle.innerHTML = script.name || script.symbol;
 			
+			// Create container for the tool
+			tools.toolContainer = document.createElement("div");
+			tools.toolContainer.id = "BookmarkletToolContainer";
+			document.body.appendChild(tools.toolContainer);
+			
 			// Load specified script
 			var jselem = document.createElement("script");
 			jselem.id = "PerfScript";
@@ -317,33 +323,37 @@ ScalePerformanceBarClass.prototype = {
 				if(script.className != null)
 				{
 					var params = {
-						performanceApi:	superClass.performanceApi
+						performanceApi:	superClass.performanceApi,
+						container:		tools.toolContainer
 					};
 					
 					var toolClass = window[script.className];
 					tools.activeTool = new toolClass(params);
 				}
 				
-				// Call the onload function set in the tools JS-script
-				if(tools.activeTool.onload != null) tools.activeTool.onload();
+				if(tools.activeTool.onload != null)
+				{
+					tools.activeTool.onload();
+				}
 				
-				// Wait for the tool container to exist and afterwards move the page content down
-				superClass.helpers.waitForElementExist(tools.activeTool.containerId, function(containerElem) {
-					containerElem.className += " scale_tool_container";
-					containerElem.style.top = -containerElem.offsetHeight + "px";
-					containerElem.style.visibility = "visible";
-					containerElem.style.transition = containerElem.style['-webkit-transition'] = "top ease-out 0.5s, opacity ease-out 0.5s";
+				tools.toolContainer.style.position = script.isFixed ? "fixed" : "absolute";
+				
+				var toolHeight = tools.toolContainer.offsetHeight;
+				
+				var transition = tools.toolContainer.style.transition;
+				tools.toolContainer.style.transition = tools.toolContainer.style['-webkit-transition'] = "none";
+				tools.toolContainer.style.top = -toolHeight + "px";
+				
+				window.setTimeout(function() {
+					tools.toolContainer.style.visibility = "visible";
+					tools.toolContainer.style.transition = transition;
+					tools.toolContainer.style.top = tools.bar.offsetHeight + "px";
 					
-					window.setTimeout(function() {
-						containerElem.style.top = tools.bar.offsetHeight + "px";
-						
-						var pageContentTop = tools.bar.offsetHeight;
-						
-						if(tools.activeTool.shouldMovePageContent) pageContentTop += containerElem.offsetHeight;
-						
-						superClass.pageContent.style.top = pageContentTop + "px";
-					}, 0);
-				});
+					var pageContentTop = tools.bar.offsetHeight;
+					pageContentTop += toolHeight;
+					
+					superClass.pageContent.style.top = pageContentTop + "px";
+				}, 0);
 			};
 			
 			document.getElementsByTagName("body")[0].appendChild(jselem);
@@ -354,6 +364,8 @@ ScalePerformanceBarClass.prototype = {
 	tools: {
 		superClass:		null,
 		bar:			null,
+		activeTool:		null,
+		toolContainer:	null,
 		
 		addBar: function() {
 			var superClass = this.superClass;
@@ -431,13 +443,15 @@ ScalePerformanceBarClass.prototype = {
 							superClass.pageContent.style.top = "0px";
 						}
 						
-						var elem = document.getElementById(tools.activeTool.containerId);
-						elem.style.top = -elem.offsetHeight + "px";
+						tools.toolContainer.style.top = -tools.toolContainer.offsetHeight + "px";
 						
 						window.setTimeout(function() {
 							// Remove the tool script
 							var scriptElem = document.getElementById("PerfScript");
 							scriptElem.parentNode.removeChild(scriptElem);
+							
+							// Remove the tool container
+							tools.toolContainer.parentNode.removeChild(tools.toolContainer);
 							
 							if(tools.activeTool.onclose != null) tools.activeTool.onclose();
 						}, 500);
@@ -471,19 +485,6 @@ ScalePerformanceBarClass.prototype = {
 		isDev: function() {
 			// Flag if this script is executes locally or not
 			return (typeof(isDevelopmentMode) == "undefined" ? false : isDevelopmentMode);
-		},
-		
-		waitForElementExist: function(elemId, callback) {
-			var interval = window.setInterval(function() {
-				var element = document.getElementById(elemId);
-				
-				if(element != null)
-				{
-					callback(element);
-					
-					window.clearInterval(interval);
-				}
-			}, 10);
 		},
 		
 		removeClass: function(elemClassName, classToRemove) {
@@ -814,18 +815,14 @@ else
 			// The file name
 			file:						"waterfall.js",
 			
+			// Whether the tool-container should stay at a fixed position when user is scrolling
+			isFixed: 					true,
+			
 			// Flags whether the tool requires the performance API which e.g. Safari for Windows does not support
 			requiresPerformanceApi:		true,
 			
 			// The name of the class that will be instantiated after loading the script
-			className:					"Waterfall",
-			
-			// A function that will return the parameters that will be given to the constructor of the tool
-			getParamsForConstructor:	function(superClass) {
-				return {
-					getPageLoadTime:	superClass.performanceApi.getPageLoadTimeFromResources
-				};
-			}
+			className:					"Waterfall"
 		}
 		*/
 		
@@ -847,6 +844,7 @@ else
 		scalePerformanceBar.addTool({
 			name:					"Picture load times",
 			file:					"perfmap.js",
+			isFixed: 				true,
 			requiresPerformanceApi:	true,
 			className:				"PerfMap"
 		});
@@ -860,6 +858,7 @@ else
 		scalePerformanceBar.addTool({
 			name:		"FPS display",
 			file:		"stats.js",
+			isFixed: 	true,
 			className:	"Stats"
 		});
 	}

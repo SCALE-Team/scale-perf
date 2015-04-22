@@ -2,7 +2,7 @@
  * @author mrdoob / http://mrdoob.com/
  */
 
-var Stats = function () {
+var Stats = function (conf) {
 	var height = 70;
 	var padding = 3;
 	var width = 200;
@@ -17,15 +17,16 @@ var Stats = function () {
 	var fps = 0, fpsMin = Infinity, fpsMax = 0;
 	var frames = 0, mode = 0;
 	
-	var body = document.getElementsByTagName("body")[0];
-
 	var container = document.createElement( 'div' );
 	container.id = 'stats';
 	container.addEventListener( 'mousedown', function ( event ) { event.preventDefault(); setMode( ++ mode % 2 ) }, false );
 	container.style.cursor = "pointer";
 	container.style.opacity = "0.9";
 	container.style.width = width + "px";
-	body.appendChild(container);
+	container.style.position = "relative";
+	container.style.left = "50%";
+	container.style["margin-left"] = -Math.round(width / 2) + "px";
+	conf.container.appendChild(container);
 	
 	var fpsDiv = document.createElement( 'div' );
 	fpsDiv.id = 'fps';
@@ -206,21 +207,12 @@ var Stats = function () {
 
 	return {
 		/* SCALE performance tool IO functions */
-			containerId:			container.id,
-			shouldMovePageContent:	true,
 			onload: function() {
 				var stats = this;
-				stats.domElement.style.position = "fixed";
-				stats.domElement.style.left = "50%";
-				stats.domElement.style["margin-left"] = -Math.round(width / 2) + "px";
-				stats.domElement.style.visibility = "hidden";
-				stats.domElement.style.zIndex = "10000";
 				
 				stats.interval = window.setInterval(function(){ stats.update(); }, 1000/60);
 			},
 			onclose: function() {
-				this.domElement.parentNode.removeChild(this.domElement);
-				
 				window.clearInterval(this.interval);
 			},
 		

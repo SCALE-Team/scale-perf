@@ -1,15 +1,5 @@
 var PerfBookmarkletByMicmro = function(conf) {
 	perfBookmarkletByMicmro(conf);
-	
-	return {
-		/* SCALE performance tool IO functions */
-			containerId:			"perfbook-iframe",
-			shouldMovePageContent:	true,
-			onclose: function() {
-				var iframe = document.getElementById(this.containerId);
-				iframe.parentNode.removeChild(iframe);
-			}
-	};
 };
 
 /*https://github.com/micmro/performance-bookmarklet
@@ -326,8 +316,12 @@ if(location.protocol === "about:"){
 	return;
 }
 
-// (SCALE bookmarklet extension) moved following code to mother perormance bookmarklet
-/*/feature check gate
+/* (SCALE bookmarklet extension) moved following code to mother performance bookmarklet */
+data.resources = scaleBookmarklet.performanceApi.getEntriesByType("resource");
+data.marks = scaleBookmarklet.performanceApi.getEntriesByType("mark");
+data.measures = scaleBookmarklet.performanceApi.getEntriesByType("measure");
+/*/
+//feature check gate
 if(window.performance && window.performance.getEntriesByType !== undefined) {
 	data.resources = window.performance.getEntriesByType("resource");
 	data.marks = window.performance.getEntriesByType("mark");
@@ -341,12 +335,6 @@ if(window.performance && window.performance.getEntriesByType !== undefined) {
 	return;
 }
 //*/
-
-/* SCALE bookmarklet extension */ {
-	data.resources = scaleBookmarklet.performanceApi.getEntriesByType("resource");
-	data.marks = scaleBookmarklet.performanceApi.getEntriesByType("mark");
-	data.measures = scaleBookmarklet.performanceApi.getEntriesByType("measure");
-}
 
 if(window.performance.timing){
 	data.perfTiming = window.performance.timing;
@@ -490,8 +478,13 @@ if(iFrameEl){
 			
 			triggerEvent(window, "iFrameLoaded");
 		}
-	}, "position:absolute; margin-bottom:1em; z-index: 9999; width:100%;left:0px; border:0; box-shadow:0 0 25px 0 rgba(0,0,0,0.5); background:#fff;");
+	}, "margin-bottom:1em; width:100%; border:0; box-shadow:0 0 25px 0 rgba(0,0,0,0.5); background:#fff;");
+	
+	/* SCALE bookmarklet extension */
+	scaleBookmarklet.container.appendChild(iFrameEl);
+	/*/
 	document.body.appendChild(iFrameEl);
+	//*/
 }
 
 onIFrameLoaded(function(helper, dom, svg){
