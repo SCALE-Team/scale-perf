@@ -4,9 +4,10 @@ var ScalePerformanceBarClass = function() {
 	this.tools.superClass = this;
 	this.helpers.superClass = this;
 	this.performanceApi.superClass = this;
-	this.popup.superClass = this;
 	
 	this.readme = new BookmarkletReadme();
+	
+	this.popup = new BookmarkletPopup();
 	
 	// add all CSS styles
 	this.addStyles();
@@ -83,16 +84,6 @@ ScalePerformanceBarClass.prototype = {
 		style += "#PerfBar .perfSeparator:first-child { display: none; }";
 		style += "#PerfBar .perfSymbolsSeparator { display: none; }";
 		
-		style += "#ScalePopUp { z-index: 1000002; position: fixed; top: 10px; bottom: 10px; left: 25%; width: 50%; height: auto; min-height: auto; background: #fff; box-shadow: 2px 2px 10px rgba(0,0,0,0.7); }";
-		style += "#ScalePopUp h5 { font-weight: bold; }";
-		style += "#ScalePopUp .img-responsive { width: 100%; }";
-		style += "#ScalePopUp.is_short { height: 500px; }";
-		style += "#ScalePopUp .content { position: absolute; top: 0px; left: 0px; right: 0px; bottom: 50px; overflow: auto; padding: 15px; }";
-		style += "#ScalePopUp .button-row { position: absolute; bottom: 0px; left: 0px; right: 0px; height: 50px; }";
-		style += "#ScalePopUp .button-row a { position: absolute; top: 0px; right: 0px; bottom: 0px; left: 0px; color: #555; font-size: 16px; background: #ECF0F1; padding: 14px; text-align: center; }";
-		style += "#ScalePopUp .button-row a:hover { cursor: pointer; background-color: #BDC3C7; }";
-		style += "#ScalePopUpBackground { z-index: 1000001; position: fixed; top: 0px; right: 0px; bottom: 0px; left: 0px; background: rgba(0,0,0,0.5); }";
-		
 		style += "@media (max-width: 768px) {";
 			style += "#PerfBar { height: auto !important; }";
 			style += "#PerfBar.hideBar, #ToolsActiveBar.hideBar { top: -300px; }";
@@ -108,8 +99,6 @@ ScalePerformanceBarClass.prototype = {
 			style += "#PerfBar .perfSymbolsSeparator { display: block; }";
 			
 			style += "#ScalePageContent, #PerfBar, #ToolsActiveBar, .scaleToolContainer { transition: none !important; } ";
-			
-			style += "#ScalePopUp { width: 400px; left: 50%; margin-left: -200px; }";
 		style += "}";
 		style += "#PerfToolTitle { font-weight: bold; }";
 		style += "#ToolsActiveBar .perfToolBackButton { font-weight: bold; }";
@@ -477,70 +466,6 @@ ScalePerformanceBarClass.prototype = {
 		}
 	},
 	
-	// A simple popup
-	popup: {
-		id:				"ScalePopUp",
-		backgroundId:	"ScalePopUpBackground",
-		elem:			null,
-		contentElem:	null,
-		backgroundElem:	null,
-		
-		show: function(content, isShort) {
-			var popup = this.superClass.popup;
-			
-			if(popup.elem == null)
-			{
-				popup.elem = document.createElement("div");
-				popup.elem.id = popup.id;
-				document.body.appendChild(popup.elem);
-				
-				popup.contentElem = document.createElement("div");
-				popup.contentElem.className = "content";
-				popup.elem.appendChild(popup.contentElem);
-				
-				var buttonRow = document.createElement("div");
-				buttonRow.className = "button-row";
-				popup.elem.appendChild(buttonRow);
-				
-				var closeButton = document.createElement("a");
-				closeButton.innerHTML = "close";
-				closeButton.onclick = function(){ popup.hide() };
-				buttonRow.appendChild(closeButton);
-				
-				// Background
-				popup.backgroundElem = document.createElement("div");
-				popup.backgroundElem.id = popup.backgroundId;
-				popup.backgroundElem.onclick = function(){ popup.hide() };
-				document.body.appendChild(popup.backgroundElem);
-			}
-			
-			popup.elem.style.display = "block";
-			popup.backgroundElem.style.display = "block";
-			
-			popup.elem.className = (isShort ? "is_short" : "");
-			
-			if(typeof(content) == "string")
-			{
-				popup.contentElem.innerHTML = content;
-			}
-			else if(typeof(content) == "object")
-			{
-				for(var f in content)
-				{
-					popup.contentElem.appendChild(content[f]);
-				}
-			}
-		},
-		
-		hide: function() {
-			var popup = this.superClass.popup;
-			
-			popup.elem.style.display = "none";
-			popup.backgroundElem.style.display = "none";
-			popup.contentElem.innerHTML = "";
-		}
-	},
-	
 	// An interface to offer pre filtered results from the perfomance API
 	performanceApi: {
 		getEntriesByType: function(type) {
@@ -751,6 +676,97 @@ ScalePerformanceBarClass.prototype = {
 			
 			return markedContent;
 		};
+	};
+}
+
+/* Popup */ {
+	// A simple popup
+	var BookmarkletPopup = function() {
+		this.id = "ScalePopUp_" + Math.round(Math.random() * (Math.pow(2, 32) - 1));
+		this.backgroundId = "ScalePopUpBackground_" + Math.round(Math.random() * (Math.pow(2, 32) - 1));
+		
+		var styleElem = document.createElement("style");
+		styleElem.id = "ScalePopUpStyle";
+		
+		var style = ".scalePopUp { z-index: 1000002; position: fixed; top: 10px; bottom: 10px; left: 25%; width: 50%; height: auto; min-height: auto; background: #fff; box-shadow: 2px 2px 10px rgba(0,0,0,0.7); }";
+		style += ".scalePopUp h5 { font-weight: bold; }";
+		style += ".scalePopUp .img-responsive { width: 100%; }";
+		style += ".scalePopUp.is_short { height: 500px; }";
+		style += ".scalePopUp .content { position: absolute; top: 0px; left: 0px; right: 0px; bottom: 50px; overflow: auto; padding: 15px; }";
+		style += ".scalePopUp .button-row { position: absolute; bottom: 0px; left: 0px; right: 0px; height: 50px; }";
+		style += ".scalePopUp .button-row a { position: absolute; top: 0px; right: 0px; bottom: 0px; left: 0px; color: #555; font-size: 16px; background: #ECF0F1; padding: 14px; text-align: center; }";
+		style += ".scalePopUp .button-row a:hover { cursor: pointer; background-color: #BDC3C7; }";
+		style += ".scalePopUpBackground { z-index: 1000001; position: fixed; top: 0px; right: 0px; bottom: 0px; left: 0px; background: rgba(0,0,0,0.5); }";
+		
+		style += "@media (max-width: 768px) {";
+			style += ".scalePopUp { width: 400px; left: 50%; margin-left: -200px; }";
+		style += "}";
+		
+		styleElem.innerHTML = style;
+		document.head.appendChild(styleElem);
+	};
+	
+	BookmarkletPopup.prototype = {
+		id:				"",
+		backgroundId:	"",
+		elem:			null,
+		contentElem:	null,
+		backgroundElem:	null,
+		
+		show: function(content, isShort) {
+			if(this.elem == null)
+			{
+				this.elem = document.createElement("div");
+				this.elem.id = this.id;
+				this.elem.className = "scalePopUp";
+				document.body.appendChild(this.elem);
+				
+				this.contentElem = document.createElement("div");
+				this.contentElem.className = "content";
+				this.elem.appendChild(this.contentElem);
+				
+				var buttonRow = document.createElement("div");
+				buttonRow.className = "button-row";
+				this.elem.appendChild(buttonRow);
+				
+				var closeButton = document.createElement("a");
+				closeButton.innerHTML = "close";
+				closeButton.superClass = this;
+				closeButton.onclick = function(e){ e.target.superClass.hide() };
+				buttonRow.appendChild(closeButton);
+				
+				// Background
+				this.backgroundElem = document.createElement("div");
+				this.backgroundElem.id = this.backgroundId;
+				this.backgroundElem.className = "scalePopUpBackground";
+				this.backgroundElem.superClass = this;
+				this.backgroundElem.onclick = function(e){ e.target.superClass.hide() };
+				document.body.appendChild(this.backgroundElem);
+			}
+			
+			this.elem.style.display = "block";
+			this.backgroundElem.style.display = "block";
+			
+			this.elem.className += (isShort ? " is_short" : "");
+			
+			if(typeof(content) == "string")
+			{
+				this.contentElem.innerHTML = content;
+			}
+			else if(typeof(content) == "object")
+			{
+				for(var f in content)
+				{
+					this.contentElem.appendChild(content[f]);
+				}
+			}
+		},
+		
+		hide: function() {
+			this.elem.style.display = "none";
+			this.backgroundElem.style.display = "none";
+			this.contentElem.innerHTML = "";
+		}
 	};
 }
 
