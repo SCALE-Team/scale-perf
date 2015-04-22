@@ -283,29 +283,7 @@ ScalePerformanceBarClass.prototype = {
 				else
 				{
 					link.href = "javascript:;";
-					link.onclick = function(e) {
-						superClass.tools.onActiveToolLoaded(function() {
-							// Wait for the tool container to exist and afterwards move the page content down
-							superClass.helpers.waitForElementExist(superClass.tools.activeTool.containerId, function(containerElem) {
-								containerElem.className += " scaleToolContainer";
-								containerElem.style.top = -containerElem.offsetHeight + "px";
-								containerElem.style.visibility = "visible";
-								containerElem.style.transition = containerElem.style['-webkit-transition'] = "top ease-out 0.5s, opacity ease-out 0.5s";
-								
-								window.setTimeout(function() {
-									containerElem.style.top = superClass.tools.bar.offsetHeight + "px";
-									
-									var pageContentTop = superClass.tools.bar.offsetHeight;
-									
-									if(superClass.tools.activeTool.shouldMovePageContent) pageContentTop += containerElem.offsetHeight;
-									
-									superClass.pageContent.style.top = pageContentTop + "px";
-								}, 0);
-							});
-						});
-						
-						menu._onLinkClick(e);
-					};
+					link.onclick = menu._onLinkClick;
 				}
 				
 				// Remember the onclick event in the link-element
@@ -373,52 +351,66 @@ ScalePerformanceBarClass.prototype = {
 			// Set the tools-bar title
 			superClass.toolBarActiveTitle.innerHTML = script.name || script.symbol;
 			
-			var loadScript = function() {
-				// Load specified script
-				var jselem = document.createElement("script");
-				jselem.id = "PerfScript";
-				jselem.type = "text/javascript";
-				
-				// Decide whether to load local, dev or public script
-				if(superClass.helpers.isLocal())
+			// Load specified script
+			var jselem = document.createElement("script");
+			jselem.id = "PerfScript";
+			jselem.type = "text/javascript";
+			
+			// Decide whether to load local, dev or public script
+			if(superClass.helpers.isLocal())
+			{
+				jselem.src = "/tools/" + script.file;
+			}
+			else if(superClass.helpers.isDev())
+			{
+				jselem.src = "https://scale-team.github.io/scale-perf-dev/tools/" + script.file;
+			}
+			else
+			{
+				jselem.src = "https://scale-team.github.io/scale-perf/tools/" + script.file;
+			}
+			
+			jselem.onload = function() {
+				// Call the constructor
+				if(script.className != null)
 				{
-					jselem.src = "/tools/" + script.file;
-				}
-				else if(superClass.helpers.isDev())
-				{
-					jselem.src = "https://scale-team.github.io/scale-perf-dev/tools/" + script.file;
-				}
-				else
-				{
-					jselem.src = "https://scale-team.github.io/scale-perf/tools/" + script.file;
-				}
-				
-				jselem.onload = function() {
-					if(script.className != null)
+					var params;
+					
+					if(typeof(script.getParamsForConstructor) == "function")
 					{
-						var params;
-						
-						if(typeof(script.getParamsForConstructor) == "function")
-						{
-							params = script.getParamsForConstructor(superClass);
-						}
-						else if(script.getParamsForConstructor != null)
-						{
-							params = script.getParamsForConstructor;
-						}	
-						
-						tools.activeTool = new window[script.className](params);
+						params = script.getParamsForConstructor(superClass);
 					}
+					else if(script.getParamsForConstructor != null)
+					{
+						params = script.getParamsForConstructor;
+					}	
 					
-					if(tools.activeTool.onload != null) tools.activeTool.onload();
-					
-					tools.executeOnActiveToolLoaded();
-				};
+					tools.activeTool = new window[script.className](params);
+				}
 				
-				document.getElementsByTagName("body")[0].appendChild(jselem);
+				// Call the onload function set in the tools JS-script
+				if(tools.activeTool.onload != null) tools.activeTool.onload();
+				
+				// Wait for the tool container to exist and afterwards move the page content down
+				superClass.helpers.waitForElementExist(tools.activeTool.containerId, function(containerElem) {
+					containerElem.className += " scaleToolContainer";
+					containerElem.style.top = -containerElem.offsetHeight + "px";
+					containerElem.style.visibility = "visible";
+					containerElem.style.transition = containerElem.style['-webkit-transition'] = "top ease-out 0.5s, opacity ease-out 0.5s";
+					
+					window.setTimeout(function() {
+						containerElem.style.top = tools.bar.offsetHeight + "px";
+						
+						var pageContentTop = tools.bar.offsetHeight;
+						
+						if(tools.activeTool.shouldMovePageContent) pageContentTop += containerElem.offsetHeight;
+						
+						superClass.pageContent.style.top = pageContentTop + "px";
+					}, 0);
+				});
 			};
 			
-			loadScript();
+			document.getElementsByTagName("body")[0].appendChild(jselem);
 		}
 	},
 	
@@ -523,19 +515,6 @@ ScalePerformanceBarClass.prototype = {
 		// Hide the tools bar
 		hide: function() {
 			this.bar.className = this.superClass.helpers.addClass("hideBar");
-		},
-		
-		_onActiveToolLoaded: [],
-		onActiveToolLoaded: function(func) {
-			this._onActiveToolLoaded.push(func);
-		},
-		
-		executeOnActiveToolLoaded: function(func) {
-			while(this._onActiveToolLoaded.length > 0)
-			{
-				var func = this._onActiveToolLoaded.pop();
-				func();
-			}
 		}
 	},
 	
