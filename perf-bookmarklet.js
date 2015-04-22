@@ -6,6 +6,8 @@ var ScalePerformanceBarClass = function() {
 	this.performanceApi.superClass = this;
 	this.popup.superClass = this;
 	
+	this.readme = new BookmarkletReadme();
+	
 	// add all CSS styles
 	this.addStyles();
 	
@@ -33,7 +35,7 @@ ScalePerformanceBarClass.prototype = {
 			symbol:			"?",
 			pullToSymbols:	true,
 			onclick: function(superClass) {
-				var content = superClass.getHelpText();
+				var content = superClass.readme.getHelpText();
 				
 				scalePerformanceBar.popup.show(content);
 			}
@@ -49,54 +51,11 @@ ScalePerformanceBarClass.prototype = {
 		}
 	],
 	
+	// Adds a tool to the bookmarklet
 	addTool: function(script) {
 		this.toolInfos.push(script);
 		
 		this.menu.addMenuLink(script);
-	},
-	
-	// Reads the bookmarklets parsed readme. If a tools title is set, just the sub-article to this tool will be delivered
-	getHelpText: function(title) {
-		if(title == null)
-		{
-			content = readme;
-		}
-		else
-		{
-			var titlePrefix = "##### ";
-			var readmeLines = readme.split("\n");
-			
-			var contentLines = [];
-			var grabContent = false;
-			for(var f in readmeLines)
-			{
-				var line = readmeLines[f];
-				
-				var isTitle = (line.substr(0, titlePrefix.length) == titlePrefix);
-				
-				if(isTitle)
-				{
-					// If the line is a title, but the searched title was already found earlier, stop grabbing content
-					if(grabContent) break;
-					
-					if(line.substr(titlePrefix.length) == title)
-					{
-						grabContent = true;
-					}
-				}
-				
-				if(grabContent)
-				{
-					contentLines.push(line);
-				}
-			}
-			
-			var content = contentLines.join("\n");
-		}
-		
-		var markedContent = marked(content);
-		
-		return markedContent;
 	},
 	
 	// adds all CSS styles to the page
@@ -465,7 +424,7 @@ ScalePerformanceBarClass.prototype = {
 					help.superClass = superClass;
 					help.onclick = function(e) {
 						var title = superClass.toolBarActiveTitle.innerHTML;
-						var content = e.target.superClass.getHelpText(title);
+						var content = e.target.superClass.readme.getHelpText(title);
 						
 						scalePerformanceBar.popup.show(content, true);
 					};
@@ -582,6 +541,7 @@ ScalePerformanceBarClass.prototype = {
 		}
 	},
 	
+	// An interface to offer pre filtered results from the perfomance API
 	performanceApi: {
 		getEntriesByType: function(type) {
 			if(window.performance && window.performance.getEntriesByType !== undefined)
@@ -690,62 +650,109 @@ ScalePerformanceBarClass.prototype = {
 }
 
 /* Readme */ {
-	var readme = '# SCALE performance bookmarklet\n';
-	readme += 'Gives you several tools to measure the performance of your website directly on your page.\n';
-	readme += '\n';
-	readme += '### How to add\n';
-	readme += 'Go [there](http://scale-team.github.io/scale-perf/). And follow the instructions.\n';
-	readme += '\n';
-	readme += '### How it works\n';
-	readme += '!["How it works"](https://scale-team.github.io/scale-perf/images/howitworks.jpg)\n';
-	readme += '\n';
-	readme += '### Tools included\n';
-	readme += '\n';
-	readme += '- [Performance Bookmarklet](#performance-bookmarklet)\n';
-	readme += '- [Page load waterfall](#page-load-waterfall)\n';
-	readme += '- [Picture load times](#picture-load-times)\n';
-	readme += '- [Analyze DOM tree](#analyze-dom-tree)\n';
-	readme += '- [FPS display](#fps-display)\n';
-	readme += '\n';
-	readme += '##### Performance Bookmarklet\n';
-	readme += 'Use it to view several performance metrics for your page.\n';
-	readme += '\n';
-	readme += 'Original tool and documentation: [Performance Bookmarklet](https://github.com/micmro/performance-bookmarklet)\n';
-	readme += '\n';
-	readme += '![](https://scale-team.github.io/scale-perf/images/performancebooklet.jpg)\n';
-	readme += '\n';
-	readme += '##### Page load waterfall\n';
-	readme += 'Use it to see an overview over the page ressources loaded (reduced to the first page load).\n';
-	readme += '\n';
-	readme += '![](https://scale-team.github.io/scale-perf/images/waterfall.jpg)\n';
-	readme += '\n';
-	readme += 'Original tool: [waterfall](https://github.com/andydavies/waterfall)\n';
-	readme += '\n';
-	readme += '##### Picture load times\n';
-	readme += 'Shows load times for all images on the page.\n';
-	readme += '\n';
-	readme += '!["How it works"](https://scale-team.github.io/scale-perf/images/pictureload.jpg)\n';
-	readme += '\n';
-	readme += 'Original tool and documentation: [perfmap.js](https://github.com/zeman/perfmap)\n';
-	readme += '\n';
-	readme += '##### Analyze DOM tree\n';
-	readme += 'Analyze the DOM tree for tipps.\n';
-	readme += '\n';
-	readme += '![](https://scale-team.github.io/scale-perf/images/dommonster.jpg)\n';
-	readme += '\n';
-	readme += 'Original tool: [Dom Monster](https://github.com/madrobby/dom-monster)\n';
-	readme += '\n';
-	readme += '##### FPS display\n';
-	readme += 'This class provides a simple info box that will help you monitor your code performance.\n';
-	readme += '\n';
-	readme += '- FPS Frames rendered in the last second. The higher the number the better.\n';
-	readme += '- MS Milliseconds needed to render a frame. The lower the number the better.\n';
-	readme += '\n';
-	readme += '![](https://scale-team.github.io/scale-perf/images/fpsdisplay.jpg)\n';
-	readme += '\n';
-	readme += 'Original tool: [stats.js](https://github.com/mrdoob/stats.js/)\n';
+	var BookmarkletReadme = function() {
+		var readme = '# SCALE performance bookmarklet\n';
+		readme += 'Gives you several tools to measure the performance of your website directly on your page.\n';
+		readme += '\n';
+		readme += '### How to add\n';
+		readme += 'Go [there](http://scale-team.github.io/scale-perf/). And follow the instructions.\n';
+		readme += '\n';
+		readme += '### How it works\n';
+		readme += '!["How it works"](https://scale-team.github.io/scale-perf/images/howitworks.jpg)\n';
+		readme += '\n';
+		readme += '### Tools included\n';
+		readme += '\n';
+		readme += '- [Performance Bookmarklet](#performance-bookmarklet)\n';
+		readme += '- [Page load waterfall](#page-load-waterfall)\n';
+		readme += '- [Picture load times](#picture-load-times)\n';
+		readme += '- [Analyze DOM tree](#analyze-dom-tree)\n';
+		readme += '- [FPS display](#fps-display)\n';
+		readme += '\n';
+		readme += '##### Performance Bookmarklet\n';
+		readme += 'Use it to view several performance metrics for your page.\n';
+		readme += '\n';
+		readme += 'Original tool and documentation: [Performance Bookmarklet](https://github.com/micmro/performance-bookmarklet)\n';
+		readme += '\n';
+		readme += '![](https://scale-team.github.io/scale-perf/images/performancebooklet.jpg)\n';
+		readme += '\n';
+		readme += '##### Page load waterfall\n';
+		readme += 'Use it to see an overview over the page ressources loaded (reduced to the first page load).\n';
+		readme += '\n';
+		readme += '![](https://scale-team.github.io/scale-perf/images/waterfall.jpg)\n';
+		readme += '\n';
+		readme += 'Original tool: [waterfall](https://github.com/andydavies/waterfall)\n';
+		readme += '\n';
+		readme += '##### Picture load times\n';
+		readme += 'Shows load times for all images on the page.\n';
+		readme += '\n';
+		readme += '!["How it works"](https://scale-team.github.io/scale-perf/images/pictureload.jpg)\n';
+		readme += '\n';
+		readme += 'Original tool and documentation: [perfmap.js](https://github.com/zeman/perfmap)\n';
+		readme += '\n';
+		readme += '##### Analyze DOM tree\n';
+		readme += 'Analyze the DOM tree for tipps.\n';
+		readme += '\n';
+		readme += '![](https://scale-team.github.io/scale-perf/images/dommonster.jpg)\n';
+		readme += '\n';
+		readme += 'Original tool: [Dom Monster](https://github.com/madrobby/dom-monster)\n';
+		readme += '\n';
+		readme += '##### FPS display\n';
+		readme += 'This class provides a simple info box that will help you monitor your code performance.\n';
+		readme += '\n';
+		readme += '- FPS Frames rendered in the last second. The higher the number the better.\n';
+		readme += '- MS Milliseconds needed to render a frame. The lower the number the better.\n';
+		readme += '\n';
+		readme += '![](https://scale-team.github.io/scale-perf/images/fpsdisplay.jpg)\n';
+		readme += '\n';
+		readme += 'Original tool: [stats.js](https://github.com/mrdoob/stats.js/)\n';
+		
+		this.readme = readme;
+		
+		// Reads the bookmarklets parsed readme. If a tools title is set, just the sub-article to this tool will be delivered
+		this.getHelpText = function(title) {
+			if(title == null)
+			{
+				content = this.readme;
+			}
+			else
+			{
+				var titlePrefix = "##### ";
+				var readmeLines = this.readme.split("\n");
+				
+				var contentLines = [];
+				var grabContent = false;
+				for(var f in readmeLines)
+				{
+					var line = readmeLines[f];
+					
+					var isTitle = (line.substr(0, titlePrefix.length) == titlePrefix);
+					
+					if(isTitle)
+					{
+						// If the line is a title, but the searched title was already found earlier, stop grabbing content
+						if(grabContent) break;
+						
+						if(line.substr(titlePrefix.length) == title)
+						{
+							grabContent = true;
+						}
+					}
+					
+					if(grabContent)
+					{
+						contentLines.push(line);
+					}
+				}
+				
+				var content = contentLines.join("\n");
+			}
+			
+			var markedContent = marked(content);
+			
+			return markedContent;
+		};
+	};
 }
-
 
 // If PerfBar not yet already exists, create it
 if(scalePerformanceBar != null)
