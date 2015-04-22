@@ -5,8 +5,10 @@ var ScalePerformanceBarClass = function() {
 	this.helpers.superClass = this;
 	this.performanceApi.superClass = this;
 	
+	// Create an object for readme
 	this.readme = new BookmarkletReadme();
 	
+	// Create an object of popup
 	this.popup = new BookmarkletPopup();
 	
 	// add all CSS styles
@@ -21,6 +23,25 @@ var ScalePerformanceBarClass = function() {
 	// Add the tool-active bar
 	this.tools.addBar();
 	
+	this.menu.addSymbol({
+		name:			"Help",
+		symbol:			"?",
+		onclick: function(superClass) {
+			var content = superClass.readme.getHelpText();
+			
+			scalePerformanceBar.popup.show(content);
+		}
+	});
+	
+	this.menu.addSymbol({
+		name:			"Close",
+		symbol:			"X",
+		isDanger:		"danger",
+		onclick: function(superClass) {
+			superClass.menu.hide();
+		}
+	});
+	
 	// Show it
 	window.setTimeout(function() {
 		scalePerformanceBar.menu.show();
@@ -29,28 +50,8 @@ var ScalePerformanceBarClass = function() {
 
 ScalePerformanceBarClass.prototype = {
 	styleElem:	null,
-	toolInfos:	[
-		// Symbols shown on the right of the bar
-		{
-			name:			"Help",
-			symbol:			"?",
-			pullToSymbols:	true,
-			onclick: function(superClass) {
-				var content = superClass.readme.getHelpText();
-				
-				scalePerformanceBar.popup.show(content);
-			}
-		},
-		{
-			name:			"Close",
-			symbol:			"X",
-			isDanger:		"danger",
-			pullToSymbols:	true,
-			onclick: function(superClass) {
-				superClass.menu.hide();
-			}
-		}
-	],
+	toolInfos:	[],		// the tool links in the menu
+	symbols:	[],		// Symbols shown on the right of the bar
 	
 	// Adds a tool to the bookmarklet
 	addTool: function(script) {
@@ -185,10 +186,12 @@ ScalePerformanceBarClass.prototype = {
 				// Add all tool links
 				for(var i in superClass.toolInfos)
 				{
-					var script = superClass.toolInfos[i];
-					
-					if(script.pullToSymbols) this.addSymbol(script);
-					else this.addMenuLink(script);
+					this.addMenuLink(superClass.toolInfos[i]);
+				}
+				
+				for(var i in superClass.symbols)
+				{
+					this.addSymbol(superClass.symbols[i]);
 				}
 			}
 		},
