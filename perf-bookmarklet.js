@@ -11,12 +11,14 @@ var ScalePerformanceBarClass = function() {
 	
 	// Create an object of the ScalePerformanceApi
 	this.performanceApi = new ScalePerformanceApi();
+	this.performanceApi.hideFileFromPerformanceApi("perf-bookmarklet.js");
 	
 	// add all CSS styles
 	this.addStyles();
 	
 	// Put the page content into a wrapper
-	this.putPageContentsToDiv();
+	this.pageContent = this.helpers.putPageContentsToDiv();
+	document.body.appendChild(this.pageContent);
 	
 	// Add the menu
 	this.menu.addBar();
@@ -58,6 +60,9 @@ ScalePerformanceBarClass.prototype = {
 	// Adds a tool to the bookmarklet
 	addTool: function(script) {
 		this.toolConfig.push(script);
+		
+		// hide the tool form the results
+		this.performanceApi.hideFileFromPerformanceApi("tools/" + script.file);
 		
 		this.menu.addMenuLink(script);
 	},
@@ -118,27 +123,6 @@ ScalePerformanceBarClass.prototype = {
 		
 		styleElem.innerHTML = style;
 		head.appendChild(styleElem);
-	},
-	
-	// Takes all page contents, and puts them into a wrapper
-	putPageContentsToDiv: function() {
-		var body = document.getElementsByTagName("body")[0];
-		
-		this.pageContent = document.createElement("div");
-		this.pageContent.id = "ScalePageContent";
-		
-		for(var i = (body.childNodes.length - 1); i>=0; i--)
-		{
-			if(body.childNodes[i].nodeName == "SCRIPT") continue;
-			if(body.childNodes[i].id == "ScalePerfLoadingHint") continue;
-			if(body.childNodes[i].id == "PerfBar") continue;
-			if(body.childNodes[i].id == "ToolsActiveBar") continue;
-			
-			if(this.pageContent.childNodes.length == 0) this.pageContent.appendChild(body.childNodes[i]);
-			else this.pageContent.insertBefore(body.childNodes[i], this.pageContent.firstChild);
-		}
-		
-		body.appendChild(this.pageContent);
 	},
 	
 	// Contains all necessary functions for the menu bar
@@ -513,6 +497,27 @@ ScalePerformanceBarClass.prototype = {
 		
 		addClass: function(elemClassName, classToAdd) {
 			return elemClassName += " " + classToAdd;
+		},
+		
+		// Takes all page contents, and puts them into a wrapper
+		putPageContentsToDiv: function() {
+			var body = document.body;
+			
+			var container = document.createElement("div");
+			container.id = "ScalePageContent";
+			
+			for(var i = (body.childNodes.length - 1); i>=0; i--)
+			{
+				if(body.childNodes[i].nodeName == "SCRIPT") continue;
+				if(body.childNodes[i].id == "ScalePerfLoadingHint") continue;
+				if(body.childNodes[i].id == "PerfBar") continue;
+				if(body.childNodes[i].id == "ToolsActiveBar") continue;
+				
+				if(container.childNodes.length == 0) container.appendChild(body.childNodes[i]);
+				else container.insertBefore(body.childNodes[i], container.firstChild);
+			}
+			
+			return container;
 		}
 	}
 };
@@ -737,9 +742,9 @@ ScalePerformanceBarClass.prototype = {
 			return this.removeOwnSourcesFromResources(resources);
 		}
 		
-		var filesToHide = [ "perf-bookmarklet.js", "tools/dommonster.js", "tools/perfmap.js", "tools/perfBookmarkletByMicmro.js", "tools/stats.js", "tools/waterfall.js" ];
+		var filesToHide = [];
 		
-		this.hideFile = function(file) {
+		this.hideFileFromPerformanceApi = function(file) {
 			filesToHide.push(file);
 		};
 		
