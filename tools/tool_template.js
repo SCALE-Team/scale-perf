@@ -16,6 +16,6 @@ var ToolTemplate = function(conf) {
 		- style tags you added to the document
 		- visual styles you appended to elements on the website
 		*/
-		onclose: function() {}
+		destructor: function() {}
 	};
 };

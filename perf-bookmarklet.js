@@ -448,7 +448,7 @@ ScalePerformanceBarClass.prototype = {
 							// Remove the tool container
 							tools.toolContainer.parentNode.removeChild(tools.toolContainer);
 							
-							if(tools.activeTool.onclose != null) tools.activeTool.onclose();
+							if(tools.activeTool.destructor != null) tools.activeTool.destructor();
 						}, 500);
 					};
 					symbolsBlock.appendChild(close);

@@ -4,7 +4,7 @@
 
 var Stats = function (conf) {
 	/* SCALE performance tool IO functions */
-		this.onclose = function() {
+		this.destructor = function() {
 			window.clearInterval(interval);
 		};
 	

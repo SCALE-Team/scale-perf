@@ -6,11 +6,11 @@ var PerfMap = function(conf) {
 	var styleElem = document.createElement("style");
 	styleElem.id = "PerfMapStyle";
 	styleElem.innerHTML = "#perfmap { position: fixed; z-index: 10000 !important; top: auto !important; bottom: 0px; overflow: hidden; }";
-	document.body.appendChild(styleElem);
+	conf.container.appendChild(styleElem);
 	
 	return {
 		/* SCALE performance tool IO functions */
-			onclose: function() {
+			destructor: function() {
 				var elems = document.getElementsByClassName("perfmap");
 				while(elems.length > 0)
 				{
