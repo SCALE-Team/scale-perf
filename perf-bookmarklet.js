@@ -331,11 +331,6 @@ ScalePerformanceBarClass.prototype = {
 					tools.activeTool = new toolClass(params);
 				}
 				
-				if(tools.activeTool.onload != null)
-				{
-					tools.activeTool.onload();
-				}
-				
 				tools.toolContainer.style.position = script.isFixed ? "fixed" : "absolute";
 				
 				var toolHeight = tools.toolContainer.offsetHeight;

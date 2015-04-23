@@ -3,6 +3,11 @@
  */
 
 var Stats = function (conf) {
+	/* SCALE performance tool IO functions */
+		this.onclose = function() {
+			window.clearInterval(interval);
+		};
+	
 	var height = 70;
 	var padding = 3;
 	var width = 200;
@@ -179,8 +184,7 @@ var Stats = function (conf) {
 
 	}
 
-	var setMode = function ( value ) {
-
+	var setMode = function(value) {
 		mode = value;
 
 		switch ( mode ) {
@@ -194,7 +198,6 @@ var Stats = function (conf) {
 				msDiv.style.display = 'block';
 				break;
 		}
-
 	};
 
 	var updateGraph = function ( dom, value ) {
@@ -204,81 +207,57 @@ var Stats = function (conf) {
 		// update the height of this bar
 		barContainer.firstChild.style.height = value + 'px';
 	};
-
-	return {
-		/* SCALE performance tool IO functions */
-			onload: function() {
-				var stats = this;
-				
-				stats.interval = window.setInterval(function(){ stats.update(); }, 1000/60);
-			},
-			onclose: function() {
-				window.clearInterval(this.interval);
-			},
+	
+	var interval = window.setInterval(function(){ update(); }, 1000/60);
+	
+	var end = function () {
+		var time = Date.now();
 		
-		REVISION: 12,
+		ms = time - startTime;
+		msMin = Math.min( msMin, ms );
+		msMax = Math.max( msMax, ms );
 
-		domElement: container,
-
-		setMode: setMode,
-
-		begin: function () {
-
-			startTime = Date.now();
-
-		},
-
-		end: function () {
-			var time = Date.now();
+		msText.textContent = ms + ' ms (min ' + msMin + ', max ' + msMax + ')';
+		//var msBarHeight = Math.min( height, height - ( ms / 200 ) * height );
+		var msBarHeight = height - ms;
+		updateGraph( msGraph, msBarHeight );
+		
+		// Increment the frames counter by one
+		frames++;
+		
+		// Only update if the new update is at least one second from the last update
+		if(time > prevTime + 1000)
+		{
+			/* The frames counter may not be exact enough cause the last measurement
+			was maybe more than one second ago. So better calculate it */
+			fps = Math.round( ( frames * 1000 ) / ( time - prevTime ) );
 			
-			ms = time - startTime;
-			msMin = Math.min( msMin, ms );
-			msMax = Math.max( msMax, ms );
-
-			msText.textContent = ms + ' ms (min ' + msMin + ', max ' + msMax + ')';
-			//var msBarHeight = Math.min( height, height - ( ms / 200 ) * height );
-			var msBarHeight = height - ms;
-			updateGraph( msGraph, msBarHeight );
+			// Determine new FPS min and max values
+			fpsMin = Math.min( fpsMin, fps );
+			fpsMax = Math.max( fpsMax, fps );
 			
-			// Increment the frames counter by one
-			frames++;
+			// Set new text
+			fpsText.textContent = fps + ' FPS (min ' + fpsMin + ', max ' + fpsMax + ')';
 			
-			// Only update if the new update is at least one second from the last update
-			if(time > prevTime + 1000)
-			{
-				/* The frames counter may not be exact enough cause the last measurement
-				was maybe more than one second ago. So better calculate it */
-				fps = Math.round( ( frames * 1000 ) / ( time - prevTime ) );
-				
-				// Determine new FPS min and max values
-				fpsMin = Math.min( fpsMin, fps );
-				fpsMax = Math.max( fpsMax, fps );
-				
-				// Set new text
-				fpsText.textContent = fps + ' FPS (min ' + fpsMin + ', max ' + fpsMax + ')';
-				
-				// draw the graph bar
-				//var fsBarHeight = Math.min( height, height - ( fps / 100 ) * height );
-				var fsBarHeight = height - fps;
-				updateGraph( fpsGraph, fsBarHeight );
-				
-				// Remember current time
-				prevTime = time;
-				
-				// Reset farmes counter
-				frames = 0;
-			}
-
-			return time;
-
-		},
-
-		update: function () {
-			startTime = this.end();
+			// draw the graph bar
+			//var fsBarHeight = Math.min( height, height - ( fps / 100 ) * height );
+			var fsBarHeight = height - fps;
+			updateGraph( fpsGraph, fsBarHeight );
+			
+			// Remember current time
+			prevTime = time;
+			
+			// Reset farmes counter
+			frames = 0;
 		}
 
-	}
+		return time;
 
+	};
+	
+	var update = function () {
+		startTime = end();
+	};
 };
 
 if(typeof module === 'object') {

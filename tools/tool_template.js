@@ -9,9 +9,6 @@ var ToolTemplate = function(conf) {
 	and append your tools elements to the display */
 	
 	return {
-		// will be executed after the tool got loaded
-		onload: function() {},
-		
 		/* This is the destructor, implement it!
 		It should remove:
 		- the container for your tool
