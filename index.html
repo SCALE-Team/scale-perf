@@ -170,6 +170,7 @@
 			(function(){
 				function setJsLinks(content) {
 					content = content.replace(new RegExp("\n", 'g'), "");
+					content = content.replace(new RegExp("\t", 'g'), "");
 					
 					var linkElems = document.querySelectorAll(".js_desktop_code_to_href");
 					for(var f in linkElems)
@@ -248,22 +249,10 @@
 						logoSub
 							.text("</" + logoSub.text() + ">")
 							.css("font-size", 10);
-						//*/
 					}
 					
 					if(_GET["developer"] == null)
 					{
-						/*
-						var count = -3;
-						$(".logo").click(function() {
-							function dev() {
-								if(++count == 5) self.location.href = "index.html?developer";
-								else $(".logo span").css("font-size", count*2);
-							}
-							dev();
-						});
-						//*/
-						
 						var style = document.createElement("style");
 						style.innerHTML += "#PerfBar { display: none !important; }";
 						document.head.appendChild(style);
