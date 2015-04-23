@@ -18,9 +18,9 @@ body {
 }
 
 .btn-primary {
-	color:				#16A085;
-	background-color:	transparent;
-	border:				1px solid #16A085;
+	color:				#16A085 !important;
+	background-color:	transparent !important;
+	border:				1px solid #16A085 !important;
 	border-radius:		5px;
 	padding:			10px;
 }
