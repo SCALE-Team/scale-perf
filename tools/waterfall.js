@@ -1,4 +1,4 @@
-function Waterfall(conf) {
+function Waterfall(performanceApi, toolContainer) {
 	// Check for Navigation Timing and Resource Timing APIs
 	if(window.performance == null || (window.performance.getEntriesByType == null && window.performance.webkitGetEntriesByType == null))
 	{
@@ -6,15 +6,16 @@ function Waterfall(conf) {
 		return;
 	}
 	
-	conf = conf||{};
-	
 	// Remember configs
-	this.bookmarklet = conf;
+	this.performanceApi = performanceApi;
+	this.toolContainer = toolContainer;
+	
+	this.toolContainer.className = "waterfall_container";
 	
 	// look for erros
-	if(typeof(this.bookmarklet.performanceApi) != "object")
+	if(typeof(this.performanceApi) != "object")
 	{
-		alert("Waterfall.js: config.bookmarklet.performanceApi is required!");
+		alert("Waterfall.js: Parameter performanceApi is required!");
 		return;
 	}
 	
@@ -151,53 +152,53 @@ Waterfall.prototype = {
 		var cssElem = document.createElement("style");
 		cssElem.id = "ScaleWaterfallStyle";
 		
-		var style = "#" + this.containerId + " { color: #2B2B2B; background: #fff; border-bottom: 2px solid #000; margin: 0px; padding: 5px 0px 10px 0px; }";
-		style += "#" + this.containerId + " input, #" + this.containerId + " button { outline: none; border-radius: 5px; padding: 5px; border: 1px solid #BDC3C7; }";
-		style += "#" + this.containerId + " button { background-color: #ECF0F1; padding: 5px 10px; }";
-		style += "#" + this.containerId + " .timeSpanInput { width: 70px; }";
+		var style = ".waterfall_container { color: #2B2B2B; background: #fff; border-bottom: 2px solid #000; margin: 0px; padding: 5px 0px 10px 0px; }";
+		style += ".waterfall_container input, .waterfall_container button { outline: none; border-radius: 5px; padding: 5px; border: 1px solid #BDC3C7; }";
+		style += ".waterfall_container button { background-color: #ECF0F1; padding: 5px 10px; }";
+		style += ".waterfall_container .timeSpanInput { width: 70px; }";
 		
-		style += "#" + this.containerId + " .filterContainer { height: 40px; position: relative; }";
+		style += ".waterfall_container .filterContainer { height: 40px; position: relative; }";
 		
-		style += "#" + this.containerId + " .filterContainer > div:first-child { position: absolute; left: 0px; top: 0px; right: 200px; padding:5px; }";
-		style += "#" + this.containerId + " .filterContainer > div:last-child { position: absolute; right: 0px; width: 450px; top: 0px; text-align: right; padding:5px; }";
+		style += ".waterfall_container .filterContainer > div:first-child { position: absolute; left: 0px; top: 0px; right: 200px; padding:5px; }";
+		style += ".waterfall_container .filterContainer > div:last-child { position: absolute; right: 0px; width: 450px; top: 0px; text-align: right; padding:5px; }";
 		
-		style += "#" + this.containerId + " .filterContainer > div:last-child > :first-child { display: inline-block; }";
-		style += "#" + this.containerId + " .filterContainer > div:last-child > :first-child input { width: 100%; }";
+		style += ".waterfall_container .filterContainer > div:last-child > :first-child { display: inline-block; }";
+		style += ".waterfall_container .filterContainer > div:last-child > :first-child input { width: 100%; }";
 		
 		style += "@media (max-width: 768px) {";
-			style += "#" + this.containerId + " .filterContainer { height: auto; }";
-			style += "#" + this.containerId + " .filterContainer > div { position: relative !important; width:100% !important; top: 0px !important; right: 0px !important; left: 0px !important; display: block !important; text-align: left !important; }";
-			style += "#" + this.containerId + " .filterContainer > div:last-child > :first-child { position: absolute; left: 0px; top: 0px; right: 240px; }";
-			style += "#" + this.containerId + " .filterContainer > div:last-child > :last-child { position: absolute; right: 0px; top: 0px; width: 240px; text-align: right; }";
+			style += ".waterfall_container .filterContainer { height: auto; }";
+			style += ".waterfall_container .filterContainer > div { position: relative !important; width:100% !important; top: 0px !important; right: 0px !important; left: 0px !important; display: block !important; text-align: left !important; }";
+			style += ".waterfall_container .filterContainer > div:last-child > :first-child { position: absolute; left: 0px; top: 0px; right: 240px; }";
+			style += ".waterfall_container .filterContainer > div:last-child > :last-child { position: absolute; right: 0px; top: 0px; width: 240px; text-align: right; }";
 			
-			style += "#" + this.containerId + " .chart_svg .hideMobile { display: none; }";
+			style += ".waterfall_container .chart_svg .hideMobile { display: none; }";
 		style += "}";
 		
-		style += "#" + this.containerId + " #ChartContainer { position: relative; }";
-		style += "#" + this.containerId + " #ChartContainer rect { fill: transparent; stroke-width: 1px; }";
-		style += "#" + this.containerId + " #ChartContainer rect:hover { stroke: #000; }";
-		style += "#" + this.containerId + " .chart_svg { position: absolute; top: 0px; left: 200px; right: 5px; }";
+		style += ".waterfall_container #ChartContainer { position: relative; }";
+		style += ".waterfall_container #ChartContainer rect { fill: transparent; stroke-width: 1px; }";
+		style += ".waterfall_container #ChartContainer rect:hover { stroke: #000; }";
+		style += ".waterfall_container .chart_svg { position: absolute; top: 0px; left: 200px; right: 5px; }";
 		
-		//style += "#" + this.containerId + " .svg_labels { z-index: 10; position: absolute; top: 0px; left: 0px; overflow: visible; }";
-		//style += "#" + this.containerId + " .svg_labels text { background:red; }";
+		//style += ".waterfall_container .svg_labels { z-index: 10; position: absolute; top: 0px; left: 0px; overflow: visible; }";
+		//style += ".waterfall_container .svg_labels text { background:red; }";
 		
-		style += "#" + this.containerId + " .button-group { display: inline-block; }";
-		style += "#" + this.containerId + " .button-group button { border-radius: 0px 0px 0px 0px; border-right: none; cursor: pointer; }";
-		style += "#" + this.containerId + " .button-group button:hover { background-color: #eee; }";
-		style += "#" + this.containerId + " .button-group button:active { background-color: #BDC3C7; }";
-		style += "#" + this.containerId + " .button-group button[disabled] { background-color: #BDC3C7 !important; cursor: default; }";
-		style += "#" + this.containerId + " .button-group :first-child { border-radius: 5px 0px 0px 5px; }";
-		style += "#" + this.containerId + " .button-group :last-child { border-radius: 0px 5px 5px 0px; border-right: 1px solid #BDC3C7; }";
+		style += ".waterfall_container .button-group { display: inline-block; }";
+		style += ".waterfall_container .button-group button { border-radius: 0px 0px 0px 0px; border-right: none; cursor: pointer; }";
+		style += ".waterfall_container .button-group button:hover { background-color: #eee; }";
+		style += ".waterfall_container .button-group button:active { background-color: #BDC3C7; }";
+		style += ".waterfall_container .button-group button[disabled] { background-color: #BDC3C7 !important; cursor: default; }";
+		style += ".waterfall_container .button-group :first-child { border-radius: 5px 0px 0px 5px; }";
+		style += ".waterfall_container .button-group :last-child { border-radius: 0px 5px 5px 0px; border-right: 1px solid #BDC3C7; }";
 		
-		style += "#" + this.containerId + " #WaterfallLegendContainer { margin-bottom: 10px; }";
-		style += "#" + this.containerId + " #WaterfallLegend, #WaterfallEventLegend { float:left; display: inline-block; }";
-		style += "#" + this.containerId + " #WaterfallEventLegend { float: right; }";
-		style += "#" + this.containerId + " #WaterfallLegend > div, #WaterfallEventLegend > div { display: inline-block; padding: 3px; border-radius: 3px; margin: 10px 3px 0px; }";
-		style += "#" + this.containerId + " #WaterfallEventLegend > div { border-radius:0px; border: 2px solid transparent; border-top: 0px; border-bottom: 0px; margin: 10px 3px 0px; }";
-		style += "#" + this.containerId + " #WaterfallLegend > div.dark { color: #fff; }";
+		style += ".waterfall_container #WaterfallLegendContainer { margin-bottom: 10px; }";
+		style += ".waterfall_container #WaterfallLegend, #WaterfallEventLegend { float:left; display: inline-block; }";
+		style += ".waterfall_container #WaterfallEventLegend { float: right; }";
+		style += ".waterfall_container #WaterfallLegend > div, #WaterfallEventLegend > div { display: inline-block; padding: 3px; border-radius: 3px; margin: 10px 3px 0px; }";
+		style += ".waterfall_container #WaterfallEventLegend > div { border-radius:0px; border: 2px solid transparent; border-top: 0px; border-bottom: 0px; margin: 10px 3px 0px; }";
+		style += ".waterfall_container #WaterfallLegend > div.dark { color: #fff; }";
 		
 		cssElem.innerHTML = style;
-		this.bookmarklet.container.appendChild(cssElem);
+		this.toolContainer.appendChild(cssElem);
 	},
 	
 	/**
@@ -206,16 +207,6 @@ Waterfall.prototype = {
 	 */
 	drawWaterfall: function(entries) {
 		var superClass = this;
-		
-		superClass.toolContainer = document.getElementById(superClass.containerId);
-		
-		// If container doesn't exist yet, create it
-		if (superClass.toolContainer === null) {
-			superClass.toolContainer = document.createElement('div');
-			superClass.toolContainer.id = superClass.containerId;
-		}
-		
-		superClass.bookmarklet.container.appendChild(superClass.toolContainer);
 		
 		/* Filters */ {
 			var filterContainer = document.createElement("div");
@@ -411,7 +402,7 @@ Waterfall.prototype = {
 			allowed:		[],
 			nowAllowed:		[],
 			searchText:		"",
-			timeSpanUntil:	superClass.bookmarklet.performanceApi.getPageLoadTime()
+			timeSpanUntil:	superClass.performanceApi.getPageLoadTime()
 		};
 		superClass.toolContainer.appendChild(superClass.chartContainer);
 		
@@ -743,7 +734,7 @@ Waterfall.prototype = {
 		// Other entries come from Resource Timing API
 		var resources = [];
 		
-		resources = this.bookmarklet.performanceApi.getEntriesByType("resource");
+		resources = this.performanceApi.getEntriesByType("resource");
 		
 		for(var n = 0; n < resources.length; n++) {
 			entries.push(this.createEntryFromResourceTiming(resources[n]));

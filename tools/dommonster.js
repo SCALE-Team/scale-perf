@@ -1,5 +1,5 @@
-var DomMonster = function(conf) {
-	domMonster(conf);
+var DomMonster = function(performanceApi, toolContainer) {
+	domMonster(performanceApi, toolContainer);
 	
 	// Add some styles
 	var styleElem = document.createElement("style");
@@ -17,10 +17,10 @@ var DomMonster = function(conf) {
 	styleElem.innerHTML += ".dommonster_dashed_red { border: 1px dashed #f00 }";
 	styleElem.innerHTML += ".dommonster_dashed_blue { border: 1px dashed #00f }";
 	
-	conf.container.appendChild(styleElem);
+	toolContainer.appendChild(styleElem);
 };
 
-var domMonster = function(scaleBookmarklet) {
+var domMonster = function(performanceApi, toolContainer) {
     var JR = {
         Version: '1.3.2'
     };
@@ -570,7 +570,7 @@ var domMonster = function(scaleBookmarklet) {
 		}
 		
         iframe.src = 'about:blank';
-        scaleBookmarklet.container.appendChild(iframe);
+        toolContainer.appendChild(iframe);
         clean = iframe.contentWindow;
         for (prop in global) {
             if (!ignore(prop) && !/^[0-9]/.test(prop) && !(document.getElementById(prop) || {}).nodeName && !nametag(prop)) {
@@ -684,7 +684,7 @@ var domMonster = function(scaleBookmarklet) {
 	var body = $tagname('body')[0],
 		node = document.createElement('div');
 	node.id = 'jr_results';
-	scaleBookmarklet.container.appendChild(node);
+	toolContainer.appendChild(node);
 	node.style.cssText = JR.reset + ';width:100%;text-align:left;letter-spacing:0;color:#444;';
 	node.innerHTML = '<div id="jr_results_tips" style="' + JR.reset + 'max-height:400px;padding:5px;overflow:auto;background:#fff;border-top:1px solid #000;box-shadow: 1px 0px 5px #000;">' + '<div style="' + JR.reset + 'height:23px;font-size:16px;font-weight:normal;margin-top:0px;margin-bottom:5px;color:#444">' + '<div style="' + JR.reset + 'float:left;padding:5px 0px 3px 5px" id="jr_results_prognosis_container">' + '<span id="jr_results_prognosis" style="' + JR.reset + '"></span> ' + '<span style="' + JR.reset + 'font-size:12px;font-weight:normal" id="jr_results_warnings_container"><span id="jr_results_warnings" style="' + JR.reset + '"></span></span>' + '</div></div>' + '<div style="' + JR.reset + 'float:left;width:220px;padding:4px;margin-top:2px;" id="jr_stats">' + '</div>' + '</div>';
 	JR.flush();

@@ -322,13 +322,8 @@ ScalePerformanceBarClass.prototype = {
 				// Call the constructor
 				if(script.className != null)
 				{
-					var params = {
-						performanceApi:	superClass.performanceApi,
-						container:		tools.toolContainer
-					};
-					
 					var toolClass = window[script.className];
-					tools.activeTool = new toolClass(params);
+					tools.activeTool = new toolClass(superClass.performanceApi, tools.toolContainer);
 				}
 				
 				tools.toolContainer.style.position = script.isFixed ? "fixed" : "absolute";

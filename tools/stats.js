@@ -2,7 +2,7 @@
  * @author mrdoob / http://mrdoob.com/
  */
 
-var Stats = function (conf) {
+var Stats = function (performanceApi, toolContainer) {
 	/* SCALE performance tool IO functions */
 		this.destructor = function() {
 			window.clearInterval(interval);
@@ -31,7 +31,7 @@ var Stats = function (conf) {
 	container.style.position = "relative";
 	container.style.left = "50%";
 	container.style["margin-left"] = -Math.round(width / 2) + "px";
-	conf.container.appendChild(container);
+	toolContainer.appendChild(container);
 	
 	var fpsDiv = document.createElement( 'div' );
 	fpsDiv.id = 'fps';
