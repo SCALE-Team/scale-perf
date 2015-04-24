@@ -17,6 +17,27 @@ body {
 	margin:	0px !important;
 }
 
+.carousel-caption {
+	background-color:	#16A085;
+	font-size:			18px;
+}
+
+.carousel-indicators {
+	bottom:	0px;
+}
+
+@media (max-width: 768px) {
+	.carousel-indicators {
+		bottom:	-10px;
+	}
+}
+
+.carousel-inner .carousel-caption {
+	left:	0px;
+	right:	0px;
+	bottom:	0px;
+}
+
 .btn-primary {
 	color:				#16A085 !important;
 	background-color:	transparent !important;
