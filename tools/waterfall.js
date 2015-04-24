@@ -533,6 +533,7 @@ Waterfall.prototype = {
 				
 				var background = this.svg.createSVGRect(0, 0, 300, rowHeight);
 				background.setAttribute("class", "waterfall_label");
+				background.appendChild(this.buildTitle(entry.url));
 				background.info = [
 					{
 						name:	"URL",
@@ -618,10 +619,16 @@ Waterfall.prototype = {
 	buildDurationTitle: function(duration, label) {
 		duration = Math.round(duration * 10) / 10.0;
 		
-		var title = document.createElementNS(this.svg.xmlns, "title");
-		title.innerHTML = duration + "ms";
+		var text = duration + "ms";
 		
-		if(label != null) title.innerHTML = label + ": " + title.innerHTML;
+		if(label != null) text = label + ": " + text;
+		
+		return this.buildTitle(text);
+	},
+	
+	buildTitle: function(text) {
+		var title = document.createElementNS(this.svg.xmlns, "title");
+		title.innerHTML = text;
 		
 		return title;
 	},
