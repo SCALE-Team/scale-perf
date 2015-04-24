@@ -744,7 +744,7 @@ ScalePerformanceBarClass.prototype = {
 				alert("Oups, looks like this browser does not support the Resource Timing API\ncheck http://caniuse.com/#feat=resource-timing to see the ones supporting it \n\n");
 			}
 			
-			return this.removeOwnSourcesFromResources(resources);
+			return removeOwnSourcesFromResources(resources);
 		}
 		
 		var filesToHide = [];
@@ -753,7 +753,7 @@ ScalePerformanceBarClass.prototype = {
 			filesToHide.push(file);
 		};
 		
-		this.removeOwnSourcesFromResources = function(resources) {
+		var removeOwnSourcesFromResources = function(resources) {
 			var filteredResources = [];
 			
 			for(var f in resources)
