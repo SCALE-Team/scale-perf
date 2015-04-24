@@ -28,8 +28,9 @@ var ScalePerformanceBarClass = function() {
 	
 	/* Add symbols to menu */ {
 		this.menu.addSymbol({
-			name:			"Help",
-			symbol:			"?",
+			name:		"Help",
+			symbol:		"?",
+			flagAs:		"info",
 			onclick: function(superClass) {
 				var content = superClass.readme.getHelpText();
 				
@@ -38,9 +39,9 @@ var ScalePerformanceBarClass = function() {
 		});
 		
 		this.menu.addSymbol({
-			name:			"Close",
-			symbol:			"X",
-			isDanger:		"danger",
+			name:		"Close",
+			symbol:		"X",
+			flagAs:		"danger",
 			onclick: function(superClass) {
 				superClass.menu.hide();
 			}
@@ -78,16 +79,17 @@ ScalePerformanceBarClass.prototype = {
 		style += "#PerfBar a, #ToolsActiveBar a { display: inline-block; cursor: pointer; text-decoration: none !important; color: #ECF0F1 !important; display: inline-block; padding: 5px; }";
 		style += "#PerfBar a:hover, #ToolsActiveBar a:hover { background-color: #16A085 !important; }";
 		style += "#PerfBar a.danger:hover, #ToolsActiveBar a.danger:hover { background-color: #C0392B !important; }";
+		style += "#PerfBar a.info:hover, #ToolsActiveBar a.info:hover { background-color: #3498DB !important; }";
 		style += "#PerfBar a.disabled { color: #555 !important; cursor: default; }";
 		style += "#PerfBar a.disabled:hover { background-color: transparent !important; }";
+		style += "#PerfBar a.perf_logo { width: 56px !important; background: url(" + this.menu.logoSrc + ") 5px 5px no-repeat; }";
 		
 		style += "#PerfBar.hide_bar, #ToolsActiveBar.hide_bar { top: -40px; }";
-		style += "#PerfBar .perf_logo { height: 20px; }";
 		
 		style += "#PerfBar .perf_symbols, #ToolsActiveBar .perf_symbols { position: absolute; top: 0px; right: 0px; }";
 		style += "#PerfBar .perf_symbols > *, #ToolsActiveBar .perf_symbols > * { vertical-align: middle !important; }";
 		style += "#PerfBar .perf_symbols > a, #ToolsActiveBar .perf_symbols > a { width: 30px; text-align: center; }";
-		style += "#PerfBar .perf_symbols .fullName { display: none;  }";
+		style += "#PerfBar .perf_symbols .fullName { display: none; }";
 		
 		style += "#PerfBar .perf_separator { cursor: default; }";
 		style += "#PerfBar .perf_separator:first-child { display: none; }";
@@ -104,7 +106,7 @@ ScalePerformanceBarClass.prototype = {
 		style += "@media (max-width: 768px) {";
 			style += "#PerfBar { height: auto !important; }";
 			style += "#PerfBar.hide_bar, #ToolsActiveBar.hide_bar { top: -300px; }";
-			style += "#PerfBar .perf_logo { display: none; }";
+			style += "#PerfBar a.perf_logo { display: none; }";
 			style += "#PerfBar { padding: 0px; }";
 			style += "#PerfBar a { width:	100%; }";
 			style += "#PerfBar .perf_separator { display: none; }";
@@ -132,7 +134,7 @@ ScalePerformanceBarClass.prototype = {
 		bar:			null,
 		toolsMenu:		null,
 		symbolsBlock:	null,
-		logoSrc:		"data:image/png;base64,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",
+		logoSrc:		"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAC0AAAAUCAYAAAAZb7T/AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAYdEVYdFNvZnR3YXJlAHBhaW50Lm5ldCA0LjAuNWWFMmUAAAPZSURBVEhLzZZ5iI1RGMbHWEKSZRRKIVkzCJMwtpQkYzclUpYsoWRfsiYia1HWUoiiJOYfQlnSILuyRghZi2wx4/eceb7rXu7cRiM89et9z/Oec773fvfb0qSCgoIpsB8mBwORT7A3zpa8lrCmsLCwjMeDICsUEX5nxpviaK65xLVQz9NKLzbrBDdgBDzkIN2cyxsPj6C3566Gb9De4y0wWrlEPhbOwlTBXvXVNBQybudppRebZYMaGw6Z7F+NeAQGuq6zW8v5PdjCnBUeJ2v6APW2pjykbFo+RP9MC9uppU2ZvBCewStoDheho6cEMW4FVx3v2EvW9Gu4Ltg7owRN14UXnpNjO7WYqDPdlzVliTtgAehM57quSyWL+iLiB3jiA6j5ZE1v9jCIqSmbptSa2mfPKXHTPeApTIeboCZz4S7MBZ39LLjMvv2hIbmaXeJ4GJaC1qtp/UsaizbM/6Vp8tFY1aEC+RWQ8qFkTUtM1vW8DSaxUXqcp6Zy8CoSlxDLutYCxjDuT1xmZkD7uLH4pWl58AW09zLXtkMt6AWLQf/4SuiuNX9UbLoK5nmYVPFNE8oTL3msp9BXeMwwg7gRClSLF1YeoZq3K15M1I2ZBx1sxcQGtfEPwACQ3sBg2AtVPS0m5seahvnOT8NX531hvfMXMAd6w0S4bf84IVwBCaLQCPZAM7jvyctBL5C10SLyaaolE7Vw88YLO2p6JHwC3T81YQPsgiags/6SaQ29LAivKlz1+sG2fwgzX8XiRF3XsG6cbI/fwxTS2URdox/Jm0K47iMxjprOAd3U4WYjVsKuQpzl+oKw4Cfh93N9j60fwhymokSuZ+15+Obxc4IOoMaDyNd7qdbutS2/j+0grKjp7tCRVE+NAGOdyY2uJ31yUNJbVfXTtoqEoTv/nIsPoKZ8hkPs6e/bCjMYnrR3lJAOOvvRzXUcMsOmFnZouhi9Zf5SJcTYd0+88Lu6ftBWkTBuqSCRb7etA6YzDjeMRD6H0JQY7nLCbXjgXNdrHS9NEH7jFERN6aar4iVBjHV8PT1Un2i7SBj6yjvloj6aMuwPtaczvZNUX3HhEiFGzUr6d6TwvfK7Yl1oDF2AnqBHoJ75h2QS9cYMPSWIQq4mSOS6pvVmi65pPYpijzPyLtg6C+9AzZcjZrv822JtDTijY/0s/KgHPfYqe0mRilsUiXri34PwGlGq72GpxD764aNA3z3X4ATM1P5EfUKoh2NQyUtCAw1gN+grL3qo61Wql8g6hgmPsr8pjq3L5Yp7Wmc7URTmg35xwufpvxS96NtkH5T8o+r/UVrad5+b1PN9x5MzAAAAAElFTkSuQmCC",
 		
 		addBar: function() {
 			var superClass = this.superClass;
@@ -163,9 +165,11 @@ ScalePerformanceBarClass.prototype = {
 				menu.bar.appendChild(menu.symbolsBlock);
 				
 				// Add logo
-				var logo = document.createElement("img");
+				var logo = document.createElement("a");
+				logo.href = "https://qspa.otto.de/confluence/display/LHOT/Team+Scale";
+				logo.target = "_blank";
 				logo.className = "perf_logo";
-				logo.src = menu.logoSrc;
+				logo.innerHTML = "&nbsp;";
 				menu.symbolsBlock.appendChild(logo);
 			}
 			
@@ -212,7 +216,7 @@ ScalePerformanceBarClass.prototype = {
 			// if performance api required, but api not available, disable
 			var disableTool = (script.requiresPerformanceApi && window.performance == null);
 			link.className += (disableTool ? " disabled" : "");
-			link.className += (script.isDanger ? " danger" : "");
+			link.className += (script.flagAs ? " " + script.flagAs : "");
 			if(disableTool) link.title = "This tool was disabled cause your browser doesn't support the Resource Timing API!";
 			
 			// If not disabled, add click handlers
