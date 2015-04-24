@@ -319,13 +319,14 @@ ScalePerformanceBarClass.prototype = {
 			}
 			
 			jselem.onload = function() {
-				// Call the constructor
+				// Create an object of the tool
 				if(script.className != null)
 				{
 					var toolClass = window[script.className];
-					tools.activeTool = new toolClass(superClass.performanceApi, tools.toolContainer);
+					tools.activeTool = new toolClass(superClass.performanceApi, tools.toolContainer, superClass.popup);
 				}
 				
+				// Set if container is fixed
 				tools.toolContainer.style.position = script.isFixed ? "fixed" : "absolute";
 				
 				var toolHeight = tools.toolContainer.offsetHeight;

@@ -1,4 +1,4 @@
-var ToolTemplate = function(performanceApi, toolContainer) {
+var ToolTemplate = function(performanceApi, toolContainer, popup) {
 	/* Here in the constructor you initialize your whole class
 	and append your tools elements to the display */
 	
@@ -15,6 +15,10 @@ var ToolTemplate = function(performanceApi, toolContainer) {
 			the results of the API won't be altered by the bookmarklet.
 		*/
 		this.performanceApi = performanceApi;
+
+		/* Use this popup to show informations
+		*/
+		this.popup = popup;
 	
 	return {
 		/* This is the destructor. It should remove all the things you append to the screen. Implement it!
