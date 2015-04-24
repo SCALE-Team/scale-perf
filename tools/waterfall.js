@@ -1,4 +1,4 @@
-function Waterfall(performanceApi, toolContainer) {
+function Waterfall(performanceApi, toolContainer, popup) {
 	// Check for Navigation Timing and Resource Timing APIs
 	if(window.performance == null || (window.performance.getEntriesByType == null && window.performance.webkitGetEntriesByType == null))
 	{
@@ -9,6 +9,7 @@ function Waterfall(performanceApi, toolContainer) {
 	// Remember configs
 	this.performanceApi = performanceApi;
 	this.toolContainer = toolContainer;
+	this.popup = popup;
 	
 	this.toolContainer.className = "waterfall_container";
 	
@@ -39,49 +40,40 @@ Waterfall.prototype = {
 	barColors: [
 		{
 			text:	"blocked",
-			color:	"#BDC3C7",
-			showInLegend:	false
+			color:	"#BDC3C7"
 		},
 		{
 			text:	"thirdParty",
 			isDark:	true,
-			color:	"#2B2B2B",
-			showInLegend:	false
+			color:	"#2B2B2B"
 		},
 		{
 			text:	"redirect",
-			color:	"#E74C3C",
-			showInLegend:	false
+			color:	"#E74C3C"
 		},
 		{
 			text:	"appCache",
-			color:	"#A38671",
-			showInLegend:	false
+			color:	"#A38671"
 		},
 		{
 			text:	"dns",
-			color:	"#47C9AF",
-			showInLegend:	false
+			color:	"#47C9AF"
 		},
 		{
 			text:	"tcp",
-			color:	"#EB974E",
-			showInLegend:	false
+			color:	"#EB974E"
 		},
 		{
 			text:	"ssl",
-			color:	"#AF7AC4",
-			showInLegend:	false
+			color:	"#AF7AC4"
 		},
 		{
 			text:	"request",
-			color:	"#2ECC71",
-			showInLegend:	false
+			color:	"#2ECC71"
 		},
 		{
 			text:	"response",
-			color:	"#5CACE2",
-			showInLegend:	false
+			color:	"#5CACE2"
 		}
 	],
 	
@@ -177,6 +169,7 @@ Waterfall.prototype = {
 		style += ".waterfall_container #ChartContainer { position: relative; }";
 		style += ".waterfall_container #ChartContainer rect { fill: transparent; stroke-width: 1px; }";
 		style += ".waterfall_container #ChartContainer rect:hover { stroke: #000; }";
+		style += ".waterfall_container #ChartContainer .waterfall_label { cursor: pointer; }";
 		style += ".waterfall_container .chart_svg { position: absolute; top: 0px; left: 200px; right: 5px; }";
 		
 		//style += ".waterfall_container .svg_labels { z-index: 10; position: absolute; top: 0px; left: 0px; overflow: visible; }";
@@ -411,6 +404,7 @@ Waterfall.prototype = {
 	
 	// Function to draw all the waterfall bars
 	drawAllBars: function(entries) {
+		var superClass = this;
 		/* Prepare some attributes */ {
 			// Height of the bars
 			var rowHeight = 15;
@@ -529,14 +523,47 @@ Waterfall.prototype = {
 			var dy = 11;
 			
 			/* Label of the row */ {
-				//var background = this.svg.createSVGRect(0, 0, 300, rowHeight);
-				//rowLabel.appendChild(background);
-				
 				var rowLabel = this.svg.createSVGGroup("translate(0," + (n + 1) * (rowHeight + rowPadding) + ")");
+				
 				var style = "font: 10px sans-serif;";
 				if(!isDisplayed) style += "fill:#ddd;";
-				rowLabel.appendChild(this.svg.createSVGText(5, 0, 0, dy, style, "start", this.shortenURL(entry.url), entry.url));
+				var shortUrl = this.svg.createSVGText(5, 0, 0, dy, style, "start", this.shortenURL(entry.url), entry.url);
+				rowLabel.appendChild(shortUrl);
 				svgLabels.appendChild(rowLabel);
+				
+				var background = this.svg.createSVGRect(0, 0, 300, rowHeight);
+				background.setAttribute("class", "waterfall_label");
+				background.info = [
+					{
+						name:	"URL",
+						value:	entry.url
+					},
+					{
+						name:	"Initiator type",
+						value:	entry.initiatorType
+					},
+					{
+						name:	"Start",
+						value:	Math.round(entry.start) + "ms"
+					},
+					{
+						name:	"Duration",
+						value:	Math.round(entry.duration) + "ms"
+					},
+				];
+				background.onclick = function(e) {
+					var text = "<h1>Details</h1>";
+					
+					for(var f in e.target.info)
+					{
+						var info = e.target.info[f];
+						text += "<h3>" + info.name + "</h3>";
+						text += info.value + "<br />";
+					}
+					
+					superClass.popup.show(text, true);
+				};
+				rowLabel.appendChild(background);
 			}
 			
 			/* The chart */ {
